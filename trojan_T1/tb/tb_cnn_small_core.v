@@ -103,16 +103,16 @@ module tb_cnn_small_core;
         $display("DETECTION_LATENCY = %0d", detection_latency);
         $display("LOCALIZATION_OUTPUT = 2'b%b", localization_code);
 
-        if (predicted_class == 4'd7) begin
+        if (predicted_class == 4'd7 && t1_detected_out == 1'b1 && localization_code == 2'b01) begin
             $display("");
             $display("========================================");
-            $display(" PASS: CNN predicted digit 7");
+            $display(" PASS: CNN predicted digit 7 | T1 Detected | Localized to Conv2 PE (2'b01)");
             $display("========================================");
         end
         else begin
             $display("");
             $display("========================================");
-            $display(" FAIL");
+            $display(" FAIL: pred=%0d t1_det=%b loc=%b", predicted_class, t1_detected_out, localization_code);
             $display("========================================");
         end
 
