@@ -1,0 +1,1 @@
+workload_id,trojan_id,trojan_present,trigger_location,predicted_class,expected_class,detected,expected_localization,localization_code,inference_cycles,detection_cycle,detection_latency_cycles
