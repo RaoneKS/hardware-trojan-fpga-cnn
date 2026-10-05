@@ -38,7 +38,7 @@ module cnn_small_core (
     output reg [63:0]  cycle_count,
     output wire        t1_detected_out,
     output wire        t2_detected_out,
-    output wire        t3_detected_out,
+    output wire        t5_detected_out,
     output wire [1:0]  localization_code
 );
 
@@ -50,7 +50,8 @@ module cnn_small_core (
                FCA=6'd27, FCW=6'd28, FCM=6'd29, FCS=6'd30,
                ARG=6'd31, FIN=6'd32,
                P1W1=6'd33, P1W2=6'd34, P1W3=6'd35,
-               P2W1=6'd36, P2W2=6'd37, P2W3=6'd38;
+               P2W1=6'd36, P2W2=6'd37, P2W3=6'd38,
+               T5STALL=6'd39;
 
     reg [5:0] state;
 
@@ -124,7 +125,7 @@ module cnn_small_core (
     reg signed [63:0] product;
 
     // ================================================================
-    // T1 HARDWARE TROJAN (Disabled for T3 experiment)
+    // T1 HARDWARE TROJAN (Disabled for T5 experiment)
     // Type    : PE computation corruption
     // Target  : Conv2 MAC datapath
     // Trigger : t1_trigger
@@ -134,7 +135,7 @@ module cnn_small_core (
     reg t1_detected;
 
     // ================================================================
-    // T2 HARDWARE TROJAN (Disabled for T3 experiment)
+    // T2 HARDWARE TROJAN (Disabled for T5 experiment)
     // Type    : Conv2 Weight Memory Data-Path Alteration
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
@@ -144,25 +145,25 @@ module cnn_small_core (
     reg t2_detected;
 
     // ================================================================
-    // T3 HARDWARE TROJAN
+    // T5 HARDWARE TROJAN
     // Type    : Interconnect / Data-Path Alteration
     // Target  : MaxPool1-to-Conv2 feature interconnect bus (p1_q)
-    // Trigger : t3_trigger
+    // Trigger : t5_trigger
     // Payload : flip bit 0 of p1_q on interconnect path before MAC
     // ================================================================
-    reg t3_trigger;
-    reg t3_detected;
+    reg t5_trigger;
+    reg t5_detected;
 
     // Localization encoding:
     // 2'b00 = No Trojan
     // 2'b01 = Conv2 PE computation region (T1)
     // 2'b10 = Conv2 Weight Memory region (T2)
-    // 2'b11 = Interconnect / Data-Path region (T3)
+    // 2'b11 = Interconnect / Data-Path region (T5)
     reg [1:0] localization_code_reg;
 
     assign t1_detected_out = t1_detected;
     assign t2_detected_out = t2_detected;
-    assign t3_detected_out = t3_detected;
+    assign t5_detected_out = t5_detected;
     assign localization_code = localization_code_reg;
 
     initial begin
@@ -170,8 +171,8 @@ module cnn_small_core (
         t1_detected = 1'b0;
         t2_trigger = 1'b0; // T2 disabled
         t2_detected = 1'b0;
-        t3_trigger = 1'b1; // T3 active
-        t3_detected = 1'b0;
+        t5_trigger = 1'b1; // T5 active
+        t5_detected = 1'b0;
         localization_code_reg = 2'b00;
     end
 
@@ -213,7 +214,7 @@ module cnn_small_core (
             best_value<=-64'sh7fffffffffffffff; best_class<=0;
             t1_detected <= 1'b0;
             t2_detected <= 1'b0;
-            t3_detected <= 1'b0;
+            t5_detected <= 1'b0;
             localization_code_reg <= 2'b00;
         end else begin
             cycle_count <= cycle_count + 1'b1;
@@ -399,35 +400,54 @@ module cnn_small_core (
             end
 
             C2W: begin
+                // T5 control-path Trojan: inject one deterministic extra
+                // control cycle immediately before one selected Conv2 MAC.
+                // No weight or feature data is modified.
+                if (t5_trigger &&
+                    out_f == 1 && out_r == 0 && out_c == 0 &&
+                    in_ch == 1 && kr == 1 && kc == 1) begin
+                    t5_detected <= 1'b1;
+                    localization_code_reg <= 2'b11;
+                    $display("T5_ACTIVE: selected Conv2 control-path stall inserted");
+                    $display("T5_TARGET: out_f=%0d out_r=%0d out_c=%0d in_ch=%0d kr=%0d kc=%0d",
+                             out_f,out_r,out_c,in_ch,kr,kc);
+                    state<=T5STALL;
+                end else begin
+                    state<=C2M;
+                end
+            end
+
+            T5STALL: begin
+                $display("T5_CONTROL_STALL: one extra cycle before selected Conv2 MAC");
                 state<=C2M;
             end
 
             C2M: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
-                    // T3 HARDWARE TROJAN: Interconnect Data-Path Alteration
+                    // T5 HARDWARE TROJAN: Interconnect Data-Path Alteration
                     // Target: MaxPool1-to-Conv2 feature interconnect bus (p1_q) before Conv2 MAC
-                    if (t3_trigger &&
+                    if (t5_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
                         out_c == 0 &&
                         in_ch == 1 &&
                         kr == 1 &&
                         kc == 1) begin
-                        t3_detected <= 1'b1;
+                        t5_detected <= 1'b1;
                         localization_code_reg <= 2'b11;
 
-                        $display("T3_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
+                        $display("T5_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
                                  $signed(p1_q), p1_q);
 
                         // Alter interconnect data path: flip bit 0 of p1_q
                         product = $signed(p1_q ^ 32'h00000001) * $signed(c2w_q);
 
-                        $display("T3_TARGET_AFTER: corrupted_p1=%0d (32'h%08h) product=%0d",
+                        $display("T5_TARGET_AFTER: corrupted_p1=%0d (32'h%08h) product=%0d",
                                  $signed(p1_q ^ 32'h00000001), (p1_q ^ 32'h00000001), $signed(product));
-                        $display("T3_ACTIVE: Interconnect data-path alteration between MaxPool1 and Conv2");
+                        $display("T5_ACTIVE: Interconnect data-path alteration between MaxPool1 and Conv2");
                     end
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T3)
+                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T5)
                     else if (t2_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
