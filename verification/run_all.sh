@@ -7,7 +7,7 @@ mkdir -p "$OUT"
 
 for T in T1 T2 T3 T4 T5; do
   DIR="$ROOT/trojan_$T"
-  LOG="$OUT/$T_simulation.log"
+  LOG="$OUT/${T}_simulation.log"
   echo "=== $T ===" | tee "$LOG"
   (
     cd "$DIR"
