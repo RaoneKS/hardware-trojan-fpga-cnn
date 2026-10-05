@@ -425,80 +425,9 @@ module cnn_small_core (
             C2M: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
-                    // T5 HARDWARE TROJAN: Interconnect Data-Path Alteration
-                    // Target: MaxPool1-to-Conv2 feature interconnect bus (p1_q) before Conv2 MAC
-                    if (t5_trigger &&
-                        out_f == 1 &&
-                        out_r == 0 &&
-                        out_c == 0 &&
-                        in_ch == 1 &&
-                        kr == 1 &&
-                        kc == 1) begin
-                        t5_detected <= 1'b1;
-                        localization_code_reg <= 2'b11;
-
-                        $display("T5_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
-                                 $signed(p1_q), p1_q);
-
-                        // Alter interconnect data path: flip bit 0 of p1_q
-                        product = $signed(p1_q ^ 32'h00000001) * $signed(c2w_q);
-
-                        $display("T5_TARGET_AFTER: corrupted_p1=%0d (32'h%08h) product=%0d",
-                                 $signed(p1_q ^ 32'h00000001), (p1_q ^ 32'h00000001), $signed(product));
-                        $display("T5_ACTIVE: Interconnect data-path alteration between MaxPool1 and Conv2");
-                    end
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T5)
-                    else if (t2_trigger &&
-                        out_f == 1 &&
-                        out_r == 0 &&
-                        out_c == 0 &&
-                        in_ch == 1 &&
-                        kr == 1 &&
-                        kc == 1) begin
-                        t2_detected <= 1'b1;
-                        localization_code_reg <= 2'b10;
-
-                        $display("T2_TARGET_BEFORE: p1_q=%0d c2w_q=%0d (8'b%b)",
-                                 $signed(p1_q), $signed(c2w_q), c2w_q);
-
-                        // Flip exactly bit 0 of the 8-bit signed weight
-                        product = $signed(p1_q) * $signed(c2w_q ^ 8'b00000001);
-
-                        $display("T2_TARGET_AFTER: corrupted_c2w=%0d (8'b%b) product=%0d",
-                                 $signed(c2w_q ^ 8'b00000001), (c2w_q ^ 8'b00000001), $signed(product));
-                        $display("T2_ACTIVE: Conv2 weight-data path corruption");
-                    end
-                    else begin
-                        product = $signed(p1_q) * $signed(c2w_q);
-                    end
-
-                    // T1 payload: selectively corrupt one Conv2 PE
-                    // computation when the Trojan trigger is active.
-                    if (t1_trigger &&
-                        out_f == 1 &&
-                        out_r == 0 &&
-                        out_c == 0 &&
-                        in_ch == 1 &&
-                        kr == 1 &&
-                        kc == 1) begin
-                        t1_detected <= 1'b1;
-                        localization_code_reg <= 2'b01;
-
-                        $display("T1_TARGET_BEFORE: p1_q=%0d c2w_q=%0d product=%0d",
-                                 $signed(p1_q), $signed(c2w_q), $signed(product));
-
-                        product = -product;
-
-                        $display("T1_TARGET_AFTER: p1_q=%0d c2w_q=%0d product=%0d",
-                                 $signed(p1_q), $signed(c2w_q), $signed(product));
-
-                        $display("T1_ACC_BEFORE_UPDATE: acc=%0d", $signed(acc));
-                        $display("T1_ACC_EXPECTED: acc+product=%0d",
-                                 $signed(acc) + $signed(product));
-
-                        $display("T1_ACTIVE: Conv2 PE computation corruption");
-                    end
-
+                    // T5 is a control-only Trojan. The selected transaction
+                    // reaches this MAC normally after the injected stall.
+                    product = $signed(p1_q) * $signed(c2w_q);
                     acc<=acc+product;
                 end
                 if(kc==2) begin
