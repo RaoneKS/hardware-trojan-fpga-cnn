@@ -16,7 +16,7 @@ module cnn_fpga_top (
     wire [63:0] cycle_count;
     wire        t1_detected_out;
     wire        t2_detected_out;
-    wire        t3_detected_w;
+    wire        t5_detected_w;
     wire [1:0]  loc_code;
 
     assign rst = ~KEY[0];
@@ -49,12 +49,12 @@ module cnn_fpga_top (
         .cycle_count(cycle_count),
         .t1_detected_out(t1_detected_out),
         .t2_detected_out(t2_detected_out),
-        .t3_detected_out(t3_detected_w),
+        .t5_detected_out(t5_detected_w),
         .localization_code(loc_code)
     );
 
     assign LEDR[2:0] = predicted_class[2:0];
-    assign LEDR[3]   = t3_detected_w;
+    assign LEDR[3]   = t5_detected_w;
     assign localization_code = loc_code;
 
 endmodule
