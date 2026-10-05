@@ -1,0 +1,21 @@
+
+==============================================
+ POOL2 PE RTL TEST
+==============================================
+
+RTL outputs = 784
+Expected    = 784
+
+PASS: Pool2 generated all 784 outputs.
+
+Final output:
+Row    = 6
+Column = 6
+Filter = 15
+Result = 505613
+
+Results saved to:
+reports/rtl_pool2_results.txt
+
+==============================================
+tb/tb_cnn_pool2_pe.v:123: $finish called at 7895000 (1ps)

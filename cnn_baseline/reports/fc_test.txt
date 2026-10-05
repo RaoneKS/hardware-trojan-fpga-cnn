@@ -1,0 +1,17 @@
+FC output: class=0 result=-13196320796
+FC output: class=1 result=4575135314
+FC output: class=2 result=-3580723435
+FC output: class=3 result=-4603146431
+FC output: class=4 result=-808213527
+FC output: class=5 result=336114380
+FC output: class=6 result=-10201140826
+FC output: class=7 result=1117820242
+FC output: class=8 result=-6631280082
+FC output: class=1 result=-4809051932
+======================================
+FC PE TEST COMPLETE
+======================================
+Predicted class = 1
+Final result    = -4809051932
+======================================
+tb/tb_cnn_fc_pe.v:51: $finish called at 78465000 (1ps)

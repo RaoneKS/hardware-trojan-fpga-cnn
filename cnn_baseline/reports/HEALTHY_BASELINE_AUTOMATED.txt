@@ -1,0 +1,38 @@
+============================================================
+HEALTHY FPGA-CNN BASELINE
+============================================================
+
+Project: Hardware Trojan Detection in FPGA-CNN Accelerators
+Target: Terasic DE10-Standard / Cyclone V
+CNN: MNIST CNN
+Current phase: Objective 1 - Healthy Baseline
+
+Architecture:
+  Input       : 28x28 grayscale MNIST
+  Conv1       : 1 -> 8 channels, 3x3
+  Pool1       : 2x2
+  Conv2       : 8 -> 16 channels, 3x3
+  Pool2       : 2x2
+  FC          : 784 -> 10
+
+Verified stages:
+  PE MAC      : see reports/pe_mac_test.txt
+  Conv1       : see reports/conv1_compare.txt
+  Pool1       : see reports/pool1_compare.txt
+  Conv2       : see reports/conv2_compare.txt
+  Pool2       : see reports/pool2_compare.txt
+  FC          : see reports/fc_test.txt
+
+Intermediate data:
+  reports/conv1_pool_input.mem : 6272 values
+  reports/pool1_conv2_input.mem : 1568 values
+  reports/conv2_pool2_input.mem : 3136 values
+  reports/pool2_fc_input.mem : 784 values
+
+IMPORTANT:
+  Trojan injection has NOT been performed.
+  Final integrated synthesizable CNN datapath is still required.
+  Final FPGA timing/power/resource measurements must be
+  collected after the integrated top-level is synthesized.
+
+============================================================

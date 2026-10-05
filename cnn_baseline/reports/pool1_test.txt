@@ -1,0 +1,21 @@
+
+==============================================
+ POOL1 RTL TEST
+==============================================
+
+RTL outputs   = 1568
+Expected      = 1568
+
+PASS: Pool1 generated all 1568 outputs.
+
+Results saved to:
+reports/rtl_pool1_results.txt
+
+Final output:
+Row    = 13
+Column = 13
+Filter = 7
+Result = 3477
+
+==============================================
+tb/tb_cnn_pool1_relu_maxpool_pe.v:105: $finish called at 15735000 (1ps)

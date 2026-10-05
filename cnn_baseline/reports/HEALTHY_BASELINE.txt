@@ -1,0 +1,105 @@
+============================================================
+HARDWARE TROJAN DETECTION IN FPGA-CNN ACCELERATORS
+HEALTHY BASELINE CHARACTERIZATION
+============================================================
+
+Platform:
+FPGA       : Intel Cyclone V 5CSXFC6D6F31I7
+Board      : Terasic DE10-Standard
+Clock      : 50 MHz
+Quartus    : Quartus Prime Standard 23.1
+
+------------------------------------------------------------
+FUNCTIONAL VERIFICATION
+------------------------------------------------------------
+
+Extended PE interconnect simulation:
+PASS = 66
+FAIL = 0
+STATUS = PASS
+
+------------------------------------------------------------
+RESOURCE UTILIZATION
+------------------------------------------------------------
+
+Logic utilization : 48 / 41910 ALMs (<1%)
+Registers         : 43
+RAM blocks        : 0 / 553 (0%)
+DSP blocks        : 4 / 112 (4%)
+PLLs              : 0 / 15 (0%)
+DLLs              : 0 / 4 (0%)
+Total pins        : 35 / 499 (7%)
+
+------------------------------------------------------------
+TIMING
+------------------------------------------------------------
+
+Clock frequency : 50 MHz
+
+Worst setup slack:
+13.467 ns
+Slow 1100mV -40C
+
+Worst hold slack:
+0.218 ns
+Fast 1100mV -40C
+
+Worst minimum pulse width:
+9.190 ns
+Slow 1100mV -40C
+
+TNS:
+0 ns
+
+------------------------------------------------------------
+POWER ANALYSIS
+------------------------------------------------------------
+
+Total thermal power estimate : 425.89 mW
+Core dynamic power            : 2.03 mW
+Core static power             : 411.26 mW
+I/O thermal power             : 12.60 mW
+
+Average toggle rate:
+6.659 million transitions/sec
+
+Power confidence:
+LOW
+
+Simulation-derived activity:
+10.9%
+
+Default activity:
+88.8%
+
+NOTE:
+Power values are Quartus Power Analyzer estimates.
+The current VCD does not provide sufficient activity
+coverage for a high-confidence dynamic-power estimate.
+
+------------------------------------------------------------
+PE HIERARCHY
+------------------------------------------------------------
+
+pe_interconnect_top
+  |
+  +-- pe_network
+       |
+       +-- PE0
+       +-- PE1
+       +-- PE2
+       +-- PE3
+
+------------------------------------------------------------
+BASELINE STATUS
+------------------------------------------------------------
+
+Functional behavior       : VERIFIED
+Resource characterization : VERIFIED
+Timing characterization   : VERIFIED
+PE hierarchy              : VERIFIED
+Power estimation          : COMPLETED (LOW CONFIDENCE)
+
+============================================================
+END OF HEALTHY BASELINE
+============================================================

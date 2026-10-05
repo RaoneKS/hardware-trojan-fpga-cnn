@@ -1,0 +1,38 @@
+==============================================
+ HEALTHY CNN FPGA BASELINE
+==============================================
+
+Generated: 2026-09-06 04:11:10.609643
+
+MODEL
+Input              : 28x28 grayscale
+Conv1              : 1 -> 8, 3x3
+Pool1              : 2x2
+Conv2              : 8 -> 16, 3x3
+Pool2              : 2x2
+FC                 : 784 -> 10
+
+VERIFICATION
+Conv1 outputs      : 6272
+Pool1 outputs      : 1568
+Conv2 outputs      : 3136
+Pool2 outputs      : 784
+
+EXPECTED
+Conv1              : 6272
+Pool1              : 1568
+Conv2              : 3136
+Pool2              : 784
+FC                 : 10
+
+ARCHITECTURE
+Healthy baseline only
+Hardware Trojan     : NOT INJECTED
+
+PE operations
+Conv1              : 3x3 MAC
+Conv2              : 3x3 MAC
+Pooling            : 2x2 MAX
+FC                 : 784 MACs/class
+
+==============================================

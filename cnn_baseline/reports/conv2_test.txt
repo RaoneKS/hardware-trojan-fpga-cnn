@@ -1,0 +1,21 @@
+
+==============================================
+ CONV2 PE RTL TEST
+==============================================
+
+RTL outputs = 3136
+Expected    = 3136
+
+PASS: Conv2 generated all 3136 outputs.
+
+Final output:
+Row    = 13
+Column = 13
+Filter = 15
+Result = 277290
+
+Results saved to:
+reports/rtl_conv2_results.txt
+
+==============================================
+tb/tb_cnn_conv2_pe.v:107: $finish called at 31415000 (1ps)

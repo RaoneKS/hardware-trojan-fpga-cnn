@@ -1,0 +1,16 @@
+
+==============================================
+ CONV2 RTL vs PYTHON GOLDEN COMPARISON
+==============================================
+
+Python golden outputs = 3136
+RTL outputs           = 3136
+
+
+----------------------------------------------
+Outputs checked = 3136
+Mismatches       = 0
+----------------------------------------------
+
+PASS: All 3136 Conv2 results match Python.
+

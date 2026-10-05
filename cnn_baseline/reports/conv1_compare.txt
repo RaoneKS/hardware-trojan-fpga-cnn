@@ -1,0 +1,16 @@
+
+==============================================
+ CONV1 PE RTL vs PYTHON GOLDEN COMPARISON
+==============================================
+
+Python golden outputs = 6272
+RTL outputs           = 6272
+
+
+----------------------------------------------
+Outputs checked = 6272
+Mismatches       = 0
+----------------------------------------------
+
+PASS: All 6272 Conv1 PE results match Python.
+

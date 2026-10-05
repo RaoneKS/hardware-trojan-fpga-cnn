@@ -1,0 +1,10 @@
+Error (23024): Unknown long option --report_timing. Refer to --help for legal options
+
+Usage:
+------
+
+quartus_sta [-h | --help[=<option|topic>] | -v]
+quartus_sta <project name> [<options>]
+quartus_sta -t <script file> [<script args>]
+quartus_sta -s
+quartus_sta --tcl_eval <tcl command>

@@ -1,0 +1,26 @@
+Experiment ID: EXP-T1-SIM-001
+Date: 2026-10-01
+RTL commit/hash: pending_git_hash
+FPGA: Cyclone V SoC 5CSEBA6 / 5CSXFC6D6F31I7
+Device: DE10-Standard
+Clock: 50 MHz (T = 20 ns)
+CNN: Conv1(1->8, 3x3) -> ReLU -> MaxPool(2x2) -> Conv2(8->16, 3x3) -> ReLU -> MaxPool(2x2) -> FC(784->10)
+Dataset: MNIST
+Input: data/mnist_image0_int8.mem (Digit 7)
+Trojan: T1 (PE Computation Corruption in Conv2 MAC)
+Trigger: out_f=1, out_r=0, out_c=0, in_ch=1, kr=1, kc=1
+Payload: product = -product
+Expected behavior: Internal computation corrupted, detector flags alert, prediction completes
+Observed behavior: t1_detected_out asserted at cycle 149144, predicted class 7 (PASS)
+Simulation: SUCCESS
+Total Inference Cycles: 634281
+INFERENCE_START_CYCLE: 8
+T1_DETECTION_CYCLE: 149144
+DETECTION_LATENCY: 149136 cycles (2982.72 us @ 50 MHz)
+Synthesis: Previous (1170 ALMs, 910 regs, 71 BRAMs, 13 DSPs)
+Fitter: Previous clean fit
+Timing: Previous clean slack (Setup +1.078 ns, Hold +0.328 ns)
+Hardware: Verified LEDR3=ON previously
+Detector: Basic sticky flag on Conv2 MAC trigger
+Localization: Pending (PE level)
+Notes: tb/tb_cnn_small_core.v updated with cycle-accurate monitoring for t1_detected_out.

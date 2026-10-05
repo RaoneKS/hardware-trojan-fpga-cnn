@@ -1,0 +1,35 @@
+Experiment ID: EXP-T1-LOC-001
+Date: 2026-10-01
+RTL commit/hash: pending_git_hash
+FPGA: Cyclone V SoC 5CSEBA6 / 5CSXFC6D6F31I7
+Device: DE10-Standard
+Clock: 50 MHz (T = 20 ns)
+CNN: Conv1(1->8, 3x3) -> ReLU -> MaxPool(2x2) -> Conv2(8->16, 3x3) -> ReLU -> MaxPool(2x2) -> FC(784->10)
+Dataset: MNIST
+Input: data/mnist_image0_int8.mem (Digit 7)
+Trojan: T1 (PE Computation Corruption in Conv2 MAC)
+Trigger: out_f=1, out_r=0, out_c=0, in_ch=1, kr=1, kc=1
+Payload: product = -product
+Expected behavior: Trojan detected, localization_code = 2'b01 (Conv2 PE computation region), predicted class = 7
+Observed behavior:
+  - Simulation: PASS, predicted_class = 7, t1_detected_out = 1, localization_code = 2'b01
+  - INFERENCE_START_CYCLE: 8
+  - T1_DETECTION_CYCLE: 149144
+  - DETECTION_LATENCY: 149136 cycles (2982.72 us @ 50 MHz)
+  - LOCALIZATION_OUTPUT: 2'b01
+Synthesis: Successful (0 errors)
+Fitter:
+  - Logic utilization: 1,167 ALMs (3%)
+  - Total registers: 924
+  - Block memory bits: 455,104 (8%)
+  - RAM Blocks: 71 (13%)
+  - DSP Blocks: 13 (12%)
+  - Total pins: 8 (CLOCK_50, KEY[0], LEDR[3:0], localization_code[1:0] on PIN_AG25 / PIN_AF25)
+Timing:
+  - Worst setup slack: +0.999 ns (Slow -40C), +1.726 ns (Slow 100C)
+  - Worst hold slack: +0.124 ns
+  - Timing violations: 0 (TNS = 0.000)
+Hardware Bitstream: cnn_full_small.sof generated successfully
+Detector: Active sticky assertion
+Localization: 2'b01 (Conv2 PE computation region)
+Notes: Phase 1 Step 4 completed cleanly.

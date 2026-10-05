@@ -1,0 +1,6 @@
+conv1_weight 0.0053554415
+conv1_bias 0.0022937891
+conv2_weight 0.0040539904
+conv2_bias 0.0016057928
+fc1_weight 0.0029221880
+fc1_bias 0.0004871419

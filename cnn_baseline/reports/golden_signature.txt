@@ -1,0 +1,36 @@
+========================================
+HARDWARE TROJAN DETECTION
+HEALTHY GOLDEN BASELINE
+========================================
+
+Platform:
+  Board       : Terasic DE10-Standard
+  FPGA        : Cyclone V 5CSXFC6D6F31
+  Clock       : 50 MHz
+  Clock period: 20 ns
+
+Functional:
+  Healthy RTL simulation : PASS
+  FPGA configuration     : SUCCESS
+
+Resource Utilization:
+  Registers              : 39
+  DSP Blocks             : 4 / 112 (4%)
+  Block RAM              : 0 bits
+
+Timing:
+  Worst setup slack      : +3.736 ns
+  Worst hold slack       : +0.574 ns
+
+Power (Quartus vectorless estimate):
+  Total thermal power    : 422.88 mW
+  Core dynamic power     : 1.79 mW
+  Core static power      : 411.24 mW
+  I/O thermal power      : 9.85 mW
+  Confidence             : LOW
+
+Note:
+  Power values are Quartus vectorless estimates,
+  not direct board measurements.
+
+========================================

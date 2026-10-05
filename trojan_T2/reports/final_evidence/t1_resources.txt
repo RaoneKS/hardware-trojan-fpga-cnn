@@ -1,0 +1,6 @@
+=== T1 Trojan CNN Resource Usage ===
+Logic utilization (in ALMs) : 1,167 / 41,910 ( 3 % )
+Total registers : 924
+Total block memory bits : 455,104 / 5,662,720 ( 8 % )
+Total RAM Blocks : 71 / 553 ( 13 % )
+Total DSP Blocks : 13 / 112 ( 12 % )

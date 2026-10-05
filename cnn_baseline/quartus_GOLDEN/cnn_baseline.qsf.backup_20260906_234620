@@ -1,0 +1,88 @@
+# ============================================================
+# CNN Hardware Trojan Detection - Healthy Baseline
+# Target: Terasic DE10-Standard / Cyclone V SoC
+# Quartus Prime Standard Edition 23.1
+# ============================================================
+
+# ------------------------------------------------------------
+# Project / Device
+# ------------------------------------------------------------
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSXFC6D6F31I7
+
+set_global_assignment -name TOP_LEVEL_ENTITY cnn_fpga_top
+
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+
+# ------------------------------------------------------------
+# Verilog RTL Sources
+# ------------------------------------------------------------
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe_array.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_conv3x3.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_relu.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_conv_relu.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_baseline_top.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe_node.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe_interconnect.v
+set_global_assignment -name VERILOG_FILE ../rtl/pe_interconnect_top.v
+# ------------------------------------------------------------
+# Timing Constraints
+# ------------------------------------------------------------
+set_global_assignment -name SDC_FILE cnn_baseline.sdc
+
+# ------------------------------------------------------------
+# Analysis & Synthesis
+# ------------------------------------------------------------
+set_global_assignment -name VERILOG_INPUT_VERSION SystemVerilog_2005
+
+# ------------------------------------------------------------
+# Fitter
+# ------------------------------------------------------------
+set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
+
+# ------------------------------------------------------------
+# Compilation
+# ------------------------------------------------------------
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+
+# ------------------------------------------------------------
+# Programming File
+# ------------------------------------------------------------
+set_global_assignment -name GENERATE_RBF_FILE OFF
+
+# ------------------------------------------------------------
+# Default assignments
+# ------------------------------------------------------------
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+
+# ------------------------------------------------------------
+# 50 MHz FPGA clock
+# DE10-Standard FPGA clock input
+# ------------------------------------------------------------
+set_location_assignment PIN_AF14 -to clk
+
+# ------------------------------------------------------------
+# Reset
+# KEY0 is active-low on the DE10-Standard.
+# The current CNN top-level uses active-high rst internally,
+# so this pin assignment is reserved for the next top-level
+# revision where the physical reset button is connected.
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+# End of file
+# ============================================================
+
+set_global_assignment -name LAST_QUARTUS_VERSION "23.1std.1 Standard Edition"
+
+set_global_assignment -name EDA_SIMULATION_TOOL "QuestaSim (Verilog)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_location_assignment PIN_AA24 -to led
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led
+
+set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top

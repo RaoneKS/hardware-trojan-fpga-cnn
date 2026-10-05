@@ -1,0 +1,16 @@
+
+==============================================
+ POOL1 RTL vs PYTHON GOLDEN COMPARISON
+==============================================
+
+Python golden outputs = 1568
+RTL outputs           = 1568
+
+
+----------------------------------------------
+Outputs checked = 1568
+Mismatches       = 0
+----------------------------------------------
+
+PASS: All 1568 Pool1 results match Python.
+

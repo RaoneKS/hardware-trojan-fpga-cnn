@@ -1,0 +1,51 @@
+# Quartus generated files
+db/
+incremental_db/
+simulation/
+output_files/
+*.rpt
+*.summary
+*.qws
+*.qdb
+*.qdf
+*.sof
+*.pof
+*.jic
+*.map
+*.fit
+*.sta
+*.smsg
+*.pin
+*.cmp
+*.done
+*.bak
+
+# Simulation/build artifacts
+*.vvp
+*.vcd
+*.wlf
+sim.out
+__pycache__/
+*.pyc
+
+# OS/editor
+.DS_Store
+*.swp
+
+# Large datasets/models/archives
+**/data/MNIST/raw/
+*.gz
+*.pth
+*.npy
+*.zip
+*.npz
+# Simulation binaries/temp files
+**/vvp
+**/sim.out
+**/nano
+**/grep
+**/tb/cd
+**/tb_array
+**/tb_conv
+**/tb_pe
+**/tb_relu

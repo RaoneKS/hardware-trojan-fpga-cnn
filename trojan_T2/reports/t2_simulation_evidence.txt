@@ -1,0 +1,31 @@
+Experiment ID: EXP-T2-SIM-001
+Date: 2026-10-01
+RTL commit/hash: pending_git_hash
+FPGA: Cyclone V SoC 5CSEBA6 / 5CSXFC6D6F31I7
+Device: DE10-Standard
+Clock: 50 MHz (T = 20 ns)
+CNN: Conv1(1->8, 3x3) -> ReLU -> MaxPool(2x2) -> Conv2(8->16, 3x3) -> ReLU -> MaxPool(2x2) -> FC(784->10)
+Dataset: MNIST
+Input: data/mnist_image0_int8.mem (Digit 7)
+Trojan: T2 (Conv2 Weight Memory Data-Path Alteration)
+Trigger: out_f=1, out_r=0, out_c=0, in_ch=1, kr=1, kc=1
+Payload: flip bit 0 of 8-bit signed weight c2w_q (5 -> 4) before MAC product
+Expected behavior: Weight corrupted before MAC, T2 detected, localization_code = 2'b10 (Conv2 Weight Memory), predicted class = 7
+Observed behavior:
+  - T2_TARGET_BEFORE: p1_q=2015, c2w_q=5 (8'b00000101)
+  - T2_TARGET_AFTER: corrupted_c2w=4 (8'b00000100), product=8060 (healthy was 10075)
+  - T2_DETECTED: 1
+  - INFERENCE_START_CYCLE: 8
+  - T2_DETECTION_CYCLE: 149144
+  - DETECTION_LATENCY: 149136 cycles (2982.72 us @ 50 MHz)
+  - LOCALIZATION_OUTPUT: 2'b10 (Conv2 Weight Memory)
+  - Predicted class: 7 (PASS)
+  - Total Inference Cycles: 634281
+Simulation: SUCCESS (PASS: CNN predicted digit 7 | T2 Detected | Localized to Conv2 Weight Memory 2'b10)
+Synthesis: Pending Quartus run for T2
+Fitter: Pending
+Timing: Pending
+Hardware: Pending
+Detector: Sticky t2_detected_out asserted
+Localization: 2'b10 (Conv2 Weight Memory)
+Notes: Executed in trojan_T2 only. T1 disabled (t1_trigger=0). conv2_weight.mem and cnn_sp_ram untouched.

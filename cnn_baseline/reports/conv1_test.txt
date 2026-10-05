@@ -1,0 +1,13 @@
+
+----------------------------------------
+CONV1 PE RTL VERIFICATION
+----------------------------------------
+RTL outputs checked = 6272
+Expected outputs    = 6272
+
+PASS: RTL generated all 6272 Conv1 outputs.
+
+RTL results saved to:
+reports/rtl_conv1_pe_results.txt
+----------------------------------------
+tb/tb_cnn_conv1_image_8filter_pe.v:104: $finish called at 62775000 (1ps)

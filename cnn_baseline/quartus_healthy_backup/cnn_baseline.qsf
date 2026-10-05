@@ -1,0 +1,75 @@
+# ============================================================
+# CNN Hardware Trojan Detection - Healthy Baseline
+# Target: Terasic DE10-Standard / Cyclone V SoC
+# Quartus Prime Standard Edition 23.1
+# ============================================================
+
+# ------------------------------------------------------------
+# Project / Device
+# ------------------------------------------------------------
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSXFC6D6F31I7
+
+set_global_assignment -name TOP_LEVEL_ENTITY cnn_baseline_top
+
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+
+# ------------------------------------------------------------
+# Verilog RTL Sources
+# ------------------------------------------------------------
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_pe_array.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_conv3x3.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_relu.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_conv_relu.v
+set_global_assignment -name VERILOG_FILE ../rtl/cnn_baseline_top.v
+
+# ------------------------------------------------------------
+# Timing Constraints
+# ------------------------------------------------------------
+set_global_assignment -name SDC_FILE cnn_baseline.sdc
+
+# ------------------------------------------------------------
+# Analysis & Synthesis
+# ------------------------------------------------------------
+set_global_assignment -name VERILOG_INPUT_VERSION SystemVerilog_2005
+
+# ------------------------------------------------------------
+# Fitter
+# ------------------------------------------------------------
+set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
+
+# ------------------------------------------------------------
+# Compilation
+# ------------------------------------------------------------
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+
+# ------------------------------------------------------------
+# Programming File
+# ------------------------------------------------------------
+set_global_assignment -name GENERATE_RBF_FILE OFF
+
+# ------------------------------------------------------------
+# Default assignments
+# ------------------------------------------------------------
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+
+# ------------------------------------------------------------
+# 50 MHz FPGA clock
+# DE10-Standard FPGA clock input
+# ------------------------------------------------------------
+set_location_assignment PIN_AF14 -to clk
+
+# ------------------------------------------------------------
+# Reset
+# KEY0 is active-low on the DE10-Standard.
+# The current CNN top-level uses active-high rst internally,
+# so this pin assignment is reserved for the next top-level
+# revision where the physical reset button is connected.
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+# End of file
+# ============================================================
+
+set_global_assignment -name LAST_QUARTUS_VERSION "23.1std.1 Standard Edition"
