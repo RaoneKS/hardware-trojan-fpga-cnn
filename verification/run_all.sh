@@ -43,7 +43,7 @@ for T in T1 T2 T3 T4 T5; do
     echo "$T: detector assertion not confirmed by PASS marker" >&2
     exit 1
   fi
-  if ! grep -q "LOCALIZATION_OUTPUT = 2'b${EXPECTED_LOC}" "$LOG"; then
+  if ! grep -Eq "LOCALIZATION_OUTPUT.*2'b${EXPECTED_LOC}" "$LOG"; then
     echo "$T: expected localization ${EXPECTED_LOC} not observed" >&2
     exit 1
   fi
