@@ -5,9 +5,9 @@
 | H | Reference CNN | 0 | 00 | Validated |
 | T1 | Selected Conv2 MAC product sign inversion | 1 | 01 | Detector physically validated |
 | T2 | Selected Conv2 weight bit flip | 1 | 10 | Detector + localization physically validated |
-| T3 | Selected Conv2 feature interconnect bit flip | 1 | 11 | Simulation/build validation required |
-| T4 | Selected Conv2 source-address/routing alteration | 1 | 11 | Simulation/build validation required |
-| T5 | Selected Conv2 control-cycle stall | 1 | 11 | Simulation/build validation required |
+| T3 | Selected Conv2 feature interconnect bit flip | 1 | 11 | Simulation validated; Quartus/physical pending |
+| T4 | Selected Conv2 source-address/routing alteration | 1 | 11 | Simulation validated; Quartus/physical pending |
+| T5 | Selected Conv2 control-cycle stall | 1 | 11 | Simulation validated; Quartus/physical pending |
 
 ## Required statistical evaluation
 
