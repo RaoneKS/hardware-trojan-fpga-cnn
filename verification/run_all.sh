@@ -11,8 +11,8 @@ for T in T1 T2 T3 T4 T5; do
   echo "=== $T ===" | tee "$LOG"
   (
     cd "$DIR"
-    iverilog -g2012 -o "cnn_$T_tb" tb/tb_cnn_small_core.v rtl/cnn_fpga_top.v rtl/cnn_small_core_m10k.v
-    timeout 30s vvp "cnn_$T_tb"
+    iverilog -g2012 -o "cnn_${T}_tb" tb/tb_cnn_small_core.v rtl/cnn_fpga_top.v rtl/cnn_small_core_m10k.v
+    timeout 30s vvp "cnn_${T}_tb"
   ) | tee -a "$LOG"
   if ! grep -q " PASS:" "$LOG"; then
     echo "$T: PASS marker not found" >&2
