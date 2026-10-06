@@ -28,6 +28,11 @@ jobs:
             verification/results/healthy_activity.csv \
             | tee verification/results/healthy_activity_summary.txt
 
+      - name: Run deterministic multi-workload simulation
+        run: |
+          chmod +x verification/run_multiworkload.sh
+          ./verification/run_multiworkload.sh
+
       - name: Run controlled Trojan simulations
         run: |
           ./verification/run_all.sh
@@ -43,4 +48,5 @@ jobs:
             verification/results/*_activity.csv
             verification/results/*_activity_summary.txt
             verification/results/simulation_summary.csv
+            verification/results/multiworkload/*
           if-no-files-found: ignore
