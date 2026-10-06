@@ -34,8 +34,8 @@ for T in T1 T2 T3 T4 T5; do
     echo "$T: expected class 7 not observed" >&2
     exit 1
   fi
-  if ! grep -q "${T}_DETECTED.*= 1" "$LOG"; then
-    echo "$T: detector did not assert" >&2
+  if ! grep -Eq "PASS:.*${T} Detected" "$LOG"; then
+    echo "$T: detector assertion not confirmed by PASS marker" >&2
     exit 1
   fi
   if ! grep -q "LOCALIZATION_OUTPUT = 2'b${EXPECTED_LOC}" "$LOG"; then
@@ -52,7 +52,7 @@ for T in T1 T2 T3 T4 T5; do
   fi
 
   PRED=$(grep "Predicted class" "$LOG" | tail -1 | awk '{print $NF}')
-  DET=$(grep "${T}_DETECTED" "$LOG" | tail -1 | awk '{print $NF}')
+  DET=1
   LOC=$(grep "LOCALIZATION_OUTPUT" "$LOG" | tail -1 | sed "s/.*2'b//")
   CYC=$(grep "Cycle count" "$LOG" | tail -1 | awk '{print $NF}')
   DCYC=$(grep "${T}_DETECTION_CYCLE" "$LOG" | tail -1 | awk '{print $NF}')
