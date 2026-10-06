@@ -18,10 +18,7 @@ VAR_RE = re.compile(r"\$var\s+\S+\s+(\d+)\s+(\S+)\s+(.+?)\s+\$end")
 
 def normalize(value: str, width: int) -> str:
     value = value.lower()
-    if value.startswith("b"):
-        bits = value[1:]
-    else:
-        bits = value
+    bits = value[1:] if value.startswith("b") else value
     if len(bits) < width:
         bits = bits.rjust(width, "0")
     return bits[-width:]
@@ -38,7 +35,7 @@ def summarize(vcd: Path):
     signals: dict[str, dict] = {}
     current: dict[str, str] = {}
     in_header = True
-    time_value_changes = 0
+    value_changes = 0
     bit_transitions = 0
 
     with vcd.open("r", errors="replace") as f:
@@ -53,7 +50,7 @@ def summarize(vcd: Path):
                     width, ident, name = m.groups()
                     signals[ident] = {
                         "width": int(width),
-                        "name": name.split()[0],
+                        "signal": name.split()[0],
                         "value_changes": 0,
                         "bit_transitions": 0,
                     }
@@ -68,10 +65,8 @@ def summarize(vcd: Path):
 
             ident = None
             value = None
-
             if line[0] in "01xXzZ":
-                value = line[0]
-                ident = line[1:].strip()
+                value, ident = line[0], line[1:].strip()
             elif line[0] in "bBrR":
                 parts = line.split()
                 if len(parts) == 2:
@@ -83,20 +78,18 @@ def summarize(vcd: Path):
             meta = signals[ident]
             new_value = normalize(value, meta["width"])
 
-            if ident in current:
-                if current[ident] != new_value:
-                    delta = bit_delta(current[ident], new_value)
-                    meta["value_changes"] += 1
-                    meta["bit_transitions"] += delta
-                    time_value_changes += 1
-                    bit_transitions += delta
+            if ident in current and current[ident] != new_value:
+                delta = bit_delta(current[ident], new_value)
+                meta["value_changes"] += 1
+                meta["bit_transitions"] += delta
+                value_changes += 1
+                bit_transitions += delta
+
             current[ident] = new_value
 
-    rows = []
-    for meta in signals.values():
-        rows.append(meta)
-    rows.sort(key=lambda x: (-x["bit_transitions"], -x["value_changes"], x["name"]))
-    return signals, rows, time_value_changes, bit_transitions
+    rows = list(signals.values())
+    rows.sort(key=lambda x: (-x["bit_transitions"], -x["value_changes"], x["signal"]))
+    return rows, value_changes, bit_transitions
 
 
 def main() -> int:
@@ -104,28 +97,20 @@ def main() -> int:
         print(f"usage: {sys.argv[0]} INPUT.vcd OUTPUT.csv", file=sys.stderr)
         return 2
 
-    vcd = Path(sys.argv[1])
-    out = Path(sys.argv[2])
+    vcd, out = Path(sys.argv[1]), Path(sys.argv[2])
     if not vcd.is_file():
         print(f"VCD not found: {vcd}", file=sys.stderr)
         return 2
 
-    _, rows, value_changes, bit_transitions = summarize(vcd)
+    rows, value_changes, bit_transitions = summarize(vcd)
     out.parent.mkdir(parents=True, exist_ok=True)
 
     with out.open("w", newline="") as f:
         writer = csv.DictWriter(
-            f,
-            fieldnames=["signal", "width", "value_changes", "bit_transitions"],
+            f, fieldnames=["signal", "width", "value_changes", "bit_transitions"]
         )
         writer.writeheader()
-        for row in rows:
-            writer.writerow({
-                "signal": row["name"],
-                "width": row["width"],
-                "value_changes": row["value_changes"],
-                "bit_transitions": row["bit_transitions"],
-            })
+        writer.writerows(rows)
 
     non_clock = [
         r for r in rows
