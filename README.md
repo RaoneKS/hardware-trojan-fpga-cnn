@@ -20,25 +20,61 @@ Healthy software accuracy: **98.41%**. The included reference image predicts dig
 - T4: Conv2 selective source-routing alteration
 - T5: selected Conv2 control-path stall
 
-## Current evidence
-Healthy, T1, and T2 have measured simulation/Quartus evidence. T1 and T2 have also been programmed on the physical DE10-Standard; T2 physically demonstrated class 7, detector assertion, and localization code 10.
+## Current validated evidence
+### Healthy
+- Simulation: 346,563 cycles; predicted class 7.
+- Physical DE10-Standard: class 7 observed on LEDR[2:0] = 111.
 
-T3/T4/T5 are controlled experiments but are **not described as hardware-validated** until their SOFs are programmed and observed.
+### T1
+- Simulation: detected, localization 01, 634,281 cycles, 149,136-cycle detection latency.
+- Physical DE10-Standard: detector assertion validated; localization 01.
+- Fitter: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSP blocks.
 
-## Non-hardware research package
-- `docs/PAPER_RESULTS.md` — evidence ledger
-- `docs/PAPER_RESULTS_AND_CLAIMS.md` — validated vs pending claims boundary
-- `docs/VIVA_QA.md` — professor/viva preparation
-- `docs/SUBMISSION_CHECKLIST.md` — submission status
-- `docs/BOARD_VALIDATION.md` — exact DE10 hardware validation procedure
-- `verification/aggregate_metrics.py` — statistical metric calculation
-- `verification/results/runs.csv` — repeatable experiment ledger
+### T2
+- Simulation: detected, localization 10, 634,281 cycles, 149,136-cycle detection latency.
+- Physical DE10-Standard: class 7, detector ON, localization 10.
+- Fitter: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSP blocks.
+
+### T3
+- Simulation: detected, localization 11, 634,281 cycles, 149,136-cycle detection latency.
+- Quartus full compile: 0 errors; SOF generated; no timing violations.
+- Physical DE10-Standard: LEDR0–LEDR5 all ON, corresponding to class 7 + detector ON + localization 11.
+
+### T4
+- Simulation: detected, localization 11, 634,281 cycles, 149,136-cycle detection latency.
+- Quartus full compile: 0 errors; SOF generated; no timing violations.
+- Physical DE10-Standard: LEDR0–LEDR5 all ON, corresponding to class 7 + detector ON + localization 11.
+
+### T5
+- Simulation: detected, localization 11, 634,282 cycles, 149,135-cycle detection latency.
+- Quartus full compile: 0 errors; SOF generated; no timing violations.
+- Physical DE10-Standard: LEDR0–LEDR5 all ON, corresponding to class 7 + detector ON + localization 11.
+
+**Therefore T1–T5 are now physically validated at the board-output level.**
+
+## Evidence boundary
+The deterministic reference-image experiment is **not** a statistical test set. Do not derive TPR/FPR/precision/F1, false-positive rate, cross-workload robustness, power overhead, or ablation conclusions from the single reference image.
+
+Those quantities require repeated healthy/Trojan runs and multiple valid workloads. The repository keeps verification/results/runs.csv empty until such measurements are collected.
 
 ## Reproducible simulation
-Run `verification/run_all.sh` from any working directory; the script resolves the repository root from its own location. GitHub Actions runs the same Icarus-based smoke tests automatically.
+Run verification/run_all.sh.
 
-## Paper-quality metrics
-Do **not** invent TPR/FPR/F1, localization accuracy, power, or cross-workload robustness values. Those must come from measured runs.
+The script resolves the repository root from its own location and verifies predicted class, detector assertion, localization code, inference cycles, and detection latency for T1–T5.
 
-## Hardware-validation boundary
-T3/T4/T5 still require local Quartus implementation and DE10-Standard programming before they can be claimed as physically validated. Statistical security metrics such as TPR/FPR/F1 require measured healthy and Trojan runs across multiple workloads; deterministic single-image simulations are not used as substitutes.
+## Quartus builds
+Run verification/build_quartus_t3_t5.sh.
+
+The script builds T3–T5 with Quartus Prime Lite and verifies that an SOF is generated.
+
+## Analysis
+- docs/PAPER_RESULTS.md — manuscript evidence ledger
+- docs/RELATED_WORK.md — literature review and positioning
+- docs/EXPERIMENT_MATRIX.md — controlled experiment matrix
+- docs/BOARD_VALIDATION.md — DE10 validation procedure
+- docs/VIVA_QA.md — viva preparation
+- verification/aggregate_metrics.py — TP/TN/FP/FN and derived statistics
+- verification/results/runs.csv — repeated measured-run ledger
+
+## Important scientific limitation
+This project demonstrates controlled runtime detection/localization of the selected T1–T5 Trojan classes. It does **not** establish universal Trojan detection. The current statistical gap is repeated multi-workload measurement, not RTL construction.
