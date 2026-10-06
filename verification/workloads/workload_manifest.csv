@@ -1,0 +1,11 @@
+workload_id,mnist_index,label,mem_path
+0,3,0,verification/workloads/mnist_w0_class0_idx3.mem
+1,2,1,verification/workloads/mnist_w1_class1_idx2.mem
+2,1,2,verification/workloads/mnist_w2_class2_idx1.mem
+3,30,3,verification/workloads/mnist_w3_class3_idx30.mem
+4,4,4,verification/workloads/mnist_w4_class4_idx4.mem
+5,8,5,verification/workloads/mnist_w5_class5_idx8.mem
+6,11,6,verification/workloads/mnist_w6_class6_idx11.mem
+7,0,7,verification/workloads/mnist_w7_class7_idx0.mem
+8,61,8,verification/workloads/mnist_w8_class8_idx61.mem
+9,7,9,verification/workloads/mnist_w9_class9_idx7.mem

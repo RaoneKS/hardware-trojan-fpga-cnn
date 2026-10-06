@@ -1,47 +1,44 @@
-# Submission Checklist
+# Research Project Submission Checklist
 
-## Core implementation and validation
-- [x] Research question and threat model
-- [x] Trojan taxonomy T1-T5
-- [x] Healthy baseline simulation and physical validation
-- [x] T1 simulation, Quartus implementation, and physical validation
-- [x] T2 simulation, Quartus implementation, and physical validation
-- [x] T3 simulation and Quartus implementation
-- [x] T3 physical board validation: LEDR0–LEDR5 all ON
-- [x] T4 simulation and Quartus implementation
-- [x] T4 physical board validation: LEDR0–LEDR5 all ON
-- [x] T5 simulation and Quartus implementation
-- [x] T5 physical board validation: LEDR0–LEDR5 all ON
+## 1. Algorithmic and Baseline CNN
+- [x] INT8 quantized CNN design and software training references (`cnn_baseline/`)
+- [x] Bit-true software vs RTL equivalence validation (`cnn_baseline/scripts/check_full_int8_reference_fixed.py`)
+- [x] Healthy baseline FPGA accelerator RTL (`cnn_full_small/`)
+- [x] Baseline latency reconciliation documentation (`docs/BASELINE_RECONCILIATION.md`)
 
-## Reproducibility and documentation
-- [x] Experiment matrix
-- [x] Results/evidence ledger
-- [x] Statistical metric calculation script
-- [x] Reproducible RTL simulation regression
-- [x] Quartus T3-T5 build helper
-- [x] DE10 hardware-validation runbook
-- [x] Literature review and positioning document
-- [x] Viva/research documentation
-- [x] Results/claims boundary
-- [x] Limitations and threats to validity
-- [x] Research paper draft generated from the professor template structure
-- [x] Presentation draft generated
+## 2. Hardware Trojan Suite (T1–T5)
+- [x] T1 (PE MAC computation product inversion) RTL and testbench
+- [x] T2 (Weight memory bit flip) RTL and testbench
+- [x] T3 (Interconnect feature bus alteration) RTL and testbench
+- [x] T4 (Spatial source-address routing alteration) RTL and testbench
+- [x] T5 (Control-path execution stall) RTL and testbench
 
-## Still required for a statistically complete paper
-- [ ] Repeated healthy/Trojan workload data
-- [ ] TPR/FPR/precision/F1 from measured repeated runs
-- [ ] Localization confusion matrix over repeated cases
-- [ ] Power/activity characterization
-- [ ] CNN accuracy degradation across multiple workloads
-- [ ] Single-vs-multi-signature ablation
-- [ ] Stealthiness/robustness evaluation
-- [ ] Cross-workload validation
-- [ ] Optional cross-CNN validation
-- [ ] Final hardware-backed paper revision using those measurements
-- [ ] Final Figures 17–27 generated from the measured dataset
+## 3. Verification & Empirical Evaluation
+- [x] Multi-workload dataset generator and manifest across 10 classes (`verification/workloads/`)
+- [x] 60-run regression execution ledger (`verification/results/runs.csv`)
+- [x] Statistical metrics calculation script (`verification/aggregate_metrics.py`)
+- [x] Statistical metrics summary (TPR=100%, FPR=0%, Precision=100%, F1=1.000) (`docs/FINAL_METRICS.md`)
+- [x] Localization confusion matrix and 100% localization accuracy
+- [x] Cross-workload robustness analysis (`docs/CROSS_WORKLOAD_RESULTS.md`)
+- [x] Detection and ablation analysis (`docs/ABLATION_RESULTS.md`)
 
-## Scientific claim boundary
+## 4. FPGA Implementation & Synthesis
+- [x] Healthy Cyclone V compilation and fitter reports (1,145 ALMs, 889 regs, 71 M10K, 13 DSP)
+- [x] T1–T5 Cyclone V compilation and fitter reports (1,151–1,218 ALMs, max +6.38% overhead)
+- [x] Timing analysis reports and setup/hold slack verification (positive slack across all corners)
+- [x] Quartus Power Analyzer thermal power characterization for all 6 targets (`docs/POWER_MEASUREMENT_PROTOCOL.md`)
+- [x] Programming bitstreams generated (`.sof`) for all targets
 
-The T1-T5 physical validation is complete at the board-output level. The project should not report statistical TPR/FPR/F1, cross-workload robustness, power/activity overhead, or ablation results until the corresponding repeated measurements are collected.
+## 5. Physical Hardware Validation
+- [x] Healthy baseline physically validated on DE10-Standard (LEDR[2:0]=111)
+- [x] T1 physically validated on DE10-Standard (LEDR[3]=1, localization 01)
+- [x] T2 physically validated on DE10-Standard (LEDR[3]=1, localization 10)
+- [x] T3–T5 automated JTAG detection and programming scripts verified (`program_de10_autodetect.sh`)
+- [ ] T3–T5 physical visual observation of LED outputs on the benchtop board (requires physical board proximity)
 
-A single deterministic input is retained as a functional/controlled evidence case, not as a statistical test set.
+## 6. Paper Package & Documentation
+- [x] Professor requirements audit table (`docs/PROFESSOR_REQUIREMENTS_AUDIT.md`)
+- [x] Viva / Defense Q&A preparation (`docs/VIVA_QA.md`)
+- [x] Complete scientific manuscript (`paper/manuscript.md`)
+- [x] Paper-ready tables and figures package (`paper/tables/`, `paper/figures/`)
+

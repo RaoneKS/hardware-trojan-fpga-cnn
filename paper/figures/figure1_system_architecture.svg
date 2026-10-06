@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380" style="background:#ffffff; font-family:sans-serif;">
+  <rect x="10" y="10" width="880" height="360" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="30" y="38" font-size="16" font-weight="bold" fill="#0f172a">FPGA-CNN Accelerator &amp; Runtime Trojan Detection Architecture</text>
+  
+  <!-- Image Input -->
+  <rect x="30" y="80" width="90" height="180" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="45" y="160" font-size="12" font-weight="bold" fill="#334155">28x28 INT8</text>
+  <text x="50" y="180" font-size="11" fill="#64748b">Image RAM</text>
+
+  <!-- Conv1 -->
+  <rect x="150" y="80" width="100" height="180" rx="6" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/>
+  <text x="180" y="160" font-size="13" font-weight="bold" fill="#0369a1">Conv1</text>
+  <text x="165" y="180" font-size="11" fill="#0284c7">8 ch, 3x3 + ReLU</text>
+
+  <!-- Pool1 -->
+  <rect x="280" y="100" width="80" height="140" rx="6" fill="#f0fdf4" stroke="#4ade80" stroke-width="2"/>
+  <text x="300" y="165" font-size="12" font-weight="bold" fill="#15803d">Pool1</text>
+  <text x="295" y="185" font-size="10" fill="#16a34a">2x2 Max</text>
+
+  <!-- Interconnect & Monitors -->
+  <rect x="390" y="60" width="160" height="220" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="2" stroke-dasharray="4"/>
+  <text x="405" y="85" font-size="12" font-weight="bold" fill="#b91c1c">Trojan Vulnerability Zone</text>
+  
+  <!-- Conv2 -->
+  <rect x="410" y="100" width="120" height="140" rx="6" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+  <text x="445" y="155" font-size="13" font-weight="bold" fill="#854d0e">Conv2 PE</text>
+  <text x="425" y="175" font-size="10" fill="#a16207">16 ch, 3x3 MAC Array</text>
+  <text x="420" y="205" font-size="10" fill="#dc2626; font-weight:bold">[T1, T2, T3, T4, T5 Targets]</text>
+
+  <!-- Pool2 -->
+  <rect x="580" y="110" width="70" height="120" rx="6" fill="#f0fdf4" stroke="#4ade80" stroke-width="2"/>
+  <text x="595" y="165" font-size="12" font-weight="bold" fill="#15803d">Pool2</text>
+  <text x="590" y="185" font-size="10" fill="#16a34a">2x2 Max</text>
+
+  <!-- FC -->
+  <rect x="680" y="90" width="80" height="160" rx="6" fill="#fae8ff" stroke="#c084fc" stroke-width="2"/>
+  <text x="705" y="165" font-size="12" font-weight="bold" fill="#7e22ce">FC1</text>
+  <text x="690" y="185" font-size="10" fill="#9333ea">784 to 10</text>
+
+  <!-- Output Register -->
+  <rect x="790" y="120" width="70" height="100" rx="6" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="800" y="165" font-size="11" font-weight="bold" fill="#334155">ArgMax</text>
+  <text x="800" y="185" font-size="10" fill="#475569">Class 0-9</text>
+
+  <!-- Detector Unit -->
+  <rect x="360" y="300" width="220" height="55" rx="6" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+  <text x="380" y="325" font-size="12" font-weight="bold" fill="#f8fafc">Runtime Detector &amp; Localizer</text>
+  <text x="390" y="342" font-size="10" fill="#94a3b8">LEDR[3]: Detected | Code: 2'b[XX]</text>
+
+  <!-- Lines -->
+  <line x1="120" y1="170" x2="150" y2="170" stroke="#64748b" stroke-width="2"/>
+  <line x1="250" y1="170" x2="280" y2="170" stroke="#64748b" stroke-width="2"/>
+  <line x1="360" y1="170" x2="410" y2="170" stroke="#64748b" stroke-width="2"/>
+  <line x1="530" y1="170" x2="580" y2="170" stroke="#64748b" stroke-width="2"/>
+  <line x1="650" y1="170" x2="680" y2="170" stroke="#64748b" stroke-width="2"/>
+  <line x1="760" y1="170" x2="790" y2="170" stroke="#64748b" stroke-width="2"/>
+  
+  <line x1="470" y1="240" x2="470" y2="300" stroke="#dc2626" stroke-width="2" stroke-dasharray="3"/>
+</svg>

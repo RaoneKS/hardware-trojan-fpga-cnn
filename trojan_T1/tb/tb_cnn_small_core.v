@@ -98,6 +98,7 @@ module tb_cnn_small_core;
         $display("Cycle count      = %0d", cycle_count);
         $display("Predicted class  = %0d", predicted_class);
         $display("Expected class   = 7");
+        $display("T1_DETECTED           = %0b", t1_detected_out);
         $display("T1_DETECTION_CYCLE = %0d", t1_detection_cycle);
         $display("INFERENCE_START_CYCLE = %0d", inference_start_cycle);
         $display("DETECTION_LATENCY = %0d", detection_latency);
