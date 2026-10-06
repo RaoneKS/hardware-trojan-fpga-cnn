@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 
 module tb_cnn_small_core;
 
@@ -96,7 +96,7 @@ module tb_cnn_small_core;
             localization_code == 2'b11) begin
             $display("");
             $display("========================================");
-            $display(" PASS: CNN predicted digit 7 | T5 Detected | Localized to Interconnect/Data Path (2'b11)");
+            $display(" PASS: CNN predicted digit 7 | T5 Detected | Localized to Control-Path Anomaly (2'b11)");
             $display("========================================");
         end else begin
             $display("");
