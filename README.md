@@ -30,20 +30,15 @@ T3/T4/T5 are controlled experiments but are **not described as hardware-validate
 - `docs/PAPER_RESULTS_AND_CLAIMS.md` — validated vs pending claims boundary
 - `docs/VIVA_QA.md` — professor/viva preparation
 - `docs/SUBMISSION_CHECKLIST.md` — submission status
+- `docs/BOARD_VALIDATION.md` — exact DE10 hardware validation procedure
 - `verification/aggregate_metrics.py` — statistical metric calculation
 - `verification/results/runs.csv` — repeatable experiment ledger
 
-A full paper draft, presentation, viva package and submission ZIP are also prepared as companion files.
-
 ## Reproducible simulation
-Run `verification/run_all.sh` from the repository root. GitHub Actions runs the same Icarus-based smoke tests automatically.
+Run `verification/run_all.sh` from any working directory; the script resolves the repository root from its own location. GitHub Actions runs the same Icarus-based smoke tests automatically.
 
 ## Paper-quality metrics
 Do **not** invent TPR/FPR/F1, localization accuracy, power, or cross-workload robustness values. Those must come from measured runs.
-
-
-## Simulation regression
-The repository-level regression checks all five controlled Trojan variants for the expected class, detector assertion, localization code, inference-cycle count, and detection latency. CI also publishes the simulation logs and structured CSV summary as workflow artifacts.
 
 ## Hardware-validation boundary
 T3/T4/T5 still require local Quartus implementation and DE10-Standard programming before they can be claimed as physically validated. Statistical security metrics such as TPR/FPR/F1 require measured healthy and Trojan runs across multiple workloads; deterministic single-image simulations are not used as substitutes.
