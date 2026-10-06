@@ -36,7 +36,7 @@ chain=$($jtagconfig -c "$cable")
 printf '%s\n' "$chain"
 
 if ! printf '%s\n' "$chain" | grep -Eq '02D020DD[[:space:]]+5CSEBA6'; then
-    echo "ERROR: Expected FPGA device 02D020DD / 5CSEBA6 at JTAG index 2 was not found; FPGA was not programmed." >&2
+    echo "ERROR: Expected FPGA device ID 02D020DD at JTAG index 2 was not found; FPGA was not programmed." >&2
     exit 1
 fi
 
