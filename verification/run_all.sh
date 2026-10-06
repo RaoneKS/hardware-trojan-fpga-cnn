@@ -14,10 +14,11 @@ for T in T1 T2 T3 T4 T5; do
   echo "=== $T ===" | tee "$LOG"
   (
     cd "$DIR"
-    if [[ ! -e data ]]; then
-      ln -s "$ROOT/cnn_baseline/data" data
-      trap 'rm -f data' EXIT
+    if [[ -L data || -d data ]]; then
+      rm -rf data
     fi
+    ln -s "$ROOT/cnn_baseline/data" data
+    trap 'rm -f data' EXIT
     iverilog -g2012 -o "cnn_${T}_tb" tb/tb_cnn_small_core.v rtl/cnn_fpga_top.v rtl/cnn_small_core_m10k.v
     timeout 30s vvp "cnn_${T}_tb"
   ) | tee -a "$LOG"
