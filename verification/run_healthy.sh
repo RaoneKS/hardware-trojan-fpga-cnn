@@ -19,7 +19,7 @@ iverilog -g2012 -o healthy_tb tb_cnn_small_core.v cnn_small_core.v
 timeout 30s vvp healthy_tb | tee "$OUT/healthy_simulation.log"
 cp cnn_full.vcd "$OUT/healthy.vcd"
 
-if ! grep -q "PASS: CNN predicted digit 7" "$OUT/healthy_simulation.log"; then
+if ! grep -q "PASS: CNN predicted expected digit 7" "$OUT/healthy_simulation.log"; then
   echo "Healthy regression failed: expected class 7" >&2
   exit 1
 fi
