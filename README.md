@@ -40,3 +40,10 @@ Run `verification/run_all.sh` from the repository root. GitHub Actions runs the 
 
 ## Paper-quality metrics
 Do **not** invent TPR/FPR/F1, localization accuracy, power, or cross-workload robustness values. Those must come from measured runs.
+
+
+## Simulation regression
+The repository-level regression checks all five controlled Trojan variants for the expected class, detector assertion, localization code, inference-cycle count, and detection latency. CI also publishes the simulation logs and structured CSV summary as workflow artifacts.
+
+## Hardware-validation boundary
+T3/T4/T5 still require local Quartus implementation and DE10-Standard programming before they can be claimed as physically validated. Statistical security metrics such as TPR/FPR/F1 require measured healthy and Trojan runs across multiple workloads; deterministic single-image simulations are not used as substitutes.
