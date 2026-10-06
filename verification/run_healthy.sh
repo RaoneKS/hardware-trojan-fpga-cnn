@@ -8,14 +8,14 @@ mkdir -p "$OUT"
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 
-cp "$ROOT/cnn_full_small/rtl/cnn_small_core_m10k.v" "$WORK/"
+cp "$ROOT/cnn_full_small/rtl/cnn_small_core.v" "$WORK/"
 cp "$ROOT/cnn_full_small/tb/tb_cnn_small_core.v" "$WORK/"
 ln -s "$ROOT/cnn_baseline/data" "$WORK/data"
 
 cd "$WORK"
 
 echo "=== HEALTHY ==="
-iverilog -g2012 -o healthy_tb tb_cnn_small_core.v cnn_small_core_m10k.v
+iverilog -g2012 -o healthy_tb tb_cnn_small_core.v cnn_small_core.v
 timeout 30s vvp healthy_tb | tee "$OUT/healthy_simulation.log"
 cp cnn_full.vcd "$OUT/healthy.vcd"
 
@@ -24,7 +24,7 @@ if ! grep -q "PASS: CNN predicted digit 7" "$OUT/healthy_simulation.log"; then
   exit 1
 fi
 if ! grep -q "Cycle count.*= 346563" "$OUT/healthy_simulation.log"; then
-  echo "Healthy regression failed: expected 346563 cycles" >&2
+  echo "Healthy regression failed: expected documented 346563 cycles" >&2
   exit 1
 fi
 
