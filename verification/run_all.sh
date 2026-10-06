@@ -53,7 +53,7 @@ for T in T1 T2 T3 T4 T5; do
 
   PRED=$(grep "Predicted class" "$LOG" | tail -1 | awk '{print $NF}')
   DET=$(grep "${T}_DETECTED" "$LOG" | tail -1 | awk '{print $NF}')
-  LOC=$(grep "LOCALIZATION_OUTPUT" "$LOG" | tail -1 | sed 's/.*2'b//')
+  LOC=$(grep "LOCALIZATION_OUTPUT" "$LOG" | tail -1 | sed "s/.*2'b//")
   CYC=$(grep "Cycle count" "$LOG" | tail -1 | awk '{print $NF}')
   DCYC=$(grep "${T}_DETECTION_CYCLE" "$LOG" | tail -1 | awk '{print $NF}')
   LAT=$(grep "DETECTION_LATENCY" "$LOG" | tail -1 | awk '{print $NF}')
