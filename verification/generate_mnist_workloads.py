@@ -14,7 +14,7 @@ def read_labels(p):
         magic,n=struct.unpack(">II",f.read(8)); assert magic==2049
         return list(f.read(n))
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--indices",default="0,1,2,3,4"); ap.add_argument("--clean",action="store_true"); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument("--indices",default="0,17,26,34,36"); ap.add_argument("--clean",action="store_true"); a=ap.parse_args()
     images=read_images(RAW/"t10k-images-idx3-ubyte"); labels=read_labels(RAW/"t10k-labels-idx1-ubyte")
     OUT.mkdir(parents=True,exist_ok=True)
     if a.clean:
