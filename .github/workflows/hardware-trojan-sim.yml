@@ -16,9 +16,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y iverilog
 
+      - name: Run healthy baseline regression
+        run: |
+          chmod +x verification/run_healthy.sh verification/run_all.sh
+          ./verification/run_healthy.sh
+
+      - name: Analyze healthy switching activity
+        run: |
+          python3 verification/analyze_vcd_activity.py \
+            verification/results/healthy.vcd \
+            verification/results/healthy_activity.csv \
+            | tee verification/results/healthy_activity_summary.txt
+
       - name: Run controlled Trojan simulations
         run: |
-          chmod +x verification/run_all.sh
           ./verification/run_all.sh
 
       - name: Publish simulation evidence
@@ -28,5 +39,8 @@ jobs:
           name: hardware-trojan-simulation-evidence
           path: |
             verification/results/*_simulation.log
+            verification/results/*_simulation_summary.csv
+            verification/results/*_activity.csv
+            verification/results/*_activity_summary.txt
             verification/results/simulation_summary.csv
           if-no-files-found: ignore
