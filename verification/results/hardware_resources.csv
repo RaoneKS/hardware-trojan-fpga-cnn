@@ -1,0 +1,7 @@
+case,physical_status,alms,registers,block_memory_bits,ram_blocks,dsp_blocks,worst_setup_slack_ns,worst_hold_slack_ns,fmax_mhz,notes
+Healthy,validated,1153,902,455104,71,13,2.933,0.116,58.59,Exact fitter baseline
+T1,validated,1170,910,455104,71,13,1.078,0.145,,Detector-enabled build; ALM delta is post-fit result
+T2,validated,1192,919,455104,71,15,2.634,0.140,,Exact fitter values recorded
+T3,validated,,,,,,4.447,0.159,,Exact final fitter ALM/register counts not recorded; do not invent
+T4,validated,,,,,,5.581,0.105,,Exact final fitter ALM/register counts not recorded; synthesis reported 2335 logic cells, 160 RAM segments, 13 DSP
+T5,validated,,,,,,4.648,0.134,,Exact final fitter ALM/register counts not recorded; synthesis reported 2229 logic cells, 160 RAM segments, 13 DSP
