@@ -1,35 +1,47 @@
 # Submission Checklist
 
-## Non-hardware package
+## Core implementation and validation
 - [x] Research question and threat model
 - [x] Trojan taxonomy T1-T5
-- [x] Healthy/T1/T2 measured evidence documented
-- [x] T3/T4/T5 simulation evidence documented
-- [x] Experiment matrix and metrics script
-- [x] Reproducible RTL regression with structured simulation summary
+- [x] Healthy baseline simulation and physical validation
+- [x] T1 simulation, Quartus implementation, and physical validation
+- [x] T2 simulation, Quartus implementation, and physical validation
+- [x] T3 simulation and Quartus implementation
+- [x] T3 physical board validation: LEDR0–LEDR5 all ON
+- [x] T4 simulation and Quartus implementation
+- [x] T4 physical board validation: LEDR0–LEDR5 all ON
+- [x] T5 simulation and Quartus implementation
+- [x] T5 physical board validation: LEDR0–LEDR5 all ON
+
+## Reproducibility and documentation
+- [x] Experiment matrix
+- [x] Results/evidence ledger
+- [x] Statistical metric calculation script
+- [x] Reproducible RTL simulation regression
 - [x] Quartus T3-T5 build helper
 - [x] DE10 hardware-validation runbook
-- [x] Research paper draft generated from the professor template structure
-- [x] Presentation draft generated
+- [x] Literature review and positioning document
 - [x] Viva/research documentation
 - [x] Results/claims boundary
 - [x] Limitations and threats to validity
+- [x] Research paper draft generated from the professor template structure
+- [x] Presentation draft generated
 
-## Hardware-dependent
-- [ ] T3 physical validation
-- [ ] T4 physical validation
-- [ ] T5 physical validation
+## Still required for a statistically complete paper
 - [ ] Repeated healthy/Trojan workload data
-- [ ] TPR/FPR/precision/F1
-- [ ] Localization confusion matrix
+- [ ] TPR/FPR/precision/F1 from measured repeated runs
+- [ ] Localization confusion matrix over repeated cases
 - [ ] Power/activity characterization
-- [ ] CNN accuracy degradation across workloads
+- [ ] CNN accuracy degradation across multiple workloads
 - [ ] Single-vs-multi-signature ablation
 - [ ] Stealthiness/robustness evaluation
-- [ ] Final hardware-backed paper revision
+- [ ] Cross-workload validation
+- [ ] Optional cross-CNN validation
+- [ ] Final hardware-backed paper revision using those measurements
+- [ ] Final Figures 17–27 generated from the measured dataset
 
-## Finalization rule
-The non-hardware implementation/documentation work is complete enough to proceed to the board validation phase. After T3/T4/T5 hardware observations are collected, only the corresponding evidence, statistical analysis, figures/tables, and final paper wording remain.
+## Scientific claim boundary
 
-## Claim boundary
-The project must not report final statistical security metrics, power, robustness, or T3-T5 physical-validation claims until the corresponding measurements are actually collected.
+The T1-T5 physical validation is complete at the board-output level. The project should not report statistical TPR/FPR/F1, cross-workload robustness, power/activity overhead, or ablation results until the corresponding repeated measurements are collected.
+
+A single deterministic input is retained as a functional/controlled evidence case, not as a statistical test set.
