@@ -24,6 +24,12 @@ jobs:
         run: |
           chmod +x verification/run_extended_matrix.sh
           ./verification/run_extended_matrix.sh
+      - name: Show extended summary
+        if: always()
+        run: |
+          test -f verification/results/EXTENDED_MATRIX_REPORT.md && cat verification/results/EXTENDED_MATRIX_REPORT.md || true
+          test -f verification/results/extended_workloads/extended_selection.csv && tail -n 15 verification/results/extended_workloads/extended_selection.csv || true
+
       - name: Publish extended evidence
         if: always()
         uses: actions/upload-artifact@v4
