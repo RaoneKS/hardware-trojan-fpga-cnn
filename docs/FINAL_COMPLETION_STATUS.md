@@ -62,7 +62,7 @@ The physical observations are recorded in `docs/PHYSICAL_BOARD_VALIDATION.md`.
 
 Physical rail/current power measurement is not present. Quartus Power Analyzer values remain tool estimates, and VCD switching analysis remains an activity proxy.
 
-Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and must not be invented.
+Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and must not be invented. Healthy/T1/T2 resource snapshots should also be refreshed on C6 after the final device-target correction.
 
 The 100%/0% detection metrics are scoped to the committed 60-row simulation regression. They are not a universal guarantee for arbitrary Hardware Trojans.
 
