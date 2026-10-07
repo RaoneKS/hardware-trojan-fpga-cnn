@@ -1,0 +1,8 @@
+VCD info: dumpfile cnn_full.vcd opened for output.
+WORKLOAD_ID=0 NAME=reference EXPECTED=7
+Inference complete.
+Cycle count      = 301854
+Predicted class  = 7
+Expected class   = 7
+PASS: CNN predicted expected digit 7
+tb_cnn_small_core.v:47: $finish called at 6037190000 (1ps)

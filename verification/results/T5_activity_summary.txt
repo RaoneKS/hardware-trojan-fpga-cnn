@@ -1,0 +1,7 @@
+VCD=/home/raone/hardware-trojan-fpga-cnn/verification/results/T5.vcd
+Signals=183
+Value changes=6905280
+Binary bit transitions=23261484
+Non-clock value changes=5636705
+Non-clock binary bit transitions=21992909
+CSV=/home/raone/hardware-trojan-fpga-cnn/verification/results/T5_activity.csv

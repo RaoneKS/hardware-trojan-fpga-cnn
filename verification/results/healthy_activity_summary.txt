@@ -1,0 +1,7 @@
+VCD=verification/results/healthy.vcd
+Signals=47
+Value changes=2862416
+Binary bit transitions=11664205
+Non-clock value changes=2258697
+Non-clock binary bit transitions=11060486
+CSV=verification/results/healthy_activity.csv
