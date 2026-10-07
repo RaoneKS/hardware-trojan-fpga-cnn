@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Hardware Trojan Detection in FPGA-CNNs"
+type: software
+authors:
+  - family-names: "K S"
+    given-names: "Jeevan"
+    affiliation: "IIIT Dharwad"
+repository-code: "https://github.com/RaoneKS/hardware-trojan-fpga-cnn"
+abstract: "Reproducible research prototype for runtime detection and regional localization of controlled Hardware Trojans in an INT8 FPGA-CNN."
+keywords:
+  - FPGA security
+  - Hardware Trojan
+  - CNN accelerator
+  - INT8
+  - Trojan detection
+  - Cyclone V
+  - DE10-Standard
+license: "NOASSERTION"
