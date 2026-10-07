@@ -78,7 +78,7 @@ module tb_cnn_small_core;
         if (predicted_class == expected_class[3:0] && t4_detected_out == 1'b1 && localization_code == 2'b11) begin
             $display("");
             $display("========================================");
-            $display(" PASS: CNN predicted expected digit %0d | T4 Detected | Localized to Interconnect/Data Path (2'b11)" , expected_class);
+            $display(" PASS: CNN predicted expected digit %0d | T4 Detected | Localized to Routing/Control region (2'b11)" , expected_class);
             $display("========================================");
         end else begin
             $display("");
