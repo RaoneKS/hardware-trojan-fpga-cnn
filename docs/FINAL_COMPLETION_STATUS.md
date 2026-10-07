@@ -16,6 +16,7 @@ The repository contains the reproducibility pipeline, evidence-cleanup changes, 
 - Conservative power/activity evidence wording
 - Paper manuscript and tables
 - Professor requirements audit
+- Evidence-bounded numerical regional-coverage ablation and output-stealthiness sensitivity analysis
 - Submission checklist
 - Fresh C6 resource/timing snapshot for Healthy/T1/T2
 - Physical DE10-Standard board-output validation for T1/T2/T3/T4/T5
@@ -78,9 +79,10 @@ Physical LED observations:
 3. Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not archived.
 4. Exact fresh C6 Fmax is not archived.
 5. Broader datasets/cross-CNN generalization are future work.
-6. Executable numerical ablation is not claimed.
+6. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis; separate synthesized ablation builds are not archived.
 7. The 100%/0% detection metrics are scoped to the committed 60-row simulation regression.
 8. Localization code 11 does not distinguish T3/T4/T5.
+9. The stealthiness analysis is a cross-variant output-stealthiness/observability comparison, not a graded payload-severity sweep.
 
 ## Final status
 

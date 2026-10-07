@@ -5,7 +5,7 @@
 
 ## Abstract
 
-Field-programmable gate arrays (FPGAs) provide a practical platform for deploying convolutional neural networks (CNNs) at the edge, but their programmable datapaths, third-party intellectual property, and distributed design flows also create opportunities for malicious hardware modification. Hardware Trojans are particularly difficult to expose when their payload changes an internal computation without necessarily changing the final classification. This work presents a lightweight runtime monitoring and regional localization framework integrated with an INT8 LeNet-style CNN accelerator for MNIST inference. Five controlled Trojan variants are introduced at distinct microarchitectural regions: Conv2 processing-element arithmetic, Conv2 weight memory, Conv2 feature interconnect, Conv2 spatial routing, and the Conv2 control sequencer. The accelerator is implemented for the Intel Cyclone V SoC FPGA on the Terasic DE10-Standard and evaluated using cycle-accurate Verilog simulation, Quartus implementation, and physical board programming. A committed 60-row simulation matrix covers ten MNIST workloads (digits 0–9) and six hardware targets (Healthy and T1–T5). For this controlled matrix, the detector obtains TP=50, TN=10, FP=0 and FN=0, corresponding to 100% TPR/recall, 0% FPR, 100% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1–T4 trigger after 149,136 cycles (2.98272 ms at 50 MHz), while T5 triggers after 149,135 cycles because its one-cycle control stall shifts the reference point. T3, T4 and T5 bitstreams were also successfully programmed on the physical DE10-Standard and produced the expected class/detector/localization LED pattern. Quartus Power Analyzer results are reported only as tool estimates; physical rail/current power measurements were not performed. Likewise, exact final fitter resource counts for T3–T5 and exact fresh C6 Fmax values are not claimed where they are not archived.
+Field-programmable gate arrays (FPGAs) provide a practical platform for deploying convolutional neural networks (CNNs) at the edge, but their programmable datapaths, third-party intellectual property, and distributed design flows also create opportunities for malicious hardware modification. Hardware Trojans are particularly difficult to expose when their payload changes an internal computation without necessarily changing the final classification. This work presents a lightweight runtime monitoring and regional localization framework integrated with an INT8 LeNet-style CNN accelerator for MNIST inference. Five controlled Trojan variants are introduced at distinct microarchitectural regions: Conv2 processing-element arithmetic, Conv2 weight memory, Conv2 feature interconnect, Conv2 spatial routing, and the Conv2 control sequencer. The accelerator is implemented for the Intel Cyclone V SoC FPGA on the Terasic DE10-Standard and evaluated using cycle-accurate Verilog simulation, Quartus implementation, and physical board programming. A committed 60-row simulation matrix covers ten MNIST workloads (digits 0–9) and six hardware targets (Healthy and T1–T5). For this controlled matrix, the detector obtains TP=50, TN=10, FP=0 and FN=0, corresponding to 100% TPR/recall, 0% FPR, 100% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1–T4 trigger after 149,136 cycles (2.98272 ms at 50 MHz), while T5 triggers after 149,135 cycles because its one-cycle control stall shifts the reference point. T1, T2, T3, T4 and T5 bitstreams were also successfully programmed on the physical DE10-Standard and produced the expected class/detector/localization LED patterns. Quartus Power Analyzer results are reported only as tool estimates; physical rail/current power measurements were not performed. Likewise, exact final fitter resource counts for T3–T5 and exact fresh C6 Fmax values are not claimed where they are not archived.
 
 **Keywords:** Hardware Trojans, FPGA security, CNN accelerator, runtime detection, hardware monitoring, regional localization, INT8, MNIST, Cyclone V.
 
@@ -133,11 +133,11 @@ Quartus Power Analyzer estimates are Healthy 463.79 mW, T1 465.51 mW, T2 466.28 
 
 ### F. Ablation and security-overhead trade-off
 
-A numerical ablation is not claimed because independent no-monitor, PE-only, memory-only and full-monitor builds with raw logs were not archived. Likewise, no trigger-probability or payload-severity sweep was performed. These are explicitly treated as future experiments rather than invented results.
+An evidence-bounded numerical evaluation-layer ablation is derived from the committed 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/memory-only hardware builds, so no independent resource-overhead delta is claimed.
 
 ## XI. Robustness, Stealthiness, and Generalization
 
-The ten Healthy rows produce zero detector assertions, and the 50 Trojan rows produce 50 detections. This supports cross-workload invariance for the selected deterministic MNIST set. Only one compact CNN is evaluated, so cross-CNN generalization remains future work.
+The ten Healthy rows produce zero detector assertions, and the 50 Trojan rows produce 50 detections. All five selected Trojan variants preserve the expected top-1 class across all ten workloads, giving 100% output-stealthiness under the study definition. T1-T4 are timing-invisible at the measured inference-cycle level, whereas T5 introduces a one-cycle timing deviation. These results provide an evidence-bounded stealthiness/observability sensitivity analysis, but not a graded payload-severity sweep. Only one compact CNN is evaluated, so cross-CNN generalization remains future work.
 
 ## XII. Cross-Layer Security Analysis
 
@@ -153,7 +153,7 @@ Each controlled Trojan maps from a defined architectural region to a detector ev
 | TrojanSAINT | Detection + localization | Gate level | No | No |
 | Hou et al. | CNN interconnect attack + PUF defense | Interconnect | Yes | Yes |
 | Su et al. | Explainable LUT localization | LUT/node | No | No |
-| This work | Runtime detection + regional localization | 3 architectural regions | Yes | T3-T5 |
+| This work | Runtime detection + regional localization | 3 architectural regions | Yes | T1-T5 |
 
 This comparison is by objective and evidence layer, not a universal performance ranking.
 
@@ -177,15 +177,15 @@ The repository contains the workload manifest, 60-row simulation ledger, RTL/tes
 4. Exact final T3-T5 fitter counts and fresh C6 Fmax are not archived.
 5. T3-T5 share localization code 11.
 6. Only one compact MNIST CNN is evaluated.
-7. No executable numerical ablation study was independently archived.
-8. No trigger-probability or payload-severity sweep was performed.
+7. The ablation is evaluation-layer channel masking over the committed ledger rather than independently synthesized monitor variants.
+8. No continuous trigger-probability or payload-severity sweep was performed.
 9. The monitor itself is outside the attacker-compromise model.
 
 ## XVI. Conclusion and Future Perspective
 
-A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. T3, T4 and T5 were physically programmed and validated on the DE10-Standard.
+A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. T1, T2, T3, T4 and T5 were physically programmed and validated on the DE10-Standard.
 
-The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, parameterized stealthiness sweeps, executable ablation variants, additional CNNs, broader datasets, and finer localization.
+The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, a graded trigger-probability/payload-severity sweep, independently synthesized monitor-ablation variants, additional CNNs, broader datasets, and finer localization.
 
 ## References
 

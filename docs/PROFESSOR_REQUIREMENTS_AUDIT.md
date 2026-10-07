@@ -18,9 +18,9 @@ This audit is intentionally conservative. A requirement is DONE only when the re
 | 12 | Localization accuracy/confusion matrix | DONE (simulation scope) | Metrics derived from `runs.csv` | Do not generalize beyond evaluated cases |
 | 13 | Cross-workload robustness | DONE (simulation scope) | Ten workload classes in canonical matrix | Broader datasets remain future work |
 | 14 | Resource utilization | PARTIAL | `verification/results/hardware_resources.csv` | Exact T3–T5 fitter counts and fresh C6 Fmax are not archived |
-| 15 | Paper-quality tables/figures | DONE for current evidence | `paper/tables/`, `paper/figures/` | Regenerate if new measurements are added |
+| 15 | Paper-quality tables/figures | DONE for current evidence | `paper/tables/`, `paper/figures/` | None for current evidence |
 | 16 | Healthy latency discrepancy | DONE | `docs/BASELINE_RECONCILIATION.md` | None |
-| 17 | Final paper-ready evidence | DONE for defined scope | `paper/manuscript.md` plus physical validation record | Physical power remains a stated limitation |
+| 17 | Final paper-ready evidence | DONE for defined scope | `paper/manuscript.md` plus physical validation record and ablation/stealthiness analysis | Physical power remains a stated limitation |
 
 ## Canonical C6 resource evidence
 
@@ -60,4 +60,4 @@ For the defined controlled-project scope, the project is ready for professor rev
 2. exact unarchived T3–T5 fitter resource counts;
 3. exact fresh C6 Fmax;
 4. broader datasets and cross-CNN generalization;
-5. executable numerical ablation study.
+5. independently synthesized build-level ablation variants; the current repository now contains an evidence-bounded evaluation-layer ablation.

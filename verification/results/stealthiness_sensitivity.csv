@@ -1,0 +1,6 @@
+trojan,workloads,output_stealthy_rows,output_stealthiness_rate,detected_rows,detection_rate,timing_visible_rows,timing_visibility_rate,mean_cycle_delta
+T1,10,10,1.000000,10,1.000000,0,0.000000,0.000
+T2,10,10,1.000000,10,1.000000,0,0.000000,0.000
+T3,10,10,1.000000,10,1.000000,0,0.000000,0.000
+T4,10,10,1.000000,10,1.000000,0,0.000000,0.000
+T5,10,10,1.000000,10,1.000000,10,1.000000,1.000

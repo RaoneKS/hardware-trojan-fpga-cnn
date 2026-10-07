@@ -1,0 +1,7 @@
+configuration,TP,TN,FP,FN,TPR,FPR,Precision,F1
+Functional-only,0,10,0,50,0.000000,0.000000,,
+Timing-only,10,10,0,40,0.200000,0.000000,1.000000,0.333333
+PE-region-only,10,10,0,40,0.200000,0.000000,1.000000,0.333333
+Weight-memory-region-only,10,10,0,40,0.200000,0.000000,1.000000,0.333333
+Interconnect-control-region-only,30,10,0,20,0.600000,0.000000,1.000000,0.750000
+Full-regional-monitor,50,10,0,0,1.000000,0.000000,1.000000,1.000000

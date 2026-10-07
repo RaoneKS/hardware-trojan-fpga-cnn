@@ -21,6 +21,10 @@ jobs:
           chmod +x verification/run_full_matrix.sh
           ./verification/run_full_matrix.sh
 
+      - name: Run evidence-bounded ablation and stealthiness analysis
+        run: |
+          python3 verification/analyze_ablation_stealthiness.py
+
       - name: Publish simulation evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -30,3 +34,8 @@ jobs:
             verification/results/full_matrix/**
             verification/results/runs.csv
             verification/results/METRICS_SUMMARY.md
+            verification/results/ablation_summary.csv
+            verification/results/stealthiness_sensitivity.csv
+            verification/results/ABLATION_STEALTHINESS_REPORT.md
+            paper/figures/figure22_professor.svg
+            paper/figures/figure25_professor.svg
