@@ -32,24 +32,30 @@
 ## 5. Power/activity
 - [x] Quartus Power Analyzer estimates documented
 - [x] VCD switching/activity proxy documented
-- [ ] Physical rail/current power measurement
+- [ ] Physical rail/current power measurement — limitation, not required for the defined controlled-project completion
 
 ## 6. Physical DE10-Standard validation
 - [x] Healthy/T1/T2 documented board validation
-- [ ] T3 physical LED/output observation
-- [ ] T4 physical LED/output observation
-- [ ] T5 physical LED/output observation
+- [x] T3 physical LED/output observation
+- [x] T4 physical LED/output observation
+- [x] T5 physical LED/output observation
 
 ## 7. Paper
 - [x] Manuscript
 - [x] Tables
 - [x] Figures/evidence package
 - [x] Professor requirements audit
+- [x] Physical T3–T5 validation record
 - [x] Conservative claim boundaries
-- [ ] Final evidence freeze after physical T3–T5 validation, if required by professor
 
 ## Final status
 
-The project is **engineering-complete and simulation-evaluation-complete**. It becomes fully hardware-validated only after the remaining physical DE10 observations (and physical power measurement if explicitly required) are completed.
+**PROJECT COMPLETE for the defined controlled course/research scope.**
 
-Never present the simulation ledger as physical measurements, Quartus power estimates as physical power, or regional code `11` as exact T3/T4/T5 identification.
+The project includes the INT8 CNN baseline, five controlled Trojan variants, reproducible multi-workload simulation, detection/localization metrics, Quartus implementation evidence, and physical DE10-Standard validation for T3–T5.
+
+The following remain explicitly documented limitations/future work rather than completion blockers:
+- physical rail/current power instrumentation;
+- exact final T3–T5 fitter resource counts that were not archived;
+- broader statistical datasets and cross-CNN generalization;
+- executable numerical ablation.
