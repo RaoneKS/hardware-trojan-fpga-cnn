@@ -93,7 +93,7 @@ module tb_cnn_small_core;
         $display("Inference complete.");
         $display("Cycle count           = %0d", cycle_count);
         $display("Predicted class       = %0d", predicted_class);
-        $display("Expected class   = %0d");
+        $display("Expected class   = %0d", expected_class);
         $display("T5_DETECTED           = %0b", t5_detected_out);
         $display("T5_DETECTION_CYCLE    = %0d", t5_detection_cycle);
         $display("INFERENCE_START_CYCLE = %0d", inference_start_cycle);
@@ -105,13 +105,13 @@ module tb_cnn_small_core;
             localization_code == 2'b11) begin
             $display("");
             $display("========================================");
-            $display(" PASS: CNN predicted digit 7 | T5 Detected | Localized to Control-Path Anomaly (2'b11)");
+            $display(" PASS: CNN predicted expected digit %0d | T5 Detected | Localized to Control-Path Anomaly (2'b11)" , expected_class);
             $display("========================================");
         end else begin
             $display("");
             $display("========================================");
-            $display(" FAIL: pred=%0d (exp 7), t5_det=%b (exp 1), loc=%b (exp 2'b11)",
-                     predicted_class, t5_detected_out, localization_code);
+            $display(" FAIL: pred=%0d (exp %0d), t5_det=%b (exp 1), loc=%b (exp 2'b11)",
+                     predicted_class, expected_class, tpredicted_class, t5_detected_out, localization_code);
             $display("========================================");
         end
 
