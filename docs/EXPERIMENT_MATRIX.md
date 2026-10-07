@@ -52,4 +52,12 @@ Report absolute values and percentage change relative to healthy.
 
 ## Current statistical status
 
-verification/results/runs.csv intentionally remains empty because only the deterministic reference-image measurements are currently available in repository form. Do not populate it with synthetic duplicates merely to manufacture TPR/FPR/F1.
+The committed verification/results/runs.csv contains the canonical 10-workload × 6-target simulation regression.
+
+- 10 healthy rows
+- 50 Trojan rows
+- TP=50, TN=10, FP=0, FN=0
+- TPR=100%, FPR=0%, Precision=100%, F1=1.000
+- Regional localization is correct for all 50 Trojan rows
+
+These are simulation-only metrics, not physical-board statistics. The canonical runner is verification/run_full_matrix.sh and it consumes verification/workloads/workload_manifest.csv using the synchronous-M10K healthy reference.
