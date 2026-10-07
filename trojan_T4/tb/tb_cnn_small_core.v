@@ -5,7 +5,9 @@ module tb_cnn_small_core;
     reg clk;
     reg rst;
     reg start;
-
+    integer expected_class;
+    integer workload_id;
+    reg [1023:0] workload_name;
     wire done;
     wire [3:0] predicted_class;
     wire [63:0] cycle_count;
@@ -28,6 +30,12 @@ module tb_cnn_small_core;
     );
 
     initial begin
+        expected_class = 7;
+        workload_id = 0;
+        workload_name = "reference";
+        void'($value$plusargs("EXPECTED=%d", expected_class));
+        void'($value$plusargs("WORKLOAD=%d", workload_id));
+        void'($value$plusargs("NAME=%s", workload_name));
         sim_cycle = 64'd0; inference_start_cycle = 64'd0;
         t4_detection_cycle = 64'd0; detection_latency = 64'd0;
         t4_latched = 1'b0;
@@ -57,16 +65,17 @@ module tb_cnn_small_core;
         $display(" T4 CNN FULL INFERENCE TEST");
         $display("========================================");
         wait(done); #20;
+        $display("WORKLOAD_ID=%0d NAME=%0s EXPECTED=%0d", workload_id, workload_name, expected_class);
         $display("Inference complete.");
         $display("Cycle count           = %0d", cycle_count);
         $display("Predicted class       = %0d", predicted_class);
-        $display("Expected class        = 7");
+        $display("Expected class   = %0d");
         $display("T4_DETECTED           = %0b", t4_detected_out);
         $display("T4_DETECTION_CYCLE    = %0d", t4_detection_cycle);
         $display("INFERENCE_START_CYCLE = %0d", inference_start_cycle);
         $display("DETECTION_LATENCY     = %0d", detection_latency);
         $display("LOCALIZATION_OUTPUT   = 2'b%b", localization_code);
-        if (predicted_class == 4'd7 && t4_detected_out == 1'b1 && localization_code == 2'b11) begin
+        if (predicted_class == expected_class[3:0] && t4_detected_out == 1'b1 && localization_code == 2'b11) begin
             $display("");
             $display("========================================");
             $display(" PASS: CNN predicted digit 7 | T4 Detected | Localized to Interconnect/Data Path (2'b11)");
