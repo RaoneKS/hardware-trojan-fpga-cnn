@@ -73,4 +73,4 @@ For all subsequent comparisons, overhead evaluations, and manuscript tables:
 
 
 ## Final-device note
-The DE10-Standard physical target is Cyclone V SoC 5CSXFC6D6F31C6. Some legacy Quartus project files target the I7 variant; those legacy targets must not be presented as the final physical board device.
+The DE10-Standard physical target is Cyclone V SoC 5CSXFC6D6F31C6. Legacy project targets have been corrected to C6; previously archived resource snapshots were generated before that target correction and should be rebuilt on C6 before being treated as final-device resource measurements.
