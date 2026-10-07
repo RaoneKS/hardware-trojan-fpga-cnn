@@ -1,6 +1,6 @@
 # Table 2: Cyclone V FPGA Resource and Timing Evidence
 
-Final physical target: Intel Cyclone V SoC 5CSXFC6D6F31C6 (DE10-Standard). Some legacy project files target the I7 variant; those are not the final physical target.
+Final physical target: Intel Cyclone V SoC 5CSXFC6D6F31C6 (DE10-Standard). The repository QSF targets are now aligned to C6; previously archived resource snapshots should be rebuilt on C6 before being treated as final-device resource measurements.
 
 **Evidence policy:** only values present in the canonical repository evidence ledger are published here. Exact T3–T5 final fitter resource counts are intentionally shown as unavailable rather than inferred from stale or synthesis-only artifacts.
 
