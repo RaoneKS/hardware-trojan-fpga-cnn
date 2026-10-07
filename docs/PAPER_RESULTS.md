@@ -8,21 +8,21 @@ This file is the single source of truth for manuscript numbers. Only enter value
 - MNIST reference image: predicted class 7.
 - Software reference accuracy: 98.41%.
 - Verified synchronous-M10K FPGA reference: 634,281 cycles.
-- Healthy physical board: class 7 observed on LEDR[2:0] = 111.
+- Healthy physical board output observed: class 7 on LEDR[2:0] = 111.
 
 Historical latency values are retained and reconciled in `docs/BASELINE_RECONCILIATION.md`; the 346,563-cycle intermediate value is not the canonical current hardware reference.
 
-### Quartus
+### Fresh C6 Quartus evidence
 - Device: 5CSXFC6D6F31C6.
 - ALMs: 1,153.
-- Registers: 902.
+- Registers: 912.
 - Block memory bits: 455,104.
 - RAM blocks: 71.
 - DSP blocks: 13.
-- Worst reported setup slack: +2.933 ns.
-- Worst reported hold slack: +0.116 ns.
-- Worst-case reported Fmax: 58.59 MHz.
-- No timing violations.
+- Worst reported setup slack in the archived fresh C6 evidence: +0.181 ns.
+- Worst reported hold slack in the archived fresh C6 evidence: +0.173 ns.
+- Exact fresh C6 Fmax: not archived.
+- No negative slack is recorded in the archived summary values.
 
 ## Trojan simulation evidence
 
@@ -54,52 +54,26 @@ For the committed 60-row simulation regression:
 - TPR = 100%
 - FPR = 0%
 - Precision = 100%
+- Recall = 100%
 - F1 = 1.000
 
 These are simulation-regression metrics for the evaluated workload set, not universal security guarantees.
 
 ## Physical-board validation
 
-### T1
-- Physical DE10-Standard validation completed.
-- Detector asserted.
-- Localization code 01 observed.
+Physical board evidence currently archived in `docs/PHYSICAL_BOARD_VALIDATION.md` covers T3, T4 and T5. Each was programmed successfully with 0 programming errors and 0 warnings; LEDR0–LEDR5 were observed ON, corresponding to class 7, detector asserted, localization code 11.
 
-### T2
-- Physical DE10-Standard validation completed.
-- Class 7 observed.
-- Detector asserted.
-- Localization code 10 observed.
-
-### T3
-- Physical DE10-Standard validation completed.
-- SOF checksum: `0x022CD4EE`.
-- Configuration succeeded with 0 errors and 0 warnings.
-- LEDR0–LEDR5 all ON.
-- Interpretation: class 7, detector asserted, localization 11.
-
-### T4
-- Physical DE10-Standard validation completed.
-- SOF checksum: `0x022B88DC`.
-- Configuration succeeded with 0 errors and 0 warnings.
-- LEDR0–LEDR5 all ON.
-- Interpretation: class 7, detector asserted, localization 11.
-
-### T5
-- Physical DE10-Standard validation completed.
-- SOF checksum: `0x022990E2`.
-- Configuration succeeded with 0 errors and 0 warnings.
-- LEDR0–LEDR5 all ON.
-- Interpretation: class 7, detector asserted, localization 11.
-
-Full programming/observation details are in `docs/PHYSICAL_BOARD_VALIDATION.md`.
+No physical T1/T2 observation is claimed here unless separately recorded in the physical-validation document.
 
 ## Resource and power evidence
 
-Canonical exact fitted counts are retained for Healthy, T1, and T2:
-- Healthy: 1,153 ALMs, 902 registers, 71 RAM blocks, 13 DSPs.
-- T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs.
-- T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
+Fresh C6 resource evidence currently archived:
+
+| Target | ALMs | Registers | Block memory bits | RAM blocks | DSP blocks | Worst setup slack | Worst hold slack | Fmax |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| Healthy | 1,153 | 912 | 455,104 | 71 | 13 | +0.181 ns | +0.173 ns | not archived |
+| T1 | 1,170 | 918 | 455,104 | 71 | 13 | +0.141 ns | +0.141 ns | not archived |
+| T2 | 1,192 | 919 | 455,104 | 71 | 15 | +0.163 ns | +0.163 ns | not archived |
 
 Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and are intentionally not invented.
 
