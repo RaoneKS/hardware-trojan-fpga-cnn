@@ -22,7 +22,9 @@ These values are **tool estimates**, not direct measurements from the DE10-Stand
 | T4 | 40.69 | 412.18 | 11.88 | 464.75 | +0.96 mW (+0.21%) |
 | T5 | 40.21 | 412.18 | 11.88 | 464.27 | +0.48 mW (+0.10%) |
 
-**Evidence boundary:** the power table is independent of the canonical resource ledger. Do not infer ALM/register/RAM/DSP counts for T3–T5 from this table; those exact final fitter counts are not archived in the canonical resource CSV.
+**Evidence boundary:** the power table is independent of the canonical resource ledger.
+**Device-target note:** these archived power-estimate values are retained as tool-estimation evidence. They should not be interpreted as a fresh post-correction C6 power sweep; physical rail/current measurement remains absent.
+ Do not infer ALM/register/RAM/DSP counts for T3–T5 from this table; those exact final fitter counts are not archived in the canonical resource CSV.
 
 ## 3. Physical Hardware Power Measurement Protocol (DE10-Standard)
 
