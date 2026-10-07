@@ -61,9 +61,9 @@ These are simulation-regression metrics for the evaluated workload set, not univ
 
 ## Physical-board validation
 
-Physical board evidence currently archived in `docs/PHYSICAL_BOARD_VALIDATION.md` covers T3, T4 and T5. Each was programmed successfully with 0 programming errors and 0 warnings; LEDR0–LEDR5 were observed ON, corresponding to class 7, detector asserted, localization code 11.
+Physical board evidence currently archived in `docs/PHYSICAL_BOARD_VALIDATION.md` covers T1, T2, T3, T4 and T5. Each was programmed successfully with 0 programming errors and 0 warnings. T1 showed class 7, detector asserted, localization code 01; T2 showed class 7, detector asserted, localization code 10; T3/T4/T5 showed class 7, detector asserted, localization code 11.
 
-No physical T1/T2 observation is claimed here unless separately recorded in the physical-validation document.
+Raw programmer logs for all five physical runs are archived under `verification/results/physical_T1_program.log` through `physical_T5_program.log`.
 
 ## Resource and power evidence
 

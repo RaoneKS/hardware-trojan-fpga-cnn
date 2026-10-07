@@ -22,7 +22,7 @@ Board: Terasic DE10-Standard. FPGA: Intel Cyclone V SoC 5CSXFC6D6F31C6. Clock: 5
 TP=50, TN=10, FP=0, FN=0. TPR/recall=100%, FPR=0%, precision=100%, F1=1.000. Regional localization is 50/50=100% at the defined three-region resolution. These are simulation-regression metrics only.
 
 ## Physical validation
-T3, T4 and T5 were programmed successfully with zero programming errors and zero warnings. LEDR0–LEDR5 were observed ON for each: class 7, detector asserted, localization code 11. Code 11 is shared and does not distinguish the three variants.
+T1, T2, T3, T4 and T5 were physically programmed successfully with zero programming errors and zero warnings. T1 produced class 7/detector asserted/localization 01; T2 produced class 7/detector asserted/localization 10; T3/T4/T5 produced class 7/detector asserted/localization 11. Code 11 is shared and does not distinguish the three variants.
 
 ## Evidence boundaries
 Quartus power numbers are tool estimates, not physical rail measurements. Exact T3–T5 final fitter resource counts and exact fresh-C6 Fmax are not archived. Universal detection is not claimed.

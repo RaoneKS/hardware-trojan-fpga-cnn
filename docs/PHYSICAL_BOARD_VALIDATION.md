@@ -69,3 +69,35 @@ Interpretation:
 These are direct board-output observations recorded during manual DE10-Standard validation. They establish physical output behavior for the selected T3/T4/T5 bitstreams.
 
 They do not constitute physical power/current measurements. They also do not imply that localization code `11` can distinguish T3 from T4 or T5; all three share the same regional code by design.
+
+## T1/T2 physical validation — 2026-10-08
+
+### T1
+- SOF checksum: `0x022A3638`
+- Configuration succeeded
+- 0 programmer errors, 0 programmer warnings
+- Physical LEDs observed: LEDR0–LEDR4 ON, LEDR5 OFF
+- Interpretation:
+  - LEDR[2:0] = `111` → predicted class 7
+  - LEDR3 = `1` → Trojan detector asserted
+  - LEDR[5:4] = `01` → T1 / PE computation region
+- Raw programmer log: `verification/results/physical_T1_program.log`
+
+### T2
+- SOF checksum: `0x022A8377`
+- Configuration succeeded
+- 0 programmer errors, 0 programmer warnings
+- Physical LEDs observed: LEDR0, LEDR1, LEDR2, LEDR3, LEDR5 ON; LEDR4 OFF
+- Interpretation:
+  - LEDR[2:0] = `111` → predicted class 7
+  - LEDR3 = `1` → Trojan detector asserted
+  - LEDR[5:4] = `10` → T2 / weight-memory region
+- Raw programmer log: `verification/results/physical_T2_program.log`
+
+## Complete physical validation coverage
+
+T1, T2, T3, T4, and T5 have now each been physically programmed on the DE10-Standard and observed at the board LED interface.
+
+Physical evidence demonstrates programming success, predicted class, detector assertion, and regional localization code for each variant.
+
+Localization code `11` remains shared by T3/T4/T5 and does not uniquely distinguish those variants.

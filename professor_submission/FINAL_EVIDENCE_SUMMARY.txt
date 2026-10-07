@@ -48,6 +48,8 @@ Quartus Power Analyzer values are tool estimates.
 No physical rail/current power measurement is claimed.
 
 PHYSICAL DE10 VALIDATION
+T1: PASS, 0 programming errors, 0 warnings, LEDR0-LEDR4 ON and LEDR5 OFF, class 7, detector asserted, localization 01.
+T2: PASS, 0 programming errors, 0 warnings, LEDR0,1,2,3,5 ON and LEDR4 OFF, class 7, detector asserted, localization 10.
 T3: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
 T4: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
 T5: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.

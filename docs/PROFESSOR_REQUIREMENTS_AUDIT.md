@@ -11,7 +11,7 @@ This audit is intentionally conservative. A requirement is DONE only when the re
 | 5 | Healthy + T1–T5 matched evaluation | DONE (simulation scope) | `verification/results/runs.csv`: 10 workloads × 6 targets | None |
 | 6 | Timing/latency evidence | DONE | Fresh C6 Healthy/T1/T2 snapshot plus canonical simulation ledger | Exact fresh C6 Fmax is not archived |
 | 7 | Power/activity evidence | PARTIAL | Quartus Power Analyzer estimates; VCD activity proxy | Physical rail measurement is not included |
-| 8 | Trojan detection | DONE | Simulation matrix plus physical T3–T5 board observations | None for selected T1–T5 scope |
+| 8 | Trojan detection | DONE | Simulation matrix plus physical T1–T5 board observations | None for selected T1–T5 scope |
 | 9 | Trojan localization | DONE (regional scope) | Simulation matrix plus physical localization outputs | Do not describe code 11 as exact T3/T4/T5 identification |
 | 10 | Multiple MNIST workloads | DONE | `verification/workloads/workload_manifest.csv`, `runs.csv` | None |
 | 11 | TPR/FPR/Precision/F1 | DONE (simulation scope) | Metrics derived from committed 60-row ledger | Do not generalize beyond evaluated cases |
@@ -45,6 +45,8 @@ These metrics are valid for the committed simulation regression only.
 
 ## Physical status
 
+- T1: programmed successfully; LEDR0–LEDR4 ON and LEDR5 OFF; class 7; detector asserted; localization 01.
+- T2: programmed successfully; LEDR0,1,2,3,5 ON and LEDR4 OFF; class 7; detector asserted; localization 10.
 - T3: programmed successfully; all six LEDs ON; class 7; detector asserted; localization 11.
 - T4: programmed successfully; all six LEDs ON; class 7; detector asserted; localization 11.
 - T5: programmed successfully; all six LEDs ON; class 7; detector asserted; localization 11.

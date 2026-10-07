@@ -2,7 +2,7 @@
 
 ## Repository state
 
-The repository contains the reproducibility pipeline, evidence-cleanup changes, fresh C6 Healthy/T1/T2 resource snapshot, and physical DE10-Standard observations for T3, T4, and T5.
+The repository contains the reproducibility pipeline, evidence-cleanup changes, fresh C6 Healthy/T1/T2 resource snapshot, and physical DE10-Standard observations for T1, T2, T3, T4, and T5.
 
 ## Complete evidence
 
@@ -18,7 +18,7 @@ The repository contains the reproducibility pipeline, evidence-cleanup changes, 
 - Professor requirements audit
 - Submission checklist
 - Fresh C6 resource/timing snapshot for Healthy/T1/T2
-- Physical DE10-Standard board-output validation for T3/T4/T5
+- Physical DE10-Standard board-output validation for T1/T2/T3/T4/T5
 
 ## Committed simulation result
 
@@ -60,9 +60,9 @@ At 50 MHz:
 
 ## Physical DE10-Standard validation
 
-T3, T4, and T5 were programmed successfully through the DE10-Standard USB-Blaster/JTAG chain at FPGA device index 2 (JTAG ID `02D020DD`), with 0 programming errors and 0 warnings.
+T1, T2, T3, T4, and T5 were programmed successfully through the DE10-Standard USB-Blaster/JTAG chain at FPGA device index 2 (JTAG ID `02D020DD`), with 0 programming errors and 0 warnings.
 
-For each of T3/T4/T5:
+For each of T1/T2/T3/T4/T5:
 - LEDR0–LEDR5 = ON
 - `LEDR[2:0] = 111` -> class 7
 - `LEDR3 = 1` -> detector asserted

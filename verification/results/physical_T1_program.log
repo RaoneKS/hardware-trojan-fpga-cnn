@@ -1,0 +1,43 @@
+Detecting JTAG hardware...
+1) DE-SoC [3-2]
+  4BA00477   SOCVHPS
+  02D020DD   5CSEBA6(.|ES)/5CSEMA6/..
+Selected cable: DE-SoC [3-2]
+Reading JTAG chain...
+1) DE-SoC [3-2]
+  4BA00477   SOCVHPS
+  02D020DD   5CSEBA6(.|ES)/5CSEMA6/..
+Programming /home/raone/DE10_Project/trojan_T1/cnn_full_small.sof to JTAG device @2...
+Info: *******************************************************************
+Info: Running Quartus Prime Programmer
+    Info: Version 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
+    Info: Copyright (C) 2025  Altera Corporation. All rights reserved.
+    Info: Your use of Altera Corporation's design tools, logic functions 
+    Info: and other software and tools, and any partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Altera Program License 
+    Info: Subscription Agreement, the Altera Quartus Prime License Agreement,
+    Info: the Altera IP License Agreement, or other applicable license
+    Info: agreement, including, without limitation, that your use is for
+    Info: the sole purpose of programming logic devices manufactured by
+    Info: Altera and sold by Altera or its authorized distributors.  Please
+    Info: refer to the Altera Software License Subscription Agreements 
+    Info: on the Quartus Prime software download page.
+    Info: Processing started: Thu Oct  8 01:00:11 2026
+Info: Command: quartus_pgm -c "DE-SoC [3-2]" -m jtag -o p;/home/raone/DE10_Project/trojan_T1/cnn_full_small.sof@2
+Info (213045): Using programming cable "DE-SoC [3-2]"
+Info (213011): Using programming file /home/raone/DE10_Project/trojan_T1/cnn_full_small.sof with checksum 0x022A3638 for device 5CSXFC6D6F31@2
+Info (209060): Started Programmer operation at Thu Oct  8 01:00:12 2026
+Info (209016): Configuring device index 2
+Info (209017): Device 2 contains JTAG ID code 0x02D020DD
+Info (209007): Configuration succeeded -- 1 device(s) configured
+Info (209011): Successfully performed operation(s)
+Info (209061): Ended Programmer operation at Thu Oct  8 01:00:15 2026
+Info: Quartus Prime Programmer was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 322 megabytes
+    Info: Processing ended: Thu Oct  8 01:00:15 2026
+    Info: Elapsed time: 00:00:04
+    Info: Total CPU time (on all processors): 00:00:01
+Configuration succeeded: 0 errors, 0 warnings.
