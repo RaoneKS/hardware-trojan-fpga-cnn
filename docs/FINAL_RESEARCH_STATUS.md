@@ -1,60 +1,63 @@
 # Final Research Status
 
-## Status as of the latest DE10-Standard validation
+## Status as of 2026-10-07
 
-### Complete
-- Healthy CNN baseline implemented and validated.
-- T1 PE computation corruption implemented and physically detected/localized.
-- T2 Conv2 weight/data-path corruption implemented and physically detected/localized.
-- T3 interconnect data-path alteration implemented, compiled, programmed, and physically detected/localized.
-- T4 selective interconnect routing alteration implemented, compiled, programmed, and physically detected/localized.
-- T5 selected control-path stall implemented, compiled, programmed, and physically detected/localized.
-- Quartus builds for all controlled variants complete without timing violations.
-- Reproducible simulation and build scripts exist.
-- Results/evidence ledger updated.
-- Literature review satisfies the professor's four-category / 10-paper minimum at the documentation level.
-- Submission checklist updated.
+The controlled course/research implementation is complete for the defined evidence scope.
 
-### Core measured result
-At 50 MHz, the deterministic reference-image experiment reports:
-- Healthy inference: 346,563 cycles.
-- T1-T4 inference: 634,281 cycles.
-- T5 inference: 634,282 cycles.
-- T1-T4 detector latency: 149,136 cycles = 2.98272 ms.
-- T5 detector latency: 149,135 cycles = 2.98270 ms.
-- T1 localization: 01.
-- T2 localization: 10.
-- T3-T5 localization: 11.
-- All T1-T5 predicted class 7 for the controlled reference image.
-- T1-T5 physical detector/localization outputs have been observed on the DE10-Standard.
+### Completed
+- Healthy INT8 CNN baseline with verified synchronous-M10K reference RTL.
+- T1–T5 controlled Trojan RTL variants and workload-aware testbenches.
+- Ten deterministic MNIST workloads covering classes 0–9.
+- Canonical 10-workload × 6-target simulation matrix.
+- 60-row committed simulation ledger with TP/TN/FP/FN metrics.
+- Quartus implementation/timing evidence.
+- Physical DE10-Standard board-output validation for T3, T4 and T5.
+- Paper manuscript, tables, evidence audit and submission checklist.
 
-### Remaining scientific experiments
+### Canonical simulation result
+The committed verification/results/runs.csv contains 60 PASS rows:
+- Healthy: 10
+- Trojan: 50
+- TP=50, TN=10, FP=0, FN=0
+- TPR=100%, FPR=0%, Precision=100%, F1=1.000
+- Regional localization code matches the expected region for all 50 Trojan rows.
 
-The remaining gap is **statistical/generalization evidence**, not FPGA implementation.
+These are simulation-regression results for the selected workload set, not universal detection guarantees and not 60 physical measurements.
 
-1. Collect repeated Trojan-free workloads/images.
-2. Collect repeated T1-T5 runs on the same workload set.
-3. Record each run in verification/results/runs.csv.
-4. Compute TP/TN/FP/FN, TPR, FPR, precision, and F1.
-5. Build a localization confusion matrix.
-6. Measure latency distributions rather than one deterministic latency.
-7. Collect switching/activity evidence.
-8. Collect Quartus power estimates or board-level power measurements if available.
-9. Run single-signature vs multi-signature ablation.
-10. Run controlled stealthiness/signature-strength sweeps.
-11. Run cross-workload validation.
-12. If time permits, add a second CNN/accelerator configuration for cross-CNN validation.
-13. Regenerate the final paper figures and tables from the measured dataset.
+### Canonical timing result
+At 50 MHz:
+- Healthy/T1–T4 inference: 634,281 cycles
+- T5 inference: 634,282 cycles
+- T1–T4 detection latency: 149,136 cycles = 2.98272 ms
+- T5 detection latency: 149,135 cycles = 2.98270 ms
 
-## Why these items cannot be filled automatically
+Historical 301,854-cycle distributed-RAM and 346,563-cycle intermediate-M10K values remain documented only as development-history artifacts.
 
-The current repository contains one deterministic MNIST image and controlled T1-T5 experiments. It does not contain a measured multi-workload runtime dataset. Manufacturing statistically valid FPR/TPR/F1 values by duplicating the existing deterministic result would violate the professor's explicit instruction not to invent numerical results.
+### Physical board evidence
+T3, T4 and T5 were programmed successfully on the DE10-Standard:
+- FPGA JTAG ID: 02D020DD
+- Device index: @2
+- T3 SOF checksum: 0x022CD4EE
+- T4 SOF checksum: 0x022B88DC
+- T5 SOF checksum: 0x022990E2
+- All six observed board-output LEDs were ON for each case.
+- Interpretation: class 7, detector asserted, localization code 11.
 
-## Submission recommendation
+Code 11 is a shared interconnect/routing/control region code; it does not distinguish T3, T4 and T5 individually.
 
-The FPGA engineering portion is complete enough to freeze the RTL and preserve the validated SOFs/results. Do not modify T1-T5 payload logic while collecting the remaining evidence.
+### Resource and power evidence
+Canonical exact resource counts are retained only where explicitly archived in verification/results/hardware_resources.csv:
+- Healthy: 1,153 ALMs, 902 registers, 71 RAM blocks, 13 DSPs.
+- T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs.
+- T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
+- T3–T5 exact final fitter counts: not archived in the canonical ledger.
 
-The final manuscript should distinguish:
-- hardware-validated claims: healthy and T1-T5 board observations;
-- simulation-derived timing/signature claims;
-- statistical claims: only after repeated measured runs.
+Quartus Power Analyzer values are tool estimates, not physical rail/current measurements. VCD switching results are activity proxies.
+
+### Remaining limitations / future extensions
+1. Physical rail/current power instrumentation.
+2. Broader datasets and cross-CNN generalization.
+3. Executable numerical ablation.
+4. Rebuild legacy I7-targeted Healthy/T1/T2 projects on the final C6 device if those exact resource figures are to be used as final-device evidence.
+
+These are evidence extensions/cleanup items, not blockers for the defined controlled project scope.
