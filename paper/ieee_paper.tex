@@ -1,0 +1,69 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,booktabs,array}
+\usepackage{url}
+\title{Runtime Hardware Trojan Detection and Regional Localization in an INT8 FPGA-CNN Accelerator}
+\author{\IEEEauthorblockN{Jeevan K. S.}\IEEEauthorblockA{Department of Electronics and Communication Engineering\\IIIT Dharwad, India}}
+\begin{document}\maketitle
+\begin{abstract}
+This paper presents a lightweight runtime Hardware Trojan detection and regional localization framework for an INT8 LeNet-style CNN accelerator implemented on an Intel Cyclone V FPGA. Five controlled Trojan variants target Conv2 processing-element arithmetic, weight memory, feature interconnect, spatial routing, and control sequencing. A committed 60-row cycle-accurate simulation matrix covers ten MNIST workloads and Healthy/T1--T5 targets. For this controlled matrix, TP=50, TN=10, FP=0 and FN=0, giving 100\% TPR/recall, 0\% FPR, 100\% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1--T4 detection latency is 149,136 cycles (2.98272 ms at 50 MHz), while T5 is detected in 149,135 cycles. Fresh C6 Quartus evidence is retained for Healthy, T1 and T2, and T3--T5 were physically programmed on a Terasic DE10-Standard with the expected class/detector/localization LED pattern. Quartus power values are tool estimates, not physical rail measurements.
+\end{abstract}
+\begin{IEEEkeywords}
+hardware Trojan, FPGA security, CNN accelerator, runtime detection, regional localization, INT8, MNIST
+\end{IEEEkeywords}
+
+\section{Introduction}
+Hardware Trojans are malicious hardware modifications that may remain dormant or preserve externally visible behavior on selected tests. Classical work identifies the difficulty of detecting small or rarely activated modifications using conventional verification alone \cite{chakraborty2009hardware}. Neural-network accelerators introduce additional attack surfaces because repeated MACs, memories, interconnects and control paths can be modified while the final class may remain unchanged for selected inputs \cite{clements2018hardware}. A survey of DNN hardware security similarly identifies Trojan, side-channel and fault-injection threats as important security dimensions \cite{mittal2021survey}.
+
+This work demonstrates an end-to-end runtime defense for an FPGA CNN. The contributions are: (1) an INT8 LeNet-style reference accelerator; (2) five controlled Trojan implementations; (3) a compact detector with regional localization; (4) a deterministic ten-workload simulation matrix; and (5) Quartus and physical-board evidence with explicit scientific scope boundaries.
+
+\section{Architecture and Threat Model}
+The reference network accepts 28$\times$28 grayscale MNIST images and contains Conv1, ReLU, Pool1, Conv2, ReLU, Pool2, a fully connected classifier and ArgMax. The computation is
+\begin{equation}
+Y=\operatorname{ArgMax}(f_{FC}(f_{Pool2}(f_{Conv2}(f_{Pool1}(f_{Conv1}(X)))))).
+\end{equation}
+The attacker is assumed to have RTL/netlist-level access during an untrusted design or synthesis stage. The controlled campaign includes arithmetic corruption (T1), weight-memory corruption (T2), feature-interconnect alteration (T3), source-routing alteration (T4), and a one-cycle control stall (T5).
+
+The detector output is mapped to LEDR[3]. A two-bit localization code is mapped to LEDR[5:4]: 00=healthy, 01=Conv2 PE arithmetic, 10=Conv2 weight memory, and 11=shared interconnect/routing/control. LEDR[2:0] reports the predicted class. Code 11 intentionally does not distinguish T3, T4 and T5.
+
+\section{Experimental Methodology}
+Cycle-accurate Verilog simulation uses Icarus Verilog. The canonical matrix contains ten workloads (digits 0--9) and six targets, giving 60 rows. The FPGA target is the Intel Cyclone V SoC 5CSXFC6D6F31C6 on the Terasic DE10-Standard. The verified synchronous-M10K reference latency is 634,281 cycles at 50 MHz. Earlier 301,854-cycle and 346,563-cycle values are historical development milestones and are not used as the current reference.
+
+\section{Results}
+The simulation ledger contains 10 Healthy and 50 Trojan rows. Therefore TP=50, TN=10, FP=0 and FN=0:
+\begin{equation}
+TPR=1,\quad FPR=0,\quad Precision=1,\quad F1=1.
+\end{equation}
+These metrics apply only to the committed controlled matrix.
+
+T1 is localized to region 01 for 10/10 workloads, T2 to region 10 for 10/10, and T3--T5 to shared region 11 for 30/30. Regional localization accuracy is therefore 50/50=100\% at the defined resolution.
+
+At 50 MHz, T1--T4 are detected after 149,136 cycles = 2.98272 ms. T5 is detected after 149,135 cycles = 2.98270 ms. T1--T4 inference is 634,281 cycles; T5 is 634,282 cycles.
+
+\begin{table}[t]
+\centering
+\caption{Fresh C6 resource evidence}
+\begin{tabular}{lrrrrrr}
+\toprule
+Target & ALM & Reg. & RAM & DSP & Setup & Hold\\
+\midrule
+Healthy & 1153 & 912 & 71 & 13 & +0.181 & +0.173\\
+T1 & 1170 & 918 & 71 & 13 & +0.141 & +0.141\\
+T2 & 1192 & 919 & 71 & 15 & +0.163 & +0.163\\
+\bottomrule
+\end{tabular}
+\end{table}
+Exact final fitter counts for T3--T5 and exact fresh-C6 Fmax are not archived and are not inferred.
+
+Quartus Power Analyzer estimates are 463.79, 465.51, 466.28, 467.17, 464.75 and 464.27 mW for Healthy and T1--T5 respectively. These are tool estimates rather than physical rail/current measurements.
+
+T3, T4 and T5 were programmed on the physical DE10-Standard with zero programming errors and zero warnings. All LEDR0--LEDR5 were observed ON, corresponding to class 7, detector asserted, and localization code 11.
+
+\section{Discussion and Limitations}
+The experiment shows that the selected controlled Trojans can be detected and regionally localized even when the evaluated class output remains correct. The 100\% result is not a universal Trojan-detection guarantee. Limitations include absence of physical power instrumentation, incomplete archived final fitter counts for T3--T5, lack of archived fresh-C6 Fmax, a single compact MNIST CNN, and no executable numerical ablation study.
+
+\section{Conclusion}
+A reproducible runtime detection and regional localization prototype was implemented for an INT8 FPGA CNN. The controlled simulation campaign achieved 100\% detection and regional localization at the defined scope, while physical DE10 validation was completed for T3--T5. The repository separates simulation metrics, implementation evidence, tool-estimated power and physical observations to avoid overstating the results.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references/references}
+\end{document}
