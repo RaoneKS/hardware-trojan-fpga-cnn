@@ -146,10 +146,10 @@ module cnn_small_core (
 
     // ================================================================
     // T5 HARDWARE TROJAN
-    // Type    : Interconnect / Data-Path Alteration
-    // Target  : MaxPool1-to-Conv2 feature interconnect bus (p1_q)
+    // Type    : Control-path sequencing alteration
+    // Target  : Conv2 control FSM sequencing
     // Trigger : t5_trigger
-    // Payload : flip bit 0 of p1_q on interconnect path before MAC
+    // Payload : insert one selected-cycle FSM stall before the Conv2 MAC
     // ================================================================
     reg t5_trigger;
     reg t5_detected;
