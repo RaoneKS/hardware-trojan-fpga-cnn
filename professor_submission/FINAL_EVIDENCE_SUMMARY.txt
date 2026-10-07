@@ -54,6 +54,11 @@ T3: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detecto
 T4: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
 T5: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
 
+ABLATION / STEALTHINESS ANALYSIS
+Evidence-bounded evaluation-layer channel masking over the committed 60-row ledger:
+Functional-only TPR=0%, Timing-only TPR=20%, PE-region-only TPR=20%, Weight/data-region-only TPR=20%, Interconnect/routing/control-region-only TPR=60%, Full regional monitor TPR=100%; FPR=0% for all masked configurations. This is not an independently synthesized no-monitor/PE-only/memory-only hardware ablation.
+All T1-T5 are output-stealthy across the 10 selected workloads. T1-T4 are timing-invisible at inference-cycle granularity; T5 is timing-visible with a one-cycle delta.
+
 FINAL VERDICT
 READY FOR PROFESSOR REVIEW FOR THE DEFINED CONTROLLED PROJECT SCOPE.
 
@@ -62,4 +67,4 @@ DOCUMENTED LIMITATIONS
 2. Exact T3/T4/T5 fitter resource counts are not archived.
 3. Exact fresh C6 Fmax is not archived.
 4. Broader datasets/cross-CNN generalization remain future work.
-5. Executable numerical ablation is not claimed.
+5. The current ablation is evaluation-layer channel masking; independently synthesized build-level ablation and graded payload-severity sweeps remain future extensions.
