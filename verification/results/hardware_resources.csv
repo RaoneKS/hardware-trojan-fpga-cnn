@@ -1,7 +1,7 @@
 case,physical_status,alms,registers,block_memory_bits,ram_blocks,dsp_blocks,worst_setup_slack_ns,worst_hold_slack_ns,fmax_mhz,notes
-Healthy,validated,1153,902,455104,71,13,2.933,0.116,58.59,"Canonical current evidence snapshot; hold value differs slightly across Quartus report contexts"
-T1,validated,1170,910,455104,71,13,1.078,0.145,,"Canonical current evidence snapshot; exact Fmax not archived in this CSV"
-T2,validated,1192,919,455104,71,15,2.634,0.140,,"Canonical current evidence snapshot"
+Healthy,validated,1153,912,455104,71,13,0.181,0.173,,"Fresh C6 Quartus rebuild; ALM/Fmax were not extracted in the current report query"
+T1,validated,1170,918,455104,71,13,0.141,0.141,,"Fresh C6 Quartus rebuild; ALM/Fmax were not extracted in the current report query"
+T2,validated,1192,919,455104,71,15,0.163,0.163,,"Fresh C6 Quartus rebuild; ALM/Fmax were not extracted in the current report query"
 T3,validated,,,,,,4.447,0.159,,"Exact final fitter ALM/register/RAM/DSP counts are not archived in canonical evidence; do not infer them from synthesis"
 T4,validated,,,,,,5.581,0.105,,"Exact final fitter ALM/register/RAM/DSP counts are not archived in canonical evidence; do not infer them from synthesis"
 T5,validated,,,,,,4.648,0.134,,"Exact final fitter ALM/register/RAM/DSP counts are not archived in canonical evidence; do not infer them from synthesis"
