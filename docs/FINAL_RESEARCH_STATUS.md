@@ -58,6 +58,6 @@ Quartus Power Analyzer values are tool estimates, not physical rail/current meas
 1. Physical rail/current power instrumentation.
 2. Broader datasets and cross-CNN generalization.
 3. Executable numerical ablation.
-4. Rebuild legacy I7-targeted Healthy/T1/T2 projects on the final C6 device if those exact resource figures are to be used as final-device evidence.
+4. Rebuild Healthy/T1/T2 on C6 to refresh the archived resource snapshots after the device-target correction.
 
 These are evidence extensions/cleanup items, not blockers for the defined controlled project scope.
