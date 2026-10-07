@@ -24,6 +24,9 @@ TP=50, TN=10, FP=0, FN=0. TPR/recall=100%, FPR=0%, precision=100%, F1=1.000. Reg
 ## Physical validation
 T1, T2, T3, T4 and T5 were physically programmed successfully with zero programming errors and zero warnings. T1 produced class 7/detector asserted/localization 01; T2 produced class 7/detector asserted/localization 10; T3/T4/T5 produced class 7/detector asserted/localization 11. Code 11 is shared and does not distinguish the three variants.
 
+## Ablation and stealthiness evidence
+The repository contains an evidence-bounded evaluation-layer channel-masking ablation over the committed 60-row ledger: functional-only TPR=0%, timing-only TPR=20%, PE-region-only TPR=20%, weight/data-region-only TPR=20%, interconnect/routing/control-region-only TPR=60%, and full regional monitoring TPR=100%, with FPR=0% throughout. This does not represent independently synthesized no-monitor/PE-only/memory-only builds. All T1-T5 retain the expected top-1 class across the selected ten workloads; T1-T4 are timing-invisible at inference-cycle granularity, while T5 shows a one-cycle timing delta.
+
 ## Evidence boundaries
 Quartus power numbers are tool estimates, not physical rail measurements. Exact T3–T5 final fitter resource counts and exact fresh-C6 Fmax are not archived. Universal detection is not claimed.
 
