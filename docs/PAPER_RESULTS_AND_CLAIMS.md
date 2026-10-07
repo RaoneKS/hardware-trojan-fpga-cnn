@@ -60,7 +60,7 @@ Canonical exact resource values are published only for Healthy, T1 and T2:
 - T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
 - Exact final T3–T5 fitter counts are not in the canonical resource ledger.
 
-Important target note: the final DE10-Standard device is 5CSXFC6D6F31C6. Legacy Healthy/T1/T2 QSFs currently target the I7 variant, so those resource snapshots should be treated as archived implementation evidence until rebuilt on C6.
+Important target note: the final DE10-Standard device is 5CSXFC6D6F31C6. The Healthy/T1/T2 QSFs are now aligned to C6. Their archived resource snapshots predate that target correction and should be rebuilt on C6 before being treated as final-device resource measurements.
 
 ### Power
 Quartus Power Analyzer figures are tool estimates, not physical measurements. Physical rail/current instrumentation was not collected.
