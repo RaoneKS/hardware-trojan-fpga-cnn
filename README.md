@@ -100,7 +100,7 @@ Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact 
 
 ## Physical DE10-Standard validation
 
-T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain.
+T1, T2, T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. T1 produced class 7, detector asserted, localization code 01; T2 produced class 7, detector asserted, localization code 10; T3/T4/T5 produced class 7, detector asserted, shared localization code 11.
 
 - 0 programming errors / 0 warnings
 - LEDR0–LEDR5 observed ON
@@ -177,7 +177,7 @@ hardware-trojan-fpga-cnn/
 5. Exact fresh C6 Fmax is not archived.
 6. Exact final fitter resource counts for T3/T4/T5 are not archived.
 7. Broader datasets and cross-CNN generalization remain future work.
-8. Numerical ablation is not claimed unless independently reproducible.
+8. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis over the committed 60-row ledger; independently synthesized ablation builds are not claimed.
 
 ## Project status
 
