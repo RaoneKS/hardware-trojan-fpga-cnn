@@ -3,7 +3,7 @@
 ## Overview
 A critical concern in Hardware Trojan detection within deep learning accelerators is input sensitivity: whether detection mechanisms trigger false alarms on diverse legitimate inputs (false positives) or fail to detect malicious activity when features change dynamically across different input classes (false negatives).
 
-This evaluation reports empirical cross-workload measurements collected across 10 distinct MNIST digit classes ($0, 1, 2, 3, 4, 5, 6, 7, 8, 9$) on the clean healthy baseline and all five Trojan variants ($T_1$ through $T_5$).
+This evaluation reports the cross-workload rows recorded in the committed cycle-accurate simulation ledger across 10 distinct MNIST digit classes ($0, 1, 2, 3, 4, 5, 6, 7, 8, 9$) on the clean healthy baseline and all five Trojan variants ($T_1$ through $T_5$).
 
 ---
 
@@ -24,7 +24,7 @@ This evaluation reports empirical cross-workload measurements collected across 1
 
 ---
 
-## Empirical Cross-Workload Matrix
+## Simulation Cross-Workload Matrix
 
 | Workload | True Class | Healthy Pred | Healthy Det | T1 Det (Loc) | T2 Det (Loc) | T3 Det (Loc) | T4 Det (Loc) | T5 Det (Loc) | Healthy Cycles | T5 Cycles |
 |---|---:|---:|---:|:---:|:---:|:---:|:---:|:---:|---:|---:|
@@ -57,4 +57,4 @@ This evaluation reports empirical cross-workload measurements collected across 1
    - Standard deviation of detection latency across workloads: **0.00 cycles**.
 4. **Classification Integrity & Trojan Stealthiness**:
    - For all 10 workloads, the CNN output classification was identical between the healthy baseline and Trojan-injected runs.
-   - This empirically confirms the **stealthiness** of the injected Trojans: all five Trojans operate at internal intermediate feature stages without causing top-1 classification flipping on standard MNIST images, making simple black-box output monitoring ineffective and proving the necessity of internal runtime assertion detectors.
+   - This supports classification-invariance for the ten selected MNIST workloads. It does not establish stealthiness for arbitrary inputs or trigger conditions.

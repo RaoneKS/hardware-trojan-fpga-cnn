@@ -8,7 +8,7 @@
 ## Abstract
 FPGA-accelerated Convolutional Neural Networks (CNNs) are increasingly deployed in latency-critical and mission-critical edge embedded systems. However, outsourced semiconductor design chains and untrusted third-party intellectual property (IP) cores expose these hardware accelerators to Hardware Trojans. While functional black-box verification can detect coarse disruptions that flip top-1 classification decisions, stealthy Trojans deliberately manipulate internal arithmetic elements, weight memory interfaces, spatial interconnects, or control-path sequencers without causing overt end-to-end misclassifications on standard test datasets.
 
-In this work, we present a lightweight runtime hardware assertion monitoring and spatial localization architecture for an INT8 quantized LeNet-style FPGA-CNN accelerator. We implement a systematic taxonomy of five controlled Hardware Trojan variants ($T_1$ through $T_5$) spanning processing elements, memory paths, interconnect fabrics, routing engines, and pipeline control. We evaluate the proposed architecture using Intel Quartus Prime on the Cyclone V 5CSXFC6D6F31C6 FPGA (Terasic DE10-Standard). Using a committed 60-row cycle-accurate simulation regression ledger spanning ten distinct MNIST digit workloads ($0$ to $9$) across healthy and malicious hardware targets, the evaluated cases yield a True Positive Rate (TPR) of 100.0%, a False Positive Rate (FPR) of 0.0%, Precision of 100.0%, and an F1 score of 1.0000. Regional localization is correct for all evaluated Trojan cases. These statistics are scoped to the committed simulation ledger; raw per-run simulator logs are not all archived. The detection latency is strictly bounded at 149,136 clock cycles (2.98 ms at 50 MHz), identifying intrusions within the first 23.5% of inference execution. Furthermore, the complete detection and 2-bit regional localization subsystem imposes only 0.52% to 6.38% ALM overhead and less than 0.73% thermal power overhead, proving that high-reliability runtime security can be integrated into edge CNN accelerators without compromising real-time throughput or physical budget.
+In this work, we present a lightweight runtime hardware assertion monitoring and spatial localization architecture for an INT8 quantized LeNet-style FPGA-CNN accelerator. We implement a systematic taxonomy of five controlled Hardware Trojan variants ($T_1$ through $T_5$) spanning processing elements, memory paths, interconnect fabrics, routing engines, and pipeline control. We evaluate the proposed architecture using Intel Quartus Prime on the Cyclone V 5CSXFC6D6F31C6 FPGA (Terasic DE10-Standard). Using a committed 60-row cycle-accurate simulation regression ledger spanning ten distinct MNIST digit workloads ($0$ to $9$) across healthy and malicious hardware targets, the evaluated cases yield a True Positive Rate (TPR) of 100.0%, a False Positive Rate (FPR) of 0.0%, Precision of 100.0%, and an F1 score of 1.0000. Regional localization is correct for all evaluated Trojan cases. These statistics are scoped to the committed simulation ledger; raw per-run simulator logs are not all archived. The detection latency is strictly bounded at 149,136 clock cycles (2.98 ms at 50 MHz), identifying intrusions within the first 23.5% of inference execution. Quartus implementation evidence shows positive timing slack for all archived variants. The power figures are tool estimates rather than physical rail measurements, and exact final fitter resource counts for T3–T5 are not retained in the canonical evidence ledger.
 
 **Keywords:** Hardware Trojans, FPGA-CNN Accelerators, Deep Learning Security, Runtime Anomaly Detection, Spatial Localization, Cyclone V FPGA.
 
@@ -100,7 +100,7 @@ The proposed detection subsystem integrates distributed hardware assertion check
 ## 8. Experimental Methodology
 - **Simulation Regression**: Cycle-accurate Verilog simulation using Icarus Verilog (`iverilog` / `vvp`).
 - **Multi-Workload Dataset**: 10 distinct MNIST test images spanning digits 0 through 9 ($W_0$ through $W_9$).
-- **Total Experimental Ledger**: $10\text{ workloads} \times 6\text{ architectures} = 60\text{ measured runs}$ recorded in `verification/results/runs.csv`.
+- **Simulation Regression Ledger**: $10\text{ workloads} \times 6\text{ architectures} = 60\text{ recorded simulation rows}$; the repository does not archive a separate raw simulator log for every row. recorded in `verification/results/runs.csv`.
 - **FPGA Synthesis & Implementation**: Intel Quartus Prime Standard & Lite Editions targeting the Cyclone V SoC FPGA (5CSXFC6D6F31C6 / 5CSXFC6D6F31I7).
 - **Power Characterization**: Intel Quartus Prime Power Analyzer estimating core dynamic, core static, and I/O thermal power dissipation.
 
@@ -112,12 +112,12 @@ All designs have archived Quartus compilation/timing evidence at 50 MHz. The can
 ### Resource Utilization Comparison
 | Target Architecture | ALMs | ALM Overhead | Registers | Register Overhead | M10K Blocks | DSP Blocks | Worst Setup Slack | Worst Hold Slack |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| **Healthy Baseline** | 1,145 | Baseline | 889 | Baseline | 71 | 13 | +2.669 ns | +0.129 ns |
-| **Trojan T1 (PE MAC)** | 1,167 | +1.92% | 924 | +3.94% | 71 | 13 | +0.999 ns | +0.124 ns |
-| **Trojan T2 (Weight RAM)**| 1,190 | +3.93% | 915 | +2.92% | 71 | 15 | +2.634 ns | +0.140 ns |
-| **Trojan T3 (Interconnect)**| 1,195 | +4.37% | 924 | +3.94% | 71 | 15 | +4.447 ns | +0.159 ns |
-| **Trojan T4 (Routing)** | 1,218 | +6.38% | 902 | +1.46% | 71 | 13 | +5.581 ns | +0.105 ns |
-| **Trojan T5 (Control Stall)**| 1,151 | +0.52% | 918 | +3.26% | 71 | 13 | +4.648 ns | +0.134 ns |
+| **Healthy Baseline** | 1,153 | Baseline | 902 | Baseline | 71 | 13 | +2.933 ns | +0.116 ns |
+| **Trojan T1 (PE MAC)** | 1,170 | +1.47% | 910 | +0.89% | 71 | 13 | +1.078 ns | +0.145 ns |
+| **Trojan T2 (Weight RAM)**| 1,192 | +3.38% | 919 | +1.88% | 71 | 15 | +2.634 ns | +0.140 ns |
+| **Trojan T3 (Interconnect)**| Not archived | — | Not archived | — | Not archived | Not archived | +4.447 ns | +0.159 ns |
+| **Trojan T4 (Routing)** | Not archived | — | Not archived | — | Not archived | Not archived | +5.581 ns | +0.105 ns |
+| **Trojan T5 (Control Stall)**| Not archived | — | Not archived | — | Not archived | Not archived | +4.648 ns | +0.134 ns |
 
 Within the variants for which exact canonical ALM counts are archived, T2 uses 39 additional ALMs versus Healthy. Exact T3–T5 ALM overhead is intentionally not stated because the final fitter counts are not retained in the canonical evidence. Timing closure is maintained across all models with positive setup and hold slacks.
 
@@ -148,7 +148,7 @@ The detector trips within the first 23.51% of total inference, allowing prompt s
 The Quartus estimates show a maximum reported total-power difference of 3.38 mW versus the Healthy estimate. These values are tool estimates and do not establish that physical side-channel power detection is ineffective; physical rail measurements remain future work.
 
 ### 10.4 Detection and Statistical Security Metrics
-From the 60 measured runs (10 negative, 50 positive):
+From the 60 recorded simulation rows (10 negative, 50 positive):
 $$\text{TPR} = \frac{50}{50 + 0} = 1.000000 \quad (100.0\%)$$
 $$\text{FPR} = \frac{0}{0 + 10} = 0.000000 \quad (0.0\%)$$
 $$\text{Precision} = \frac{50}{50 + 0} = 1.000000 \quad (100.0\%)$$
@@ -179,7 +179,7 @@ The evaluated findings support the conclusion that internal architectural monito
 ---
 
 ## 13. Conclusion
-We designed, implemented, and empirically validated a runtime Hardware Trojan detection and spatial localization framework for FPGA-accelerated CNNs. Evaluating five distinct Trojan families across ten diverse MNIST workloads demonstrated 100.0% detection and regional localization on the committed simulation cases, with zero false alarms in the ten recorded Healthy rows. Implemented on an Intel Cyclone V FPGA, the architecture incurs under 6.4% ALM overhead and 0.73% power overhead, establishing a practical defense mechanism for secure edge AI accelerators.
+We designed, implemented, and empirically validated a runtime Hardware Trojan detection and spatial localization framework for FPGA-accelerated CNNs. Evaluating five distinct Trojan families across ten diverse MNIST workloads demonstrated 100.0% detection and regional localization on the committed simulation cases, with zero false alarms in the ten recorded Healthy rows. Implemented for Intel Cyclone V, the archived Quartus evidence demonstrates timing closure and bounded simulation detection latency. Physical power overhead and complete T3–T5 fitted resource overhead remain to be measured/archived.
 
 ---
 
