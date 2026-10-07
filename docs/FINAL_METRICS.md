@@ -1,11 +1,11 @@
 # Verification & Statistical Metrics Summary
 
-This summary is generated strictly from the measured execution ledger: `verification/results/runs.csv`.
+This summary is generated strictly from the recorded simulation execution ledger: `verification/results/runs.csv`.
 
-## Summary of Empirical Dataset
+## Summary of recorded simulation dataset
 - **Total Workloads**: 10 distinct MNIST test images (Digit classes 0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 - **Target Hardware Architectures**: 6 (Healthy Baseline, Trojan T1, Trojan T2, Trojan T3, Trojan T4, Trojan T5)
-- **Total Measured Runs**: 60
+- **Total Recorded Simulation Rows**: 60
 - **Negative Runs (Healthy, Trojan Absent)**: 10
 - **Positive Runs (Trojan Present)**: 50 (10 per Trojan variant)
 
@@ -73,3 +73,7 @@ Operating Clock: 50 MHz ($\tau = 20.0\text{ ns}$).
 - **Inference Timing Overhead**:
   - T1–T4: **0.00%** (0 additional cycles).
   - T5: **+1 cycle (+0.00016%)** due to the single malicious stall state.
+
+
+## Evidence provenance note
+The metrics in this file are calculations from `verification/results/runs.csv`. The repository does not archive a distinct raw simulator log for every row, so these values must be presented as simulation-ledger results rather than independently archived physical measurements.

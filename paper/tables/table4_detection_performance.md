@@ -1,6 +1,6 @@
-# Table 4: Statistical Detection & Localization Metrics Across 60 Measured Runs
+# Table 4: Statistical Detection & Localization Metrics Across 60 Recorded Simulation Rows
 
-| Metric Category | Metric Name | Mathematical Definition | Measured Empirical Value |
+| Metric Category | Metric Name | Mathematical Definition | Recorded Simulation Value |
 |---|---|---|:---:|
 | **Detection Confusion** | True Positives (TP) | Verified Trojan detected | 50 / 50 |
 | | True Negatives (TN) | Healthy run, detector quiescent | 10 / 10 |

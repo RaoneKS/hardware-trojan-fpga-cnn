@@ -1,6 +1,6 @@
-# Table 3: Thermal and Dynamic Power Dissipation (Quartus Power Analyzer)
+# Table 3: Quartus Power Analyzer Estimates (Not Physical Rail Measurements)
 
-Thermal and power characterization under vectorless transition activity estimation at 50 MHz.
+Power characterization from the Quartus Prime Power Analyzer using vectorless transition-activity estimation at 50 MHz. These are tool estimates, not direct measurements from the DE10-Standard power rails.
 
 | Architecture Variant | Core Dynamic Power (mW) | Dynamic Power Change | Core Static Power (mW) | I/O Power (mW) | Total Thermal Dissipation (mW) | Total Power Overhead vs. Healthy |
 |---|---:|---:|---:|---:|---:|---:|
