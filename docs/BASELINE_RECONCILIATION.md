@@ -53,7 +53,7 @@ The research project mandates investigating the Git history and source code conf
   Cycle count = 634281
   Predicted class = 7  (and correct across 10/10 MNIST digits)
   ```
-- **Quartus Implementation**: This design synthesizes cleanly with 1,145 ALMs, 889 registers, 71 M10K RAM blocks, and 13 DSP blocks on the DE10-Standard (5CSXFC6D6F31), meeting timing at 50 MHz with positive slack.
+- **Quartus Implementation**: This design synthesizes cleanly with 1,153 ALMs, 902 registers, 71 M10K RAM blocks, and 13 DSP blocks on the DE10-Standard (5CSXFC6D6F31), meeting timing at 50 MHz with positive slack.
 
 ---
 
@@ -63,10 +63,14 @@ The research project mandates investigating the Git history and source code conf
 |---|---|---|---|---|---|
 | **301,854 cycles** | `cnn_small_core.v` | Distributed async registers | Correct (Digit 7) | High ALM pressure / Routing congestion | Architectural baseline (ideal 0-wait-state memory) |
 | **346,563 cycles** | `cnn_small_core_m10k_backup.v` | M10K synchronous RAM | Incorrect (Digit 1 data hazard) | Intermediate development stage | **HISTORICAL ARTIFACT** (Documented, not used for comparative claims) |
-| **634,281 cycles** | `cnn_small_core_m10k.v` | M10K synchronous RAM | Correct (10/10 Digits) | **Clean FPGA Fit** (71 M10Ks, 1,145 ALMs, +2.67 ns slack) | **CURRENT REPRODUCIBLE GOLDEN RTL** |
+| **634,281 cycles** | `cnn_small_core_m10k.v` | M10K synchronous RAM | Correct (10/10 Digits) | **Clean FPGA Fit** (71 M10Ks, 1,153 ALMs, +2.933 ns setup slack) | **CURRENT REPRODUCIBLE GOLDEN RTL** |
 
 ## Scientific Protocol Rule
 For all subsequent comparisons, overhead evaluations, and manuscript tables:
 1. Label **346,563 cycles** explicitly as a **historical intermediate development milestone**.
 2. Use **634,281 cycles** as the verified, reproducible reference baseline for the synthesizable M10K FPGA accelerator.
 
+
+
+## Final-device note
+The DE10-Standard physical target is Cyclone V SoC 5CSXFC6D6F31C6. Some legacy Quartus project files target the I7 variant; those legacy targets must not be presented as the final physical board device.
