@@ -44,23 +44,24 @@ At 50 MHz:
 - T5 detection latency: 149,135 cycles = 2.98270 ms.
 
 ### Physical board evidence
-T3, T4 and T5 were programmed successfully on the DE10-Standard JTAG chain:
+T1, T2, T3, T4 and T5 were programmed successfully on the DE10-Standard JTAG chain:
 - FPGA JTAG ID 02D020DD, device index @2.
-- T3 checksum 0x022CD4EE.
-- T4 checksum 0x022B88DC.
-- T5 checksum 0x022990E2.
-- For each, LEDR0–LEDR5 were observed ON: class 7, detector asserted, localization 11.
+- T1/T2/T3/T4/T5 programming logs are archived in `verification/results/physical_T1_program.log` through `physical_T5_program.log`.
+- T1: class 7, detector asserted, localization 01.
+- T2: class 7, detector asserted, localization 10.
+- T3/T4/T5: class 7, detector asserted, localization 11.
+- Physical rerun ledger: `verification/results/PHYSICAL_BOARD_RERUN_2026-10-08.md`.
 
 This demonstrates board-level output behavior for the selected bitstreams. It does not establish statistical TPR/FPR/F1 or physical power overhead.
 
 ### Resource evidence
 Canonical exact resource values are published only for Healthy, T1 and T2:
-- Healthy: 1,153 ALMs, 902 registers, 71 RAM blocks, 13 DSPs.
-- T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs.
+- Healthy: 1,153 ALMs, 912 registers, 71 RAM blocks, 13 DSPs.
+- T1: 1,170 ALMs, 918 registers, 71 RAM blocks, 13 DSPs.
 - T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
 - Exact final T3–T5 fitter counts are not in the canonical resource ledger.
 
-Important target note: the final DE10-Standard device is 5CSXFC6D6F31C6. The Healthy/T1/T2 QSFs are now aligned to C6. Their archived resource snapshots predate that target correction and should be rebuilt on C6 before being treated as final-device resource measurements.
+Important target note: the final DE10-Standard device is 5CSXFC6D6F31C6. The current canonical resource ledger records the archived Healthy/T1/T2 C6 snapshot above. Exact T3/T4/T5 fitter counts and fresh-C6 Fmax are intentionally left blank where not archived.
 
 ### Power
 Quartus Power Analyzer figures are tool estimates, not physical measurements. Physical rail/current instrumentation was not collected.
@@ -70,4 +71,5 @@ Quartus Power Analyzer figures are tool estimates, not physical measurements. Ph
 - No exact T3-vs-T4-vs-T5 identification from code 11.
 - No physical power-overhead claim.
 - No broader cross-CNN/generalization claim.
-- No numerical ablation claim beyond the documented design rationale.
+- No independent synthesized build-level ablation claim; the repository reports an evidence-bounded evaluation-layer channel-masking ablation over the committed ledger.
+- No graded payload-severity/trigger-probability sweep claim.
