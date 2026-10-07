@@ -17,7 +17,7 @@ This audit is intentionally conservative. A requirement is **DONE** only when th
 | 11 | TPR/FPR/Precision/F1 | DONE (simulation scope) | Metrics derived from the committed 60-row ledger | Do not generalize beyond evaluated cases |
 | 12 | Localization accuracy/confusion matrix | DONE (simulation scope) | Metrics derived from `runs.csv` | Do not generalize beyond evaluated cases |
 | 13 | Cross-workload robustness | DONE (simulation scope) | Ten workload classes in the canonical matrix | Broader datasets remain future work |
-| 14 | Resource utilization | PARTIAL | `verification/results/hardware_resources.csv` and Quartus logs | T3–T5 exact final fitter ALM/register counts are not archived |
+| 14 | Resource utilization | PARTIAL | `verification/results/hardware_resources.csv` and Quartus logs | T3–T5 exact final fitter ALM/register counts are not archived; Healthy/T1/T2 archived snapshots should be refreshed on C6 after the device-target correction |
 | 15 | Paper-quality tables/figures | DONE for current evidence | `paper/tables/`, `paper/figures/` | Regenerate if new measurements are added |
 | 16 | Healthy latency discrepancy | DONE | `docs/BASELINE_RECONCILIATION.md` | None |
 | 17 | Final paper-ready evidence | DONE for defined scope | `paper/manuscript.md` plus physical validation record | Physical power remains a stated limitation |
