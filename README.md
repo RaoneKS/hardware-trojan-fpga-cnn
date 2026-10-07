@@ -41,7 +41,7 @@ Canonical archived resource values are:
 - T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs
 - T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs
 
-Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and are deliberately not invented.
+Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and are deliberately not invented. The Healthy/T1/T2 resource snapshots predate the final QSF target correction to C6 and should be refreshed on C6 before being treated as final-device resource measurements.
 
 ### Power
 Quartus Power Analyzer values in the project are **tool estimates**, not physical rail/current measurements. VCD switching analysis is an activity proxy.
