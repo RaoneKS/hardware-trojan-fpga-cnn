@@ -122,7 +122,7 @@ module tb_cnn_small_core;
         else begin
             $display("");
             $display("========================================");
-            $display(" FAIL: pred=%0d t1_det=%b loc=%b", predicted_class, expected_class, tpredicted_class, t1_detected_out, localization_code);
+            $display(" FAIL: pred=%0d t1_det=%b loc=%b", predicted_class, expected_class, t1_detected_out, t1_detected_out, localization_code);
             $display("========================================");
         end
 
