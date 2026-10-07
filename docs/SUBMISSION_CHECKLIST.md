@@ -25,6 +25,8 @@
 ## 4. FPGA implementation
 - [x] Healthy/T1/T2 fresh C6 resource evidence
 - [x] T3/T4/T5 Quartus compilation
+- [x] T1 physical DE10 validation
+- [x] T2 physical DE10 validation
 - [x] T3 physical DE10 validation
 - [x] T4 physical DE10 validation
 - [x] T5 physical DE10 validation
