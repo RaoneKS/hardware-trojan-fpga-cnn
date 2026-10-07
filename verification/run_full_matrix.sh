@@ -63,7 +63,7 @@ for W in "${WORK}"/mnist_*.mem; do
       if grep -q "PASS:" "${LOG}" && [[ "${pred}" == "${expected}" && "${detected}" == "1" && "${loc}" == "${loc_expected}" ]]; then status=PASS; else status=FAIL; fi
     fi
 
-    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n'       "${workload_id}" "${T}" "${present}" "${trigger}" "${pred}" "${expected}"       "${detected}" "${loc_expected}" "${loc}" "${cyc}" "${dcycle}" "${latency}" "${status}" >> "${RUNS}"
+    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\\n' "${workload_id}" "${T}" "${present}" "${trigger}" "${pred}" "${expected}" "${detected}" "${loc_expected}" "${loc}" "${cyc}" "${dcycle}" "${latency}" "${status}" >> "${RUNS}"
 
     if [[ "${status}" != "PASS" ]]; then
       echo "FAIL: workload=${workload_id} target=${T}" >&2
