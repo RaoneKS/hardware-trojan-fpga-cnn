@@ -11,7 +11,7 @@ The controlled course/research implementation is complete for the defined eviden
 - Canonical 10-workload × 6-target simulation matrix.
 - 60-row committed simulation ledger with TP/TN/FP/FN metrics.
 - Quartus implementation/timing evidence.
-- Physical DE10-Standard board-output validation for T3, T4 and T5.
+- Physical DE10-Standard board-output validation for T1, T2, T3, T4 and T5.
 - Paper manuscript, tables, evidence audit and submission checklist.
 
 ### Canonical simulation result
@@ -34,21 +34,21 @@ At 50 MHz:
 Historical 301,854-cycle distributed-RAM and 346,563-cycle intermediate-M10K values remain documented only as development-history artifacts.
 
 ### Physical board evidence
-T3, T4 and T5 were programmed successfully on the DE10-Standard:
+T1, T2, T3, T4 and T5 were programmed successfully on the DE10-Standard:
 - FPGA JTAG ID: 02D020DD
 - Device index: @2
-- T3 SOF checksum: 0x022CD4EE
-- T4 SOF checksum: 0x022B88DC
-- T5 SOF checksum: 0x022990E2
-- All six observed board-output LEDs were ON for each case.
-- Interpretation: class 7, detector asserted, localization code 11.
+- T1/T2/T3/T4/T5 physical programming logs are archived under `verification/results/physical_T1_program.log` through `physical_T5_program.log`.
+- T1: LEDR0–LEDR4 ON, LEDR5 OFF → class 7, detector asserted, localization code 01.
+- T2: LEDR0/1/2/3/5 ON, LEDR4 OFF → class 7, detector asserted, localization code 10.
+- T3/T4/T5: all six observed board-output LEDs ON → class 7, detector asserted, localization code 11.
+- Physical rerun ledger: `verification/results/PHYSICAL_BOARD_RERUN_2026-10-08.md`.
 
 Code 11 is a shared interconnect/routing/control region code; it does not distinguish T3, T4 and T5 individually.
 
 ### Resource and power evidence
 Canonical exact resource counts are retained only where explicitly archived in verification/results/hardware_resources.csv:
-- Healthy: 1,153 ALMs, 902 registers, 71 RAM blocks, 13 DSPs.
-- T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs.
+- Healthy: 1,153 ALMs, 912 registers, 71 RAM blocks, 13 DSPs.
+- T1: 1,170 ALMs, 918 registers, 71 RAM blocks, 13 DSPs.
 - T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
 - T3–T5 exact final fitter counts: not archived in the canonical ledger.
 
@@ -57,7 +57,10 @@ Quartus Power Analyzer values are tool estimates, not physical rail/current meas
 ### Remaining limitations / future extensions
 1. Physical rail/current power instrumentation.
 2. Broader datasets and cross-CNN generalization.
-3. Executable numerical ablation.
-4. Rebuild Healthy/T1/T2 on C6 to refresh the archived resource snapshots after the device-target correction.
+3. Independently synthesized build-level monitor ablation variants.
+4. Graded trigger-probability/payload-severity sweep.
+5. Exact final T3/T4/T5 fitter resource counts and fresh C6 Fmax, if those are required by the final paper.
+
+The repository already contains an evidence-bounded evaluation-layer ablation and cross-variant stealthiness analysis; these are not substitutes for independently synthesized variants or a graded payload sweep.
 
 These are evidence extensions/cleanup items, not blockers for the defined controlled project scope.
