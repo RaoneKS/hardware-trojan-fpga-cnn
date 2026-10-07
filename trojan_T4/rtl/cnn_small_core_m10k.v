@@ -145,10 +145,10 @@ module cnn_small_core (
 
     // ================================================================
     // T4 HARDWARE TROJAN
-    // Type    : Interconnect / Data-Path Alteration
-    // Target  : MaxPool1-to-Conv2 feature interconnect bus (p1_q)
+    // Type    : Selective source-routing alteration
+    // Target  : Conv2 feature-memory source address path
     // Trigger : t4_trigger
-    // Payload : flip bit 0 of p1_q on interconnect path before MAC
+    // Payload : redirect the selected Conv2 read to an adjacent spatial source
     // ================================================================
     reg t4_trigger;
     reg t4_detected;
