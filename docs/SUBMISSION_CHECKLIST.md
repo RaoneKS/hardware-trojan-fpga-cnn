@@ -1,44 +1,55 @@
 # Research Project Submission Checklist
 
-## 1. Algorithmic and Baseline CNN
-- [x] INT8 quantized CNN design and software training references (`cnn_baseline/`)
-- [x] Bit-true software vs RTL equivalence validation (`cnn_baseline/scripts/check_full_int8_reference_fixed.py`)
-- [x] Healthy baseline FPGA accelerator RTL (`cnn_full_small/`)
-- [x] Baseline latency reconciliation documentation (`docs/BASELINE_RECONCILIATION.md`)
+## 1. CNN baseline
+- [x] INT8 quantized CNN
+- [x] Healthy baseline RTL
+- [x] Bit-true/reference verification
+- [x] Baseline latency reconciliation
 
-## 2. Hardware Trojan Suite (T1–T5)
-- [x] T1 (PE MAC computation product inversion) RTL and testbench
-- [x] T2 (Weight memory bit flip) RTL and testbench
-- [x] T3 (Interconnect feature bus alteration) RTL and testbench
-- [x] T4 (Spatial source-address routing alteration) RTL and testbench
-- [x] T5 (Control-path execution stall) RTL and testbench
+## 2. Hardware Trojan suite
+- [x] T1 — PE MAC computation corruption
+- [x] T2 — Weight-memory corruption
+- [x] T3 — Interconnect corruption
+- [x] T4 — Spatial routing corruption
+- [x] T5 — Control-path stall
 
-## 3. Verification & Empirical Evaluation
-- [x] Multi-workload dataset generator and manifest across 10 classes (`verification/workloads/`)
-- [x] 60-run regression execution ledger (`verification/results/runs.csv`)
-- [x] Statistical metrics calculation script (`verification/aggregate_metrics.py`)
-- [x] Statistical metrics summary (TPR=100%, FPR=0%, Precision=100%, F1=1.000) (`docs/FINAL_METRICS.md`)
-- [x] Localization confusion matrix and 100% localization accuracy
-- [x] Cross-workload robustness analysis (`docs/CROSS_WORKLOAD_RESULTS.md`)
-- [x] Detection and ablation analysis (`docs/ABLATION_RESULTS.md`)
+## 3. Reproducible simulation
+- [x] Ten deterministic MNIST workloads covering digits 0–9
+- [x] Canonical 10 × 6 simulation matrix
+- [x] 60-row `verification/results/runs.csv` ledger
+- [x] TPR/FPR/Precision/F1 derived from the committed simulation ledger
+- [x] Regional localization metrics
+- [x] Cross-workload simulation evidence
+- [x] CI regression and artifact archiving
+- [x] No unsupported numerical ablation claims
 
-## 4. FPGA Implementation & Synthesis
-- [x] Healthy Cyclone V compilation and fitter reports (1,145 ALMs, 889 regs, 71 M10K, 13 DSP)
-- [x] T1–T5 Cyclone V compilation and fitter reports (1,151–1,218 ALMs, max +6.38% overhead)
-- [x] Timing analysis reports and setup/hold slack verification (positive slack across all corners)
-- [x] Quartus Power Analyzer thermal power characterization for all 6 targets (`docs/POWER_MEASUREMENT_PROTOCOL.md`)
-- [x] Programming bitstreams generated (`.sof`) for all targets
+## 4. FPGA implementation
+- [x] Healthy/T1/T2 canonical resource evidence
+- [x] Quartus timing evidence
+- [x] T3–T5 Quartus timing/build evidence retained where available
+- [x] Conservative resource policy: unarchived T3–T5 fitter counts are not invented
 
-## 5. Physical Hardware Validation
-- [x] Healthy baseline physically validated on DE10-Standard (LEDR[2:0]=111)
-- [x] T1 physically validated on DE10-Standard (LEDR[3]=1, localization 01)
-- [x] T2 physically validated on DE10-Standard (LEDR[3]=1, localization 10)
-- [x] T3–T5 automated JTAG detection and programming scripts verified (`program_de10_autodetect.sh`)
-- [ ] T3–T5 physical visual observation of LED outputs on the benchtop board (requires physical board proximity)
+## 5. Power/activity
+- [x] Quartus Power Analyzer estimates documented
+- [x] VCD switching/activity proxy documented
+- [ ] Physical rail/current power measurement
 
-## 6. Paper Package & Documentation
-- [x] Professor requirements audit table (`docs/PROFESSOR_REQUIREMENTS_AUDIT.md`)
-- [x] Viva / Defense Q&A preparation (`docs/VIVA_QA.md`)
-- [x] Complete scientific manuscript (`paper/manuscript.md`)
-- [x] Paper-ready tables and figures package (`paper/tables/`, `paper/figures/`)
+## 6. Physical DE10-Standard validation
+- [x] Healthy/T1/T2 documented board validation
+- [ ] T3 physical LED/output observation
+- [ ] T4 physical LED/output observation
+- [ ] T5 physical LED/output observation
 
+## 7. Paper
+- [x] Manuscript
+- [x] Tables
+- [x] Figures/evidence package
+- [x] Professor requirements audit
+- [x] Conservative claim boundaries
+- [ ] Final evidence freeze after physical T3–T5 validation, if required by professor
+
+## Final status
+
+The project is **engineering-complete and simulation-evaluation-complete**. It becomes fully hardware-validated only after the remaining physical DE10 observations (and physical power measurement if explicitly required) are completed.
+
+Never present the simulation ledger as physical measurements, Quartus power estimates as physical power, or regional code `11` as exact T3/T4/T5 identification.
