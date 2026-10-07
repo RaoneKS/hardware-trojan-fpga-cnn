@@ -22,7 +22,7 @@ The contributions are:
 2. five controlled Trojan variants spanning arithmetic, memory, interconnect, routing, and control regions;
 3. a runtime detector with three regional localization classes;
 4. a deterministic ten-workload simulation matrix covering Healthy and T1–T5;
-5. Quartus implementation evidence and physical DE10-Standard validation for T3–T5; and
+5. Quartus implementation evidence and physical DE10-Standard validation for T1–T5; and
 6. an evidence-cleaned reporting methodology that explicitly separates simulation metrics, FPGA implementation results, tool-estimated power, and physical observations.
 
 ## 2. Background and Threat Model
