@@ -54,12 +54,12 @@
 - [x] T3/T4/T5 localization code 11 explicitly treated as shared regional localization
 - [x] No fabricated T3–T5 fitter counts
 - [x] No fabricated fresh-C6 Fmax
-- [x] No fabricated numerical ablation
-- [x] No fabricated stealthiness sweep
+- [x] Evidence-bounded evaluation-layer ablation is explicitly scoped
+- [x] Output-stealthiness/timing-observability analysis is explicitly scoped
 - [x] Physical power limitation stated
 
 ## Final status
 
 **PROJECT COMPLETE for the defined controlled course/research implementation and validation scope.**
 
-The remaining unchecked item is physical rail/current instrumentation, which is explicitly treated as a limitation rather than a blocker. Broader cross-CNN generalization, parameterized stealthiness sweeps, and executable ablation remain research extensions.
+The remaining unchecked item is physical rail/current instrumentation, which is explicitly treated as a limitation rather than a blocker. Independently synthesized build-level ablation, graded payload-severity sweeps, and broader cross-CNN generalization remain research extensions.
