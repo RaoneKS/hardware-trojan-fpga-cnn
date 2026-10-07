@@ -47,7 +47,7 @@ This evaluation reports the cross-workload rows recorded in the committed cycle-
    - Detection Rate across all 10 workloads: **100.0%** (50 / 50 detections).
    - False Alarm Rate across all 10 healthy workloads: **0.0%** (0 / 10 false alarms).
 2. **Localization Consistency**:
-   - Every Trojan variant reported its exact dedicated 2-bit localization code without confusion across all digit classes.
+   - Every Trojan variant reported the correct regional 2-bit localization code across all digit classes; T3, T4 and T5 intentionally share code 11 and are not distinguished individually.
    - Code `2'b01` (T1 Conv2 PE): 10/10 correct.
    - Code `2'b10` (T2 Conv2 Weight Memory): 10/10 correct.
    - Code `2'b11` (T3 Interconnect, T4 Routing, T5 Control): 30/30 correct.
