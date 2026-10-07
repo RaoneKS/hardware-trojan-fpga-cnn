@@ -7,24 +7,22 @@
 
 ---
 
-## 2. Quartus Power Analyzer Measurements (Cyclone V 5CSXFC6D6F31)
+## 2. Quartus Power Analyzer Estimates
 
-Operating Conditions: $f = 50.0\text{ MHz}$, $V_{\text{CCINT}} = 1.1\text{ V}$, Industrial/Commercial Temperature Models.
+Operating conditions reported by the project: 50 MHz, VCCINT = 1.1 V, Cyclone V thermal model.
 
-| Implementation | Logic ALMs | Registers | M10K Blocks | DSP Blocks | Core Dynamic Power (mW) | Core Static Power (mW) | I/O Power (mW) | Total Thermal Power (mW) | Power Overhead vs. Healthy |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **Healthy Baseline** | 1,145 | 889 | 71 | 13 | 40.65 | 412.18 | 10.97 | **463.79** | Baseline |
-| **Trojan T1 (PE MAC)** | 1,167 | 924 | 71 | 13 | 41.88 | 412.19 | 11.44 | **465.51** | +1.72 mW (+0.37%) |
-| **Trojan T2 (Weight RAM)**| 1,190 | 915 | 71 | 15 | 42.66 | 412.19 | 11.43 | **466.28** | +2.49 mW (+0.54%) |
-| **Trojan T3 (Interconnect)**| 1,195 | 924 | 71 | 15 | 43.09 | 412.20 | 11.88 | **467.17** | +3.38 mW (+0.73%) |
-| **Trojan T4 (Routing)** | 1,218 | 902 | 71 | 13 | 40.69 | 412.18 | 11.88 | **464.75** | +0.96 mW (+0.21%) |
-| **Trojan T5 (Control Stall)**| 1,151 | 918 | 71 | 13 | 40.21 | 412.18 | 11.88 | **464.27** | +0.48 mW (+0.10%) |
+These values are **tool estimates**, not direct measurements from the DE10-Standard power rails.
 
-### Observations
-1. **Stealthiness**: Total power dissipation increases by less than **0.75%** across all Trojan and detector configurations relative to the healthy CNN baseline.
-2. **Dominance of Static Power**: Core static thermal dissipation (~412.2 mW) dominates Cyclone V power consumption, confirming that side-channel external power analysis alone would struggle to identify these stealthy Trojans without internal architectural monitors.
+| Implementation | Core Dynamic Power (mW) | Core Static Power (mW) | I/O Power (mW) | Total Thermal Power (mW) | Overhead vs. Healthy |
+|---|---:|---:|---:|---:|---:|
+| Healthy Baseline | 40.65 | 412.18 | 10.97 | 463.79 | Baseline |
+| T1 | 41.88 | 412.19 | 11.44 | 465.51 | +1.72 mW (+0.37%) |
+| T2 | 42.66 | 412.19 | 11.43 | 466.28 | +2.49 mW (+0.54%) |
+| T3 | 43.09 | 412.20 | 11.88 | 467.17 | +3.38 mW (+0.73%) |
+| T4 | 40.69 | 412.18 | 11.88 | 464.75 | +0.96 mW (+0.21%) |
+| T5 | 40.21 | 412.18 | 11.88 | 464.27 | +0.48 mW (+0.10%) |
 
----
+**Evidence boundary:** the power table is independent of the canonical resource ledger. Do not infer ALM/register/RAM/DSP counts for T3–T5 from this table; those exact final fitter counts are not archived in the canonical resource CSV.
 
 ## 3. Physical Hardware Power Measurement Protocol (DE10-Standard)
 
