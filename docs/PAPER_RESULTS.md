@@ -7,8 +7,10 @@ This file is the single source of truth for manuscript numbers. Only enter value
 ### Functional
 - MNIST reference image: predicted class 7.
 - Software reference accuracy: 98.41%.
-- Healthy FPGA simulation: 346,563 cycles.
+- Verified synchronous-M10K FPGA reference: 634,281 cycles.
 - Healthy physical board: class 7 observed on LEDR[2:0] = 111.
+
+Historical latency values are retained and reconciled in `docs/BASELINE_RECONCILIATION.md`; the 346,563-cycle intermediate value is not the canonical current hardware reference.
 
 ### Quartus
 - Device: 5CSXFC6D6F31C6.
@@ -17,14 +19,16 @@ This file is the single source of truth for manuscript numbers. Only enter value
 - Block memory bits: 455,104.
 - RAM blocks: 71.
 - DSP blocks: 13.
-- Worst reported setup slack: +2.933 ns (Slow 1100 mV, -40 C).
-- Worst reported hold slack: +0.116 ns (Fast 1100 mV, -40 C).
-- Worst-case reported Fmax: 58.59 MHz (Slow 1100 mV, -40 C).
+- Worst reported setup slack: +2.933 ns.
+- Worst reported hold slack: +0.116 ns.
+- Worst-case reported Fmax: 58.59 MHz.
 - No timing violations.
 
 ## Trojan simulation evidence
 
-All values below are for the included deterministic MNIST reference image and are simulation evidence only.
+The canonical `verification/results/runs.csv` contains 60 simulation regression rows: 10 workloads × Healthy/T1–T5.
+
+For the deterministic reference image:
 
 | ID | Behavior | Predicted class | Detected | Localization | Inference cycles | Detection cycle | Detection latency |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -34,97 +38,81 @@ All values below are for the included deterministic MNIST reference image and ar
 | T4 | Conv2 selective source-routing alteration | 7 | 1 | 11 | 634,281 | 149,144 | 149,136 |
 | T5 | Conv2 selected control-path stall | 7 | 1 | 11 | 634,282 | 149,143 | 149,135 |
 
-At the 50 MHz experiment clock:
-- T1-T4 detection latency = 149,136 cycles = 2.98272 ms.
+At 50 MHz:
+- T1–T4 detection latency = 149,136 cycles = 2.98272 ms.
 - T5 detection latency = 149,135 cycles = 2.98270 ms.
-- T5 has the intended one-cycle inference-cycle difference caused by the selected control-path stall.
 
-## Physical-board validation status
+## Simulation metrics
 
-### T1 — PE computation corruption
+For the committed 60-row simulation regression:
+- Healthy = 10
+- Trojan = 50
+- TP = 50
+- TN = 10
+- FP = 0
+- FN = 0
+- TPR = 100%
+- FPR = 0%
+- Precision = 100%
+- F1 = 1.000
+
+These are simulation-regression metrics for the evaluated workload set, not universal security guarantees.
+
+## Physical-board validation
+
+### T1
 - Physical DE10-Standard validation completed.
-- Detector assertion observed.
+- Detector asserted.
 - Localization code 01 observed.
-- Detector-enabled fitter: 1,170 ALMs, 910 registers, 455,104 block memory bits, 71 RAM blocks, 13 DSP blocks.
-- Detector-enabled worst setup slack: +1.078 ns.
-- Detector-enabled worst hold slack: +0.145 ns.
-- No timing violations.
 
-Note: the ALM change is a post-fit implementation result and should not be described as the exact gate count of the detector.
-
-### T2 — Weight/data-path corruption
-- Physical board validation completed.
+### T2
+- Physical DE10-Standard validation completed.
 - Class 7 observed.
 - Detector asserted.
 - Localization code 10 observed.
-- Fitter: 1,192 ALMs, 919 registers, 455,104 block memory bits, 71 RAM blocks, 15 DSP blocks.
-- Worst setup slack: +2.634 ns.
-- Worst hold slack: +0.140 ns.
-- No timing violations.
-- Relative to healthy: ALMs +39 (+3.38%), registers +17 (+1.88%), RAM 0%, DSP +2 (+15.38%).
 
-### T3 — Interconnect data-path alteration
-- Simulation validated: class 7, detector = 1, localization = 11.
-- Quartus full compile completed with 0 errors; SOF generated; no timing violations.
+### T3
 - Physical DE10-Standard validation completed.
-- Observed board state: LEDR0–LEDR5 all ON.
+- SOF checksum: `0x022CD4EE`.
+- Configuration succeeded with 0 errors and 0 warnings.
+- LEDR0–LEDR5 all ON.
 - Interpretation: class 7, detector asserted, localization 11.
-- Exact final fitter ALM/register counts are not recorded in the repository evidence ledger and must not be invented.
 
-### T4 — Selective interconnect routing alteration
-- Simulation validated: class 7, detector = 1, localization = 11.
-- Quartus full compile completed with 0 errors; SOF generated; no timing violations.
+### T4
 - Physical DE10-Standard validation completed.
-- Observed board state: LEDR0–LEDR5 all ON.
+- SOF checksum: `0x022B88DC`.
+- Configuration succeeded with 0 errors and 0 warnings.
+- LEDR0–LEDR5 all ON.
 - Interpretation: class 7, detector asserted, localization 11.
-- Quartus synthesis evidence: 2,335 logic cells, 160 RAM segments, 13 DSP elements.
-- Timing: worst setup +5.581 ns; worst hold +0.105 ns.
-- Exact final fitter ALM/register counts are not recorded in the repository evidence ledger and must not be invented.
 
-### T5 — Control-path anomaly
-- Simulation validated: class 7, detector = 1, localization = 11.
-- Quartus full compile completed with 0 errors; SOF generated; no timing violations.
+### T5
 - Physical DE10-Standard validation completed.
-- Observed board state: LEDR0–LEDR5 all ON.
+- SOF checksum: `0x022990E2`.
+- Configuration succeeded with 0 errors and 0 warnings.
+- LEDR0–LEDR5 all ON.
 - Interpretation: class 7, detector asserted, localization 11.
-- Quartus synthesis evidence: 2,229 logic cells, 160 RAM segments, 13 DSP elements.
-- Timing: worst setup +4.648 ns; worst hold +0.134 ns.
-- Exact final fitter ALM/register counts are not recorded in the repository evidence ledger and must not be invented.
 
-## What is scientifically established
+Full programming/observation details are in `docs/PHYSICAL_BOARD_VALIDATION.md`.
 
-The controlled T1-T5 set demonstrates:
-1. The healthy CNN completes correctly on the target FPGA.
-2. Each selected Trojan variant can be activated in the controlled experiment.
-3. The runtime detector asserts for each selected variant.
-4. The current monitor exports region codes for the selected experiment regions.
-5. T1-T5 all reach the physical DE10 board-output validation stage.
-6. Detection latency is approximately 2.983 ms at 50 MHz for the deterministic reference input.
+## Resource and power evidence
 
-## What is not yet statistically established
+Canonical exact fitted counts are retained for Healthy, T1, and T2:
+- Healthy: 1,153 ALMs, 902 registers, 71 RAM blocks, 13 DSPs.
+- T1: 1,170 ALMs, 910 registers, 71 RAM blocks, 13 DSPs.
+- T2: 1,192 ALMs, 919 registers, 71 RAM blocks, 15 DSPs.
 
-Do not derive the following from the single deterministic reference input:
-- TPR/recall
-- FPR
-- precision/F1
-- localization accuracy over a test set
-- cross-workload robustness
-- false-positive stress-test rate
-- stealthiness detection-probability curve
-- power/activity overhead
-- single-vs-multi-signature ablation
-- cross-CNN generalization
+Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in the canonical resource ledger and are intentionally not invented.
 
-A valid statistical evaluation requires repeated healthy and Trojan runs over multiple valid inputs/workloads.
+Quartus Power Analyzer estimates:
+- Healthy: 463.79 mW
+- T1: 465.51 mW
+- T2: 466.28 mW
+- T3: 467.17 mW
+- T4: 464.75 mW
+- T5: 464.27 mW
 
-## Repeated-run ledger
+These are tool estimates, not physical rail/current measurements.
 
-verification/results/runs.csv is intentionally empty until measured runs are collected. Execute:
+## Scientific boundary
 
-python3 verification/aggregate_metrics.py
-
-after populating it with real measurements.
-
-## Hardware validation boundary
-
-T1-T5 are now physically validated at the board-output level. Statistical security and generalization claims remain pending because the repository does not contain the required repeated multi-workload measurement dataset.
+The project establishes runtime detection and regional localization for the selected controlled T1–T5 implementations within the evaluated simulation matrix and physical board-output demonstrations. It does not establish universal Hardware Trojan detection, exact identification among T3/T4/T5 from localization code 11, or physical power overhead.
