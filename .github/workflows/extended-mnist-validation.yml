@@ -1,4 +1,5 @@
 name: Extended MNIST validation
+
 on:
   workflow_dispatch:
   push:
@@ -7,6 +8,10 @@ on:
       - verification/run_extended_matrix.sh
       - verification/analyze_extended_matrix.py
       - .github/workflows/extended-mnist-validation.yml
+
+concurrency:
+  group: extended-mnist-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   extended-regression:

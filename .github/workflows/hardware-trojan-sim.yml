@@ -5,6 +5,10 @@ on:
     branches: ["**"]
   pull_request:
 
+concurrency:
+  group: hardware-trojan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   rtl-simulation:
     runs-on: ubuntu-latest
