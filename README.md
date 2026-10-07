@@ -47,7 +47,13 @@ Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained in t
 Quartus Power Analyzer values in the project are **tool estimates**, not physical rail/current measurements. VCD switching analysis is an activity proxy.
 
 ### Physical board validation
-T1/T2 have documented physical validation in the project history. Current repository evidence does not independently establish human-observed T3/T4/T5 LED output validation. If the professor requires every Trojan to be demonstrated on the DE10-Standard, T3–T5 still require a physical board run.
+T3, T4, and T5 were programmed successfully on the DE10-Standard and observed at the board-output level. For each:
+- LEDR0–LEDR5 were all ON
+- `LEDR[2:0] = 111` → class 7
+- `LEDR3 = 1` → detector asserted
+- `LEDR[5:4] = 11` → regional localization code 11
+
+The detailed record is in `docs/PHYSICAL_BOARD_VALIDATION.md`.
 
 ## Reproducibility
 
@@ -62,7 +68,9 @@ chmod +x verification/run_full_matrix.sh
 CI runs the same canonical full matrix and archives the per-run logs as workflow artifacts.
 
 ## Key documents
-- `docs/PROFESSOR_REQUIREMENTS_AUDIT.md` — evidence status and remaining gates
+- `docs/FINAL_COMPLETION_STATUS.md` — final project status
+- `docs/PROFESSOR_REQUIREMENTS_AUDIT.md` — evidence status
+- `docs/PHYSICAL_BOARD_VALIDATION.md` — DE10-Standard T3–T5 observations
 - `docs/BASELINE_RECONCILIATION.md` — healthy latency history
 - `docs/CROSS_WORKLOAD_RESULTS.md` — simulation-only cross-workload evidence
 - `docs/ABLATION_RESULTS.md` — ablation status; no unsupported numerical ablation claims
