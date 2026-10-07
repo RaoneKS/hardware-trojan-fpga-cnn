@@ -24,7 +24,7 @@
 - [x] No unsupported numerical ablation claims
 
 ## 4. FPGA implementation
-- [x] Healthy/T1/T2 canonical resource evidence
+- [x] Healthy/T1/T2 archived resource evidence (refresh on C6 recommended)
 - [x] Quartus timing evidence
 - [x] T3–T5 Quartus timing/build evidence retained where available
 - [x] Conservative resource policy: unarchived T3–T5 fitter counts are not invented
