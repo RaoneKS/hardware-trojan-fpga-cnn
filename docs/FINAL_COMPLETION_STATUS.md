@@ -62,11 +62,14 @@ At 50 MHz:
 
 T1, T2, T3, T4, and T5 were programmed successfully through the DE10-Standard USB-Blaster/JTAG chain at FPGA device index 2 (JTAG ID `02D020DD`), with 0 programming errors and 0 warnings.
 
-For each of T1/T2/T3/T4/T5:
-- LEDR0–LEDR5 = ON
-- `LEDR[2:0] = 111` -> class 7
-- `LEDR3 = 1` -> detector asserted
-- `LEDR[5:4] = 11` -> regional localization code 11
+Physical LED observations:
+- T1: LEDR0–LEDR4 ON, LEDR5 OFF -> `LEDR[5:4] = 01`
+- T2: LEDR0, LEDR1, LEDR2, LEDR3, LEDR5 ON, LEDR4 OFF -> `LEDR[5:4] = 10`
+- T3: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
+- T4: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
+- T5: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
+- For all five variants, `LEDR[2:0] = 111` -> class 7
+- For all five variants, `LEDR3 = 1` -> detector asserted
 
 ## Limitations
 
