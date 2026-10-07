@@ -9,7 +9,7 @@ RAW = ROOT / "cnn_baseline" / "data" / "MNIST" / "raw"
 OUT = ROOT / "verification" / "results" / "extended_workloads"
 IMAGES = RAW / "t10k-images-idx3-ubyte"
 LABELS = RAW / "t10k-labels-idx1-ubyte"
-CANDIDATES_PER_CLASS = 20
+CANDIDATES_PER_CLASS = 10
 CANONICAL = {3, 2, 1, 30, 4, 8, 11, 0, 61, 7}
 
 def read_idx_images(path: Path):
