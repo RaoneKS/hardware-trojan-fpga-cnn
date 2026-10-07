@@ -1,0 +1,63 @@
+HARDWARE TROJAN DETECTION IN FPGA-CNNS
+FINAL EVIDENCE SUMMARY
+
+PLATFORM
+Board: Terasic DE10-Standard
+FPGA: Intel Cyclone V SoC 5CSXFC6D6F31C6
+Clock: 50 MHz
+Toolchain: Intel Quartus Prime Lite 25.1
+
+EXPERIMENT MATRIX
+10 MNIST workloads (digits 0-9) x 6 targets = 60 simulation rows
+Healthy = 10
+T1-T5 = 50
+
+DETECTION METRICS
+TP = 50
+TN = 10
+FP = 0
+FN = 0
+TPR = 100%
+FPR = 0%
+Precision = 100%
+Recall = 100%
+F1 = 1.000
+
+LOCALIZATION
+Regional localization correct for all 50 Trojan simulation rows.
+T1 = code 01
+T2 = code 10
+T3/T4/T5 = code 11
+Code 11 is a shared regional code and does not distinguish T3/T4/T5.
+
+CANONICAL LATENCY
+Healthy/T1/T2/T3/T4 = 634281 cycles = 12.68562 ms
+T5 = 634282 cycles = 12.68564 ms
+T1-T4 detection latency = 149136 cycles = 2.98272 ms
+T5 detection latency = 149135 cycles = 2.98270 ms
+
+FRESH C6 RESOURCE/TIMING SNAPSHOT
+Healthy: 1153 ALMs, 912 registers, 455104 block-memory bits, 71 RAM blocks, 13 DSPs, +0.181 ns setup, +0.173 ns hold
+T1: 1170 ALMs, 918 registers, 455104 block-memory bits, 71 RAM blocks, 13 DSPs, +0.141 ns setup, +0.141 ns hold
+T2: 1192 ALMs, 919 registers, 455104 block-memory bits, 71 RAM blocks, 15 DSPs, +0.163 ns setup, +0.163 ns hold
+Fresh C6 Fmax is not archived.
+T3/T4/T5 exact final fitter resource counts are not archived.
+
+POWER
+Quartus Power Analyzer values are tool estimates.
+No physical rail/current power measurement is claimed.
+
+PHYSICAL DE10 VALIDATION
+T3: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
+T4: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
+T5: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
+
+FINAL VERDICT
+READY FOR PROFESSOR REVIEW FOR THE DEFINED CONTROLLED PROJECT SCOPE.
+
+DOCUMENTED LIMITATIONS
+1. Physical rail/current power instrumentation is not included.
+2. Exact T3/T4/T5 fitter resource counts are not archived.
+3. Exact fresh C6 Fmax is not archived.
+4. Broader datasets/cross-CNN generalization remain future work.
+5. Executable numerical ablation is not claimed.
