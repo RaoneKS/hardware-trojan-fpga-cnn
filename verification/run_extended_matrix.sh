@@ -50,6 +50,7 @@ while IFS=, read -r cid idx label mem_path; do
   rm -f "${SELECTOR}/cnn_full.vcd"
   done < "${CANDIDATES}"
 
+echo "Healthy screening complete: ${screened} candidates examined."
 for d in 0 1 2 3 4 5 6 7 8 9; do
   [[ "${counts[${d}]}" -eq 5 ]] || { echo "FAIL: only ${counts[${d}]} Healthy-correct samples for class ${d}" >&2; exit 1; }
 done
