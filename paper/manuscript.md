@@ -46,234 +46,147 @@ The controlled payload families are:
 
 The attacker is not assumed to bypass or compromise the runtime monitor itself. This is an important scope boundary: the study evaluates whether the monitor detects the selected controlled implementations, not whether every possible adversarial Trojan can be detected.
 
-## 3. CNN Accelerator
+## III. Related Work and Positioning
 
-The reference accelerator is a compact LeNet-style architecture for 28×28 grayscale MNIST images. The model is quantized to signed INT8 at the hardware interface.
+The literature is grouped into CNN accelerator Trojan attacks, runtime/behavioral detection, Trojan localization, and lightweight accelerator security. Recent representative works include FeSHI [6], CNN resilience studies [7], [14], golden-reference-free localization [8], TrojanSAINT [9], interconnect attacks [11], two-level protection [12], and explainable LUT localization [13].
 
-The computation is represented as
+The project occupies a narrower runtime position: a compact digital monitor is embedded in the accelerator, controlled Trojans are inserted into multiple architectural regions, ten deterministic MNIST workloads are exercised, and selected variants are physically demonstrated on a Cyclone V DE10-Standard. Fine-grained graph/netlist localization and runtime architectural-region localization are complementary objectives rather than directly interchangeable methods.
 
-$$
-Y = operatorname{ArgMax}left(
-f_{mathrm{FC}}left(
-f_{mathrm{Pool2}}left(
-f_{mathrm{Conv2}}left(
-f_{mathrm{Pool1}}left(
-f_{mathrm{Conv1}}(X)
-ight)ight)ight)ight)ight).
-$$
+## IV. Baseline FPGA CNN Accelerator
 
-The major stages are:
-- Conv1: 8 filters with 3×3 kernels;
-- ReLU;
-- Pool1: 2×2 max pooling;
-- Conv2: 16 filters with 3×3×8 kernels;
-- ReLU;
-- Pool2: 2×2 max pooling;
-- FC1: projection to ten class scores;
-- ArgMax: predicted digit 0–9.
+The reference accelerator processes 28x28 grayscale MNIST images using INT8 data. Conv1 uses 8 filters with 3x3 kernels, followed by ReLU and 2x2 max pooling. Conv2 uses 16 filters with 3x3 kernels over eight input channels, followed by ReLU and 2x2 max pooling. A fully connected classifier produces ten class scores followed by ArgMax.
 
-The FPGA implementation uses Intel Cyclone V M10K memories through synchronous read interfaces. The project history contained three latency milestones: 301,854 cycles for an earlier distributed-logic/asynchronous-memory baseline, 346,563 cycles for an intermediate M10K implementation with read-latency hazards, and 634,281 cycles for the verified synchronous-M10K reference. Only the final value is used as the canonical current reference.
+The software reference accuracy is 98.41%. The verified synchronous-M10K Healthy reference requires 634,281 cycles at 50 MHz, or:
 
-## 4. Trojan Campaign
+$T_{inf}=634281\times20\mathrm{ns}=12.68562\mathrm{ms}.$
 
-Five controlled Trojans were inserted around Conv2.
+The fresh C6 Healthy snapshot contains 1,153 ALMs, 912 registers, 71 RAM blocks, 455,104 block-memory bits, and 13 DSP blocks. Worst archived setup and hold slack are +0.181 ns and +0.173 ns.
 
-| Trojan | Region | Controlled payload | Detector region |
+## V. Experimental Inputs and Expected Outputs
+
+Ten deterministic MNIST workloads represent classes 0 through 9. The canonical top-level interface reports predicted class on LEDR[2:0], detector status on LEDR3, and a two-bit regional code on LEDR[5:4].
+
+Healthy uses localization 00. T1 uses 01 for Conv2 PE computation. T2 uses 10 for Conv2 weight/data path. T3, T4 and T5 use shared regional code 11 for interconnect/routing/control.
+
+## VI. Hardware Trojan Experimental Setup
+
+| ID | Target | Controlled payload | Region code |
 |---|---|---|---|
-| T1 | Conv2 PE | invert the selected MAC product sign | 01 |
-| T2 | Conv2 weight memory | flip a selected weight bit | 10 |
-| T3 | Conv2 interconnect | alter a selected activation-bus bit | 11 |
-| T4 | Conv2 routing | redirect a selected source-memory address | 11 |
-| T5 | Conv2 control | inject a one-cycle sequencer stall | 11 |
+| T1 | Conv2 PE | selected MAC product sign inversion | 01 |
+| T2 | Conv2 weight/data path | selected weight bit flip | 10 |
+| T3 | Conv2 interconnect | selected feature-interconnect alteration | 11 |
+| T4 | Conv2 routing | selected source-address/routing alteration | 11 |
+| T5 | Conv2 control | one-cycle control-path stall | 11 |
 
-For T1, the selected corrupted product is
+The injection/build flow is Healthy RTL -> controlled Trojan RTL -> Icarus simulation -> Quartus compile -> SOF -> DE10 programming. The same workload and clock configuration are retained across variants.
 
-$$
-P_{mathrm{corrupt}}=-P=-(A	imes B).
-$$
+For this work, output-stealthy means that the selected Trojan-present run retains the same top-1 class as the corresponding Healthy run while the runtime monitor detects the internal anomaly. This is a workload-scoped definition.
 
-For T2, a selected Conv2 weight operand is modified by a one-bit perturbation. T3 changes one selected activation-interconnect bit. T4 changes the selected spatial source address to an adjacent coordinate. T5 inserts the controlled `T5STALL` wait state.
+## VII. Normal Runtime Signature Characterization
 
-The localization code is intentionally regional rather than Trojan-specific:
-- `00`: healthy/quiescent;
-- `01`: Conv2 arithmetic/PE;
-- `10`: Conv2 weight-memory;
-- `11`: shared interconnect/routing/control region.
+All ten Healthy rows report the expected class, detector 0, localization 00, and 634,281 inference cycles. This establishes controlled signature stability for the selected deterministic workload set. It does not constitute a complete PVT or application-distribution characterization.
 
-Consequently, code `11` cannot distinguish T3 from T4 or T5.
+## VIII. Proposed Lightweight Multi-Signature Anomaly Detection
 
-## 5. Runtime Detection Architecture
+The detector observes selected architectural invariants and trigger-state information near the controlled Trojan regions. It latches a detector bit and a corresponding regional code when the selected anomaly occurs.
 
-The monitor observes selected architectural invariants and latches a detector flag when an unexpected event is observed. The detector output is exposed on `LEDR[3]`. The 2-bit localization code is exposed on `LEDR[5:4]`, while `LEDR[2:0]` reports the predicted class.
+The runtime procedure is: start inference, monitor the selected event, latch detection, expose the region code, and complete inference. The monitor is integrated in RTL and does not require an external software classification oracle during runtime.
 
-The overall interface is therefore
+## IX. Trojan Localization
 
-$$
-mathrm{LEDR}[5:4] parallel mathrm{LEDR}[3] parallel mathrm{LEDR}[2:0]
-=
-mathrm{localization}parallelmathrm{detected}parallelmathrm{class}.
-$$
+The localization map is:
 
-This compact interface makes the detector observable both in simulation and on the physical DE10-Standard without requiring an external software monitor.
+- 00: Healthy;
+- 01: Conv2 PE computation;
+- 10: Conv2 weight/data path;
+- 11: shared interconnect/routing/control.
 
-The design goal is lightweight runtime checking rather than a full side-channel measurement system. Side-channel techniques can detect subtle changes in power, timing, or electromagnetic behavior, but they require careful treatment of PVT variation and measurement noise [3]. The proposed design instead checks internal digital behavior directly.
+The 11 code intentionally does not distinguish T3 from T4 or T5. In the committed simulation matrix, T1 is correct on 10/10 rows, T2 on 10/10, and T3-T5 on 30/30, giving 50/50 = 100% regional localization accuracy.
 
-## 6. Experimental Methodology
+## X. Results and Discussion
 
-### 6.1 Simulation
+### A. Detection performance
 
-Cycle-accurate simulation is performed with Icarus Verilog. The canonical workload manifest contains ten deterministic MNIST workloads corresponding to digits 0 through 9. Each workload is evaluated on six targets:
+The 60 simulation rows contain 10 Healthy and 50 Trojan cases. The resulting counts are TP=50, TN=10, FP=0, FN=0. Therefore TPR/recall = 100%, FPR = 0%, precision = 100%, and F1 = 1.000. These values apply only to the committed controlled matrix.
 
-$$
-10;mathrm{workloads}	imes6;mathrm{targets}=60;mathrm{simulation rows}.
-$$
+### B. Detection latency
 
-The Healthy target supplies ten negative cases; T1–T5 supply fifty positive cases. The repository stores the complete ledger in `verification/results/runs.csv`.
+T1-T4 detect at 149,136 cycles = 2.98272 ms at 50 MHz. T5 detects at 149,135 cycles = 2.98270 ms. The committed ten-workload matrix shows the same latency for every row of a given Trojan class.
 
-### 6.2 FPGA implementation
+### C. CNN functional impact
 
-Intel Quartus Prime Lite 25.1 targets the DE10-Standard Cyclone V SoC FPGA, device 5CSXFC6D6F31C6. The current canonical resource ledger contains exact fresh-C6 values for Healthy, T1 and T2. Exact final fitter resource counts for T3–T5 are not retained and are therefore not inferred.
+All 50 Trojan-present rows retain the expected top-1 class. This demonstrates output-stealthy behavior for the selected controlled cases and does not prove universal stealthiness.
 
-### 6.3 Physical validation
+### D. Hardware resource evidence
 
-T3, T4 and T5 were programmed through the DE10-Standard JTAG chain. Each programming operation completed with zero programming errors and zero warnings. The board-output observation for all three cases was:
-- predicted class = 7;
-- detector = asserted;
-- localization = `11`;
-- LEDR0–LEDR5 = ON.
-
-These observations establish physical board-level observability for the three tested Trojan bitstreams, but they are not equivalent to a physical power measurement.
-
-### 6.4 Power
-
-Quartus Power Analyzer estimates are retained as implementation-estimation evidence. They are not physical rail/current measurements and are not used to claim experimentally measured power overhead.
-
-## 7. Results
-
-### 7.1 Detection metrics
-
-The committed 60-row ledger contains:
-- 10 Healthy rows;
-- 50 Trojan rows;
-- TP = 50;
-- TN = 10;
-- FP = 0;
-- FN = 0.
-
-Therefore,
-
-$$
-mathrm{TPR}=rac{TP}{TP+FN}=1.0,
-$$
-
-$$
-mathrm{FPR}=rac{FP}{FP+TN}=0.0,
-$$
-
-$$
-mathrm{Precision}=rac{TP}{TP+FP}=1.0,
-$$
-
-and
-
-$$
-F_1=2rac{mathrm{Precision}cdotmathrm{Recall}}
-{mathrm{Precision}+mathrm{Recall}}=1.0.
-$$
-
-These values describe the evaluated simulation matrix only.
-
-### 7.2 Localization
-
-T1 is localized to region `01` for all ten workloads, T2 to region `10` for all ten workloads, and T3–T5 to region `11` for all thirty corresponding rows. Thus regional localization accuracy is 50/50 = 100% for the Trojan rows in the simulation ledger.
-
-The corresponding confusion matrix at the **regional** resolution is:
-
-| True region | Pred. 01 | Pred. 10 | Pred. 11 |
-|---|---:|---:|---:|
-| PE (T1) | 10 | 0 | 0 |
-| Weight memory (T2) | 0 | 10 | 0 |
-| Shared interconnect/routing/control (T3–T5) | 0 | 0 | 30 |
-
-The matrix must not be interpreted as exact T3/T4/T5 identification.
-
-### 7.3 Latency
-
-At 50 MHz, one clock cycle is 20 ns. The deterministic reference results are:
-
-| Target | Inference cycles | Detection latency | Detection latency |
-|---|---:|---:|---:|
-| T1 | 634,281 | 149,136 cycles | 2.98272 ms |
-| T2 | 634,281 | 149,136 cycles | 2.98272 ms |
-| T3 | 634,281 | 149,136 cycles | 2.98272 ms |
-| T4 | 634,281 | 149,136 cycles | 2.98272 ms |
-| T5 | 634,282 | 149,135 cycles | 2.98270 ms |
-
-The detection event occurs at approximately 23.51% of the total inference-cycle budget for T1–T4.
-
-### 7.4 FPGA resource evidence
-
-| Target | ALMs | Registers | M10K/RAM blocks | DSP blocks | Setup slack | Hold slack |
+| Target | ALMs | Registers | RAM | DSP | Setup slack | Hold slack |
 |---|---:|---:|---:|---:|---:|---:|
-| Healthy | 1,153 | 912 | 71 | 13 | +0.181 ns | +0.173 ns |
-| T1 | 1,170 | 918 | 71 | 13 | +0.141 ns | +0.141 ns |
-| T2 | 1,192 | 919 | 71 | 15 | +0.163 ns | +0.163 ns |
-| T3 | Not archived | Not archived | Not archived | Not archived | +4.447 ns* | +0.159 ns* |
-| T4 | Not archived | Not archived | Not archived | Not archived | +5.581 ns* | +0.105 ns* |
-| T5 | Not archived | Not archived | Not archived | Not archived | +4.648 ns* | +0.134 ns* |
+| Healthy | 1153 | 912 | 71 | 13 | +0.181 ns | +0.173 ns |
+| T1 | 1170 | 918 | 71 | 13 | +0.141 ns | +0.141 ns |
+| T2 | 1192 | 919 | 71 | 15 | +0.163 ns | +0.163 ns |
 
-* Historical timing evidence retained in the repository; exact final fitter resource counts are not archived for these variants.
+Exact final T3-T5 fitter counts and exact fresh-C6 Fmax are not archived and are not inferred.
 
-The fresh C6 Healthy/T1/T2 evidence shows positive setup and hold slack and confirms implementation on the corrected C6 device.
+### E. Power estimates
 
-### 7.5 Power estimates
+Quartus Power Analyzer estimates are Healthy 463.79 mW, T1 465.51 mW, T2 466.28 mW, T3 467.17 mW, T4 464.75 mW, and T5 464.27 mW. These are tool estimates, not physical rail/current measurements.
 
-Quartus Power Analyzer estimates are:
+### F. Ablation and security-overhead trade-off
 
-| Target | Total thermal dissipation |
-|---|---:|
-| Healthy | 463.79 mW |
-| T1 | 465.51 mW |
-| T2 | 466.28 mW |
-| T3 | 467.17 mW |
-| T4 | 464.75 mW |
-| T5 | 464.27 mW |
+A numerical ablation is not claimed because independent no-monitor, PE-only, memory-only and full-monitor builds with raw logs were not archived. Likewise, no trigger-probability or payload-severity sweep was performed. These are explicitly treated as future experiments rather than invented results.
 
-These numbers are explicitly **tool estimates**, not physical measurements.
+## XI. Robustness, Stealthiness, and Generalization
 
-## 8. Discussion
+The ten Healthy rows produce zero detector assertions, and the 50 Trojan rows produce 50 detections. This supports cross-workload invariance for the selected deterministic MNIST set. Only one compact CNN is evaluated, so cross-CNN generalization remains future work.
 
-The experiment demonstrates three useful properties. First, the selected Trojans can be detected without relying on a changed top-1 classification for the evaluated workloads. Second, the detector provides more actionable information than a binary alarm by identifying the affected architectural region. Third, the same detector outputs can be observed on the FPGA board for T3–T5.
+## XII. Cross-Layer Security Analysis
 
-The main scientific strength of the work is reproducibility and evidence separation. Simulation metrics are derived from a committed 60-row ledger; FPGA resource figures are taken only from retained implementation evidence; physical claims are limited to observations actually made on the DE10-Standard; and tool-estimated power is not presented as measured power.
+Each controlled Trojan maps from a defined architectural region to a detector event and regional code. The important cross-layer observation is that detection occurs while the selected Trojan-present runs retain the expected CNN class. This demonstrates that runtime internal monitoring can expose a selected anomaly before output-level misclassification is required.
 
-The 100% simulation detection rate should therefore be interpreted as **100% on the selected controlled campaign**, not as proof that the architecture detects arbitrary future Trojans. This distinction is important because prior Trojan research demonstrates a broad design space of trigger conditions and payload mechanisms [1], [2].
+## XIII. Comparison With State of the Art
 
-## 9. Limitations
+| Work | Main objective | Resolution | Runtime FPGA CNN | Physical validation |
+|---|---|---|---|---|
+| Clements & Lao | CNN Trojan attack | Architecture-dependent | No | No |
+| Odetola et al. | Stealthy CNN Trojan attack | Feature-map level | PYNQ | Yes |
+| Yasaei et al. | Golden-reference-free localization | RTL node | No | No |
+| TrojanSAINT | Detection + localization | Gate level | No | No |
+| Hou et al. | CNN interconnect attack + PUF defense | Interconnect | Yes | Yes |
+| Su et al. | Explainable LUT localization | LUT/node | No | No |
+| This work | Runtime detection + regional localization | 3 architectural regions | Yes | T3-T5 |
 
-1. Physical rail/current power instrumentation was not performed.
-2. Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not retained.
-3. Exact fresh-C6 Fmax is not archived.
-4. The evaluated model is an INT8 LeNet-style MNIST accelerator.
-5. The ten workloads are deterministic selected cases rather than a statistically comprehensive dataset evaluation.
-6. The detector was evaluated against five controlled Trojan implementations and does not establish universal Trojan detection.
-7. Localization code `11` is shared by T3, T4 and T5.
-8. A numerical executable ablation study is not claimed; the repository documents design rationale separately.
+This comparison is by objective and evidence layer, not a universal performance ranking.
 
-## 10. Conclusion
+## XIV. Reproducibility
 
-This work presents and evaluates a runtime Hardware Trojan detection and regional localization framework for an INT8 FPGA-CNN accelerator. Five controlled Trojan families were implemented across arithmetic, memory, interconnect, routing and control regions. The canonical 60-row simulation campaign produced 100% TPR/recall, 0% FPR, 100% precision and F1=1.000 for the evaluated cases, with 100% regional localization accuracy at the defined three-region resolution. Fresh C6 implementation evidence is available for the Healthy, T1 and T2 configurations, while physical DE10-Standard programming and board-output observations were completed for T3, T4 and T5.
+Canonical simulation:
 
-The work is therefore suitable as a controlled FPGA/AI hardware-security research prototype and course-project submission. Future work should add physical current/voltage instrumentation, archive complete fitter reports for every Trojan variant, perform executable ablation studies, and evaluate broader CNNs and datasets.
+~~~bash
+cd ~/hardware-trojan-fpga-cnn
+chmod +x verification/run_full_matrix.sh
+./verification/run_full_matrix.sh
+~~~
+
+The repository contains the workload manifest, 60-row simulation ledger, RTL/testbenches, Quartus projects, physical validation record, paper tables/figures, and professor submission scripts.
+
+## XV. Limitations and Threats to Validity
+
+1. The 60-row matrix is controlled simulation, not 60 independent physical measurements.
+2. Physical rail/current power was not measured.
+3. Quartus Power Analyzer values are estimates.
+4. Exact final T3-T5 fitter counts and fresh C6 Fmax are not archived.
+5. T3-T5 share localization code 11.
+6. Only one compact MNIST CNN is evaluated.
+7. No executable numerical ablation study was independently archived.
+8. No trigger-probability or payload-severity sweep was performed.
+9. The monitor itself is outside the attacker-compromise model.
+
+## XVI. Conclusion and Future Perspective
+
+A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. T3, T4 and T5 were physically programmed and validated on the DE10-Standard.
+
+The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, parameterized stealthiness sweeps, executable ablation variants, additional CNNs, broader datasets, and finer localization.
 
 ## References
 
-[1] R. S. Chakraborty, S. Narasimhan, and S. Bhunia, “Hardware Trojan: Threats and emerging solutions,” in *Proc. IEEE International High Level Design Validation and Test Workshop*, pp. 166–171, 2009, doi: 10.1109/HLDVT.2009.5340158.
-
-[2] J. Clements and Y. Lao, “Hardware Trojan attacks on neural networks,” arXiv:1806.05768, 2018.
-
-[3] S. Mittal, H. Gupta, and S. Srivastava, “A survey on hardware security of DNN models and accelerators,” *Journal of Systems Architecture*, vol. 117, Art. no. 102163, 2021, doi: 10.1016/j.sysarc.2021.102163.
-
-[4] R. Elnaggar, K. Chakrabarty, and M. B. Tahoori, “Hardware Trojan detection using changepoint-based anomaly detection techniques,” *IEEE Trans. Very Large Scale Integr. Syst.*, vol. 27, no. 12, pp. 2706–2719, 2019, doi: 10.1109/TVLSI.2019.2925807.
-
-[5] B. J. Mohd, S. Abed, T. Hayajneh, and M. H. Alshayeji, “Run-Time Monitoring and Validation Using Reverse Function (RMVRF) for Hardware Trojans Detection,” *IEEE Trans. Dependable Secure Comput.*, vol. 18, no. 6, pp. 2689–2704, 2021, doi: 10.1109/TDSC.2019.2961902.
+See `paper/references/references.bib` for the expanded source-checked bibliography.
