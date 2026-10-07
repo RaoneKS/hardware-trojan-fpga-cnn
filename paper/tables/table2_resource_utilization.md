@@ -1,6 +1,6 @@
 # Table 2: Cyclone V FPGA Resource and Timing Evidence
 
-Target device: Intel Cyclone V 5CSXFC6D6F31C6/5CSXFC6D6F31I7 family as used by the repository projects.
+Final physical target: Intel Cyclone V SoC 5CSXFC6D6F31C6 (DE10-Standard). Some legacy project files target the I7 variant; those are not the final physical target.
 
 **Evidence policy:** only values present in the canonical repository evidence ledger are published here. Exact T3–T5 final fitter resource counts are intentionally shown as unavailable rather than inferred from stale or synthesis-only artifacts.
 
@@ -13,4 +13,4 @@ Target device: Intel Cyclone V 5CSXFC6D6F31C6/5CSXFC6D6F31I7 family as used by t
 | T4 | **Not archived** | **Not archived** | **Not archived** | **Not archived** | +5.581 | +0.105 |
 | T5 | **Not archived** | **Not archived** | **Not archived** | **Not archived** | +4.648 | +0.134 |
 
-The positive timing slacks demonstrate timing closure in the archived Quartus runs. The resource table is deliberately conservative: older paper tables contained conflicting resource snapshots and are superseded by `verification/results/hardware_resources.csv`.
+The positive timing slacks demonstrate timing closure in the archived Quartus runs. Healthy/T1/T2 resource snapshots are archived implementation evidence; rebuild on C6 before treating them as final-device resource measurements. The resource table is deliberately conservative: older paper tables contained conflicting resource snapshots and are superseded by `verification/results/hardware_resources.csv`.
