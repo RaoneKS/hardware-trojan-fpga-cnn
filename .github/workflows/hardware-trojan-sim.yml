@@ -27,10 +27,6 @@ jobs:
         with:
           name: hardware-trojan-simulation-evidence
           path: |
-            verification/results/*_simulation.log
-            verification/results/*_simulation_summary.csv
-            verification/results/*_activity.csv
-            verification/results/*_activity_summary.txt
-            verification/results/simulation_summary.csv
-            verification/results/multiworkload/*
-          if-no-files-found: ignore
+            verification/results/full_matrix/**
+            verification/results/runs.csv
+            verification/results/METRICS_SUMMARY.md
