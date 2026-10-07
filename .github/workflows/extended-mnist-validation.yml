@@ -1,5 +1,4 @@
 name: Extended MNIST validation
-
 on:
   workflow_dispatch:
   push:
@@ -21,14 +20,17 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Icarus Verilog
         run: sudo apt-get update && sudo apt-get install -y iverilog
-      - name: Run 50-input x 6-target regression
+      - name: Run held-out 50-input x 6-target regression
         run: |
           chmod +x verification/run_extended_matrix.sh
           ./verification/run_extended_matrix.sh
       - name: Publish extended evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: extended-mnist-validation
           path: |
             verification/results/extended_runs.csv
             verification/results/EXTENDED_MATRIX_REPORT.md
+            verification/results/extended_workloads/extended_manifest.csv
+            verification/results/extended_workloads/extended_selection.csv
