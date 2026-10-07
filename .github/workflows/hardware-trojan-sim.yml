@@ -16,26 +16,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y iverilog
 
-      - name: Run healthy baseline regression
+      - name: Run full 10-workload x 6-target regression
         run: |
-          chmod +x verification/run_healthy.sh verification/run_all.sh
-          ./verification/run_healthy.sh
-
-      - name: Analyze healthy switching activity
-        run: |
-          python3 verification/analyze_vcd_activity.py \
-            verification/results/healthy.vcd \
-            verification/results/healthy_activity.csv \
-            | tee verification/results/healthy_activity_summary.txt
-
-      - name: Run deterministic multi-workload simulation
-        run: |
-          chmod +x verification/run_multiworkload.sh
-          ./verification/run_multiworkload.sh
-
-      - name: Run controlled Trojan simulations
-        run: |
-          ./verification/run_all.sh
+          chmod +x verification/run_full_matrix.sh
+          ./verification/run_full_matrix.sh
 
       - name: Publish simulation evidence
         if: always()
