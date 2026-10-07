@@ -1,104 +1,189 @@
-# Lightweight Runtime Detection and Localization of Hardware Trojans in FPGA-CNNs
+# Hardware Trojan Detection in FPGA-CNNs
 
-This repository contains an INT8 FPGA-CNN baseline and five controlled Hardware Trojan variants for runtime detection and regional localization.
+<p align="center"><strong>Runtime detection and regional localization of controlled Hardware Trojans in an INT8 FPGA-CNN</strong></p>
+
+<p align="center"><a href="https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/workflows/hardware-trojan-sim.yml"><img src="https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/workflows/hardware-trojan-sim.yml/badge.svg" alt="Simulation CI"></a> <img src="https://img.shields.io/badge/FPGA-Cyclone%20V-blue" alt="FPGA"> <img src="https://img.shields.io/badge/Board-DE10--Standard-informational" alt="Board"> <img src="https://img.shields.io/badge/CNN-INT8-success" alt="INT8"> <img src="https://img.shields.io/badge/Workloads-MNIST-orange" alt="MNIST"> <img src="https://img.shields.io/badge/Status-Research%20Prototype-purple" alt="Status"></p>
+
+## Overview
+
+This repository presents a reproducible study of **runtime detection and regional localization of controlled Hardware Trojans in an FPGA-based CNN**.
+
+The project combines an INT8 CNN, five controlled Trojan variants, ten deterministic MNIST workloads, RTL simulation, Quartus implementation evidence, and physical DE10-Standard board validation.
+
+> **Research scope:** the reported 100% detection / 0% false-positive result applies to the committed 60-case controlled simulation matrix. It is not a claim of universal Hardware Trojan detection.
+
+## Research question
+
+> Can lightweight runtime signatures identify and regionally localize controlled Hardware Trojan perturbations in an FPGA-CNN while preserving the intended CNN classification output?
+
+## System architecture
+
+~~~text
+MNIST → INT8 CNN → Runtime detector → CNN class + Trojan status + regional code
+             │
+             ├─ Conv1 → ReLU → Pool
+             ├─ Conv2 → ReLU → Pool
+             └─ FC → Argmax
+~~~
+
+### Localization map
+
+| Code | Region | Interpretation |
+|---|---|---|
+| 00 | Healthy | No Trojan detected |
+| 01 | Conv2 PE | T1 region |
+| 10 | Conv2 weight/data path | T2 region |
+| 11 | Shared routing/control | T3/T4/T5 region |
+
+Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and T5.
 
 ## Platform
-- Terasic DE10-Standard
-- Intel Cyclone V SoC FPGA: 5CSXFC6D6F31C6
-- 50 MHz experiment clock
-- Intel Quartus Prime Lite 25.1
 
-## CNN workload
-MNIST -> Conv1 -> ReLU -> MaxPool -> Conv2 -> ReLU -> MaxPool -> FC -> Argmax
+| Item | Configuration |
+|---|---|
+| Board | Terasic DE10-Standard |
+| FPGA | Intel Cyclone V SoC |
+| Device | <code>5CSXFC6D6F31C6</code> |
+| Clock | 50 MHz |
+| Toolchain | Intel Quartus Prime Lite 25.1 |
+| RTL simulation | Icarus Verilog 12.0 |
+| Dataset | MNIST |
+| CNN precision | INT8 |
 
-## Security experiments
-- T1: Conv2 PE computation corruption
-- T2: Conv2 weight/data-path corruption
-- T3: Conv2 interconnect data-path alteration
-- T4: Conv2 selective source-routing alteration
-- T5: Conv2 control-path stall
+## Trojan campaign
 
-## Current evidence status
+| ID | Target region | Controlled perturbation |
+|---|---|---|
+| T1 | Conv2 PE | Computation corruption |
+| T2 | Conv2 weight/data path | Weight/data corruption |
+| T3 | Conv2 interconnect | Feature-interconnect alteration |
+| T4 | Conv2 routing | Selective source-routing alteration |
+| T5 | Conv2 control | One-cycle control-path stall |
 
-### Simulation
-The canonical reproducible regression is `verification/run_full_matrix.sh`.
+## Results
 
-The committed `verification/results/runs.csv` contains 60 PASS rows:
-- 10 healthy cases
-- 50 Trojan cases
-- TP=50, TN=10, FP=0, FN=0
-- TPR=100%, FPR=0%, Precision=100%, F1=1.000
-- regional localization correct for all evaluated Trojan rows
+### 60-case simulation matrix
 
-These statistics are scoped to the committed simulation regression ledger and are not universal Trojan-detection performance.
+10 MNIST workloads × 6 targets = **60 controlled simulation cases**.
 
-### Fresh C6 FPGA implementation evidence
-The canonical resource ledger was refreshed after rebuilding the Healthy/T1/T2 Quartus projects for device `5CSXFC6D6F31C6`:
+| Metric | Result |
+|---|---:|
+| True positives | 50 |
+| True negatives | 10 |
+| False positives | 0 |
+| False negatives | 0 |
+| TPR / Recall | **100%** |
+| FPR | **0%** |
+| Precision | **100%** |
+| F1 | **1.000** |
 
-| Target | ALMs | Registers | Block memory bits | RAM blocks | DSP blocks | Worst setup slack (ns) | Worst hold slack (ns) | Fmax |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| Healthy | 1153 | 912 | 455104 | 71 | 13 | +0.181 | +0.173 | not archived |
-| T1 | 1170 | 918 | 455104 | 71 | 13 | +0.141 | +0.141 | not archived |
-| T2 | 1192 | 919 | 455104 | 71 | 15 | +0.163 | +0.163 | not archived |
-| T3 | — | — | — | — | — | historical evidence only | historical evidence only | — |
-| T4 | — | — | — | — | — | historical evidence only | historical evidence only | — |
-| T5 | — | — | — | — | — | historical evidence only | historical evidence only | — |
+Regional localization was correct for all 50 evaluated Trojan rows at the defined regional-code level.
 
-The Healthy/T1/T2 values above are the fresh C6 evidence currently archived in `verification/results/hardware_resources.csv`. Exact final fitter counts for T3–T5 are not archived and are deliberately not inferred.
+### Latency
 
-Fmax is left blank because an exact fresh C6 Fmax value is not archived in the repository evidence. No Fmax number is fabricated.
+| Target | Inference | Detection latency |
+|---|---:|---:|
+| Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T4: 149,136 cycles / 2.98272 ms |
+| T5 | 634,282 cycles / 12.68564 ms | 149,135 cycles / 2.98270 ms |
 
-### Canonical latency
-At 50 MHz:
-- Healthy/T1/T2/T3/T4: 634,281 cycles = 12.68562 ms
-- T5: 634,282 cycles = 12.68564 ms
-- T1–T4 detection latency: 149,136 cycles = 2.98272 ms
-- T5 detection latency: 149,135 cycles = 2.98270 ms
+### Fresh C6 implementation evidence
 
-### Power
-Quartus Power Analyzer values are **tool estimates**, not physical rail/current measurements. VCD switching analysis is an activity proxy.
+| Target | ALMs | Registers | RAM blocks | DSPs | Setup slack | Hold slack |
+|---|---:|---:|---:|---:|---:|---:|
+| Healthy | 1,153 | 912 | 71 | 13 | +0.181 ns | +0.173 ns |
+| T1 | 1,170 | 918 | 71 | 13 | +0.141 ns | +0.141 ns |
+| T2 | 1,192 | 919 | 71 | 15 | +0.163 ns | +0.163 ns |
 
-### Physical board validation
-T3, T4, and T5 were programmed successfully on the DE10-Standard and observed at board-output level. For each:
-- LEDR0–LEDR5 were all ON
-- `LEDR[2:0] = 111` -> class 7
-- `LEDR3 = 1` -> detector asserted
-- `LEDR[5:4] = 11` -> regional localization code 11
+Block memory bits for Healthy/T1/T2: **455,104**.
 
-The detailed record is in `docs/PHYSICAL_BOARD_VALIDATION.md`.
+Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact final fitter resource counts for T3/T4/T5 are also not inferred.
+
+## Physical DE10-Standard validation
+
+T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain.
+
+- 0 programming errors / 0 warnings
+- LEDR0–LEDR5 observed ON
+- <code>LEDR[2:0] = 111</code> → class 7
+- <code>LEDR3 = 1</code> → detector asserted
+- <code>LEDR[5:4] = 11</code> → regional code 11
+
+[Detailed physical validation](docs/PHYSICAL_BOARD_VALIDATION.md)
+
+## Power evidence
+
+Quartus Power Analyzer values and VCD activity evidence are **tool/activity estimates**. No physical rail/current power measurement is claimed.
 
 ## Reproducibility
 
-```bash
+### Canonical simulation
+
+~~~bash
 cd ~/hardware-trojan-fpga-cnn
 chmod +x verification/run_full_matrix.sh
 ./verification/run_full_matrix.sh
-```
+~~~
 
-For the fresh C6 Healthy/T1/T2 rebuild:
+### Fresh C6 rebuild
 
-```bash
+~~~bash
+cd ~/hardware-trojan-fpga-cnn
 bash scripts/rebuild_c6_quartus.sh
-```
+~~~
 
-## Key documents
-- `docs/FINAL_COMPLETION_STATUS.md`
-- `docs/PROFESSOR_REQUIREMENTS_AUDIT.md`
-- `docs/PHYSICAL_BOARD_VALIDATION.md`
-- `docs/BASELINE_RECONCILIATION.md`
-- `docs/CROSS_WORKLOAD_RESULTS.md`
-- `docs/ABLATION_RESULTS.md`
-- `paper/manuscript.md`
-- `verification/results/runs.csv`
-- `verification/results/hardware_resources.csv`
+### Professor package
 
-## Scientific boundary
+~~~bash
+cd ~/hardware-trojan-fpga-cnn
+bash professor_submission/build_submission_zip.sh
+~~~
 
-This project demonstrates runtime detection/localization for the selected T1–T5 controlled Trojan implementations.
+## Repository structure
 
-Do not describe:
-- the 60 simulation rows as 60 physical measurements;
-- Quartus power estimates as physical power measurements;
-- localization code `11` as exact identification of T3, T4, and T5;
-- classification invariance on the selected workloads as universal stealthiness;
-- missing T3–T5 fitter values as measured numbers.
+~~~text
+hardware-trojan-fpga-cnn/
+├── cnn_baseline/                  # Clean/reference CNN
+├── cnn_full_small/                # Main CNN implementation
+├── trojan_T1/ … trojan_T5/        # Controlled Trojan variants
+├── verification/                  # Canonical regression + evidence
+├── scripts/                       # Build/programming utilities
+├── docs/                          # Methodology and validation
+├── paper/                         # Manuscript, tables and figures
+├── professor_submission/          # Professor-facing evidence package
+└── .github/workflows/             # Automated RTL regression
+~~~
+
+## Documentation
+
+- [Final completion status](docs/FINAL_COMPLETION_STATUS.md)
+- [Professor requirements audit](docs/PROFESSOR_REQUIREMENTS_AUDIT.md)
+- [Physical board validation](docs/PHYSICAL_BOARD_VALIDATION.md)
+- [Paper results ledger](docs/PAPER_RESULTS.md)
+- [Experiment matrix](docs/EXPERIMENT_MATRIX.md)
+- [Baseline reconciliation](docs/BASELINE_RECONCILIATION.md)
+- [Cross-workload results](docs/CROSS_WORKLOAD_RESULTS.md)
+- [Ablation results](docs/ABLATION_RESULTS.md)
+- [Power measurement protocol](docs/POWER_MEASUREMENT_PROTOCOL.md)
+- [Paper manuscript](paper/manuscript.md)
+- [Final evidence summary](professor_submission/FINAL_EVIDENCE_SUMMARY.txt)
+
+## Scientific limitations
+
+1. The 60-row experiment is a controlled simulation regression, not 60 physical measurements.
+2. Physical rail/current power measurement is not included.
+3. Quartus Power Analyzer values are tool estimates.
+4. T3/T4/T5 share localization code 11.
+5. Exact fresh C6 Fmax is not archived.
+6. Exact final fitter resource counts for T3/T4/T5 are not archived.
+7. Broader datasets and cross-CNN generalization remain future work.
+8. Numerical ablation is not claimed unless independently reproducible.
+
+## Project status
+
+**Research prototype — complete for the defined controlled course/research scope.**
+
+## Author
+
+**Jeevan K S**  
+B.Tech — Electronics and Communication Engineering  
+IIIT Dharwad
