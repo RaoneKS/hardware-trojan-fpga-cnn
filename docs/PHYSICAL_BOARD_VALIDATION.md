@@ -1,4 +1,4 @@
-# Physical DE10-Standard Board Validation — T3/T4/T5
+# Physical DE10-Standard Board Validation — T1/T2/T3/T4/T5
 
 Validation date: 2026-10-07  
 Board: Terasic DE10-Standard  
@@ -66,7 +66,7 @@ Interpretation:
 
 ## Evidence boundary
 
-These are direct board-output observations recorded during manual DE10-Standard validation. They establish physical output behavior for the selected T3/T4/T5 bitstreams.
+These are direct board-output observations recorded during manual DE10-Standard validation. They establish physical output behavior for the selected T1/T2/T3/T4/T5 bitstreams.
 
 They do not constitute physical power/current measurements. They also do not imply that localization code `11` can distinguish T3 from T4 or T5; all three share the same regional code by design.
 
