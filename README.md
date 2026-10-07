@@ -165,6 +165,7 @@ hardware-trojan-fpga-cnn/
 - [Ablation results](docs/ABLATION_RESULTS.md)
 - [Power measurement protocol](docs/POWER_MEASUREMENT_PROTOCOL.md)
 - [Paper manuscript](paper/manuscript.md)
+- [Related work and positioning](docs/RELATED_WORK.md)
 - [Final evidence summary](professor_submission/FINAL_EVIDENCE_SUMMARY.txt)
 
 ## Scientific limitations
@@ -180,7 +181,7 @@ hardware-trojan-fpga-cnn/
 
 ## Project status
 
-**Research prototype — complete for the defined controlled course/research scope.**
+**Research prototype — complete and submission-ready for the defined controlled course/research scope.**
 
 ## Author
 
