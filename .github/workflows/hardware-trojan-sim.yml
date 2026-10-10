@@ -43,13 +43,13 @@ jobs:
           name: hardware-trojan-professor-submission
           path: Hardware_Trojan_FPGA_CNN_Professor_Submission.zip
 
-      - name: Publish simulation evidence
+      - name: Publish compact simulation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hardware-trojan-simulation-evidence
           path: |
-            verification/results/full_matrix/**
+            verification/results/full_matrix/**/simulation.log
             verification/results/runs.csv
             verification/results/METRICS_SUMMARY.md
             verification/results/ablation_summary.csv
