@@ -8,7 +8,7 @@ This audit is intentionally conservative. A requirement is DONE only when the re
 | 2 | INT8/quantized CNN | DONE | `cnn_baseline/data/`, quantization scripts | None |
 | 3 | Verified CNN inference | DONE | `cnn_full_small/tb/`, golden simulation evidence | None |
 | 4 | T1–T5 controlled Trojans | DONE | `trojan_T1/` … `trojan_T5/` | None |
-| 5 | Healthy + T1–T5 matched evaluation | DONE (simulation scope) | `verification/results/runs.csv`: 10 workloads × 6 targets | None |
+| 5 | Healthy + T1–T5 matched evaluation | DONE (simulation scope) | Canonical `runs.csv`: 10 workloads × 6 targets; separate held-out CI artifact: 50 Healthy-correct images × 6 targets = 300 rows | None for current same-CNN scope |
 | 6 | Timing/latency evidence | DONE | Fresh C6 Healthy/T1/T2 snapshot plus canonical simulation ledger | Exact fresh C6 Fmax is not archived |
 | 7 | Power/activity evidence | PARTIAL | Quartus Power Analyzer estimates; VCD activity proxy | Physical rail measurement is not included |
 | 8 | Trojan detection | DONE | Simulation matrix plus physical T1–T5 board observations | None for selected T1–T5 scope |
@@ -16,7 +16,7 @@ This audit is intentionally conservative. A requirement is DONE only when the re
 | 10 | Multiple MNIST workloads | DONE | `verification/workloads/workload_manifest.csv`, `runs.csv` | None |
 | 11 | TPR/FPR/Precision/F1 | DONE (simulation scope) | Metrics derived from committed 60-row ledger | Do not generalize beyond evaluated cases |
 | 12 | Localization accuracy/confusion matrix | DONE (simulation scope) | Metrics derived from `runs.csv` | Do not generalize beyond evaluated cases |
-| 13 | Cross-workload robustness | DONE (simulation scope) | Ten workload classes in canonical matrix | Broader datasets remain future work |
+| 13 | Cross-workload robustness | DONE (same-CNN simulation scope) | Ten canonical class representatives plus 50 held-out Healthy-correct images (five per class) in a separate 300-row CI run | Inputs are Healthy-screened; cross-CNN and physical robustness remain future work |
 | 14 | Resource utilization | PARTIAL | `verification/results/hardware_resources.csv` | Exact T3–T5 fitter counts and fresh C6 Fmax are not archived |
 | 15 | Paper-quality tables/figures | DONE for current evidence | `paper/tables/`, `paper/figures/` | None for current evidence |
 | 16 | Healthy latency discrepancy | DONE | `docs/BASELINE_RECONCILIATION.md` | None |
@@ -34,14 +34,14 @@ T3/T4/T5 exact final fitter counts are not archived and are not inferred.
 
 ## Statistical scope
 
-The 60-row ledger is:
+The canonical 60-row ledger is:
 - 10 workloads × 6 architectures
 - 10 healthy rows
 - 50 Trojan rows
 - TP=50, TN=10, FP=0, FN=0
 - TPR=100%, FPR=0%, Precision=100%, Recall=100%, F1=1.000
 
-These metrics are valid for the committed simulation regression only.
+These metrics are valid for the canonical committed simulation regression only. A separate 300-row held-out same-CNN CI run reports TP=250, TN=50, FP=0, FN=0 after screening for Healthy-correct inputs; its conditional scope is documented in `docs/EXTENDED_HELDOUT_RESULTS.md`.
 
 ## Physical status
 
