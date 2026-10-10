@@ -76,4 +76,7 @@ Operating Clock: 50 MHz ($\tau = 20.0\text{ ns}$).
 
 
 ## Evidence provenance note
-The metrics in this file are calculations from `verification/results/runs.csv`. The repository does not archive a distinct raw simulator log for every row, so these values must be presented as simulation-ledger results rather than independently archived physical measurements.
+The metrics in this file are calculations from `verification/results/runs.csv`. The repository does not archive a distinct raw simulator log for every canonical row, so these values must be presented as simulation-ledger results rather than independently archived physical measurements.
+
+## Separate held-out same-CNN evaluation
+A separate successful GitHub Actions run evaluated 50 held-out MNIST images (five per class) after screening with the Healthy baseline, across Healthy and T1–T5 (300 rows). It reported TP=250, TN=50, FP=0, FN=0; TPR=100%, FPR=0%, precision=100%, F1=1.000, 250/250 regional-localization matches, and expected-class preservation for all selected cases. Because inputs misclassified by Healthy were excluded, the FPR is conditional on this Healthy-correct sample selection. This matrix is separate from the canonical `runs.csv` ledger and is documented in `docs/EXTENDED_HELDOUT_RESULTS.md`; raw CSV and screening records are retained in the successful [CI artifact](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036).
