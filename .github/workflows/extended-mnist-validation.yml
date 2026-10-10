@@ -40,3 +40,4 @@ jobs:
             verification/results/EXTENDED_MATRIX_REPORT.md
             verification/results/extended_workloads/extended_manifest.csv
             verification/results/extended_workloads/extended_selection.csv
+            verification/results/extended_workloads/*.mem
