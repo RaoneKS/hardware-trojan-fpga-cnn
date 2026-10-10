@@ -134,10 +134,10 @@ module tb_cnn_small_core;
     end
 
     initial begin
-
-        $dumpfile("cnn_full.vcd");
-        $dumpvars(0, tb_cnn_small_core);
-
+        if ($test$plusargs("DUMP_VCD")) begin
+            $dumpfile("cnn_full.vcd");
+            $dumpvars(0, tb_cnn_small_core);
+        end
     end
 
     /*
