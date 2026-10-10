@@ -29,6 +29,17 @@ jobs:
         run: |
           python3 verification/analyze_ablation_stealthiness.py
 
+      - name: Build and verify professor submission ZIP
+        if: success()
+        run: bash professor_submission/build_submission_zip.sh
+
+      - name: Publish professor submission package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hardware-trojan-professor-submission
+          path: Hardware_Trojan_FPGA_CNN_Professor_Submission.zip
+
       - name: Publish simulation evidence
         if: always()
         uses: actions/upload-artifact@v4
