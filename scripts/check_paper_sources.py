@@ -40,4 +40,5 @@ if errors:
 
 print(f"PASS: {len(cite_keys)} LaTeX citation keys resolve to {len(bib_keys)} BibTeX entries.")
 print(f"PASS: professor figures 13–27 are embedded and exist ({len(figure_paths)} figures).")
-print(f"PASS: Markdown bibliography contains {len(re.findall(r'^\[\d+\] ', md, re.MULTILINE))} numbered references.")
+numbered_refs = len(re.findall(r"^\[\d+\] ", md, re.MULTILINE))
+print(f"PASS: Markdown bibliography contains {numbered_refs} numbered references.")
