@@ -44,7 +44,7 @@ TPR=\frac{TP}{TP+FN},\quad FPR=\frac{FP}{FP+TN},
 Precision=\frac{TP}{TP+FP},\quad F1=2\frac{Precision\cdot TPR}{Precision+TPR}.
 \end{equation}
 For the canonical matrix, $(TP,TN,FP,FN)=(50,10,0,0)$, so the metrics evaluate to $(TPR,FPR,Precision,F1)=(1,0,1,1)$. The held-out matrix independently gives $(250,50,0,0)$ and the same point estimates within its Healthy-screened sample.
-These metrics apply only to the canonical committed controlled matrix. In a separate held-out same-CNN evaluation, 50 additional Healthy-correct images were run on Healthy and T1--T5 (300 rows), producing TP=250, TN=50, FP=0 and FN=0. Because images misclassified by the Healthy baseline were screened out, the held-out FPR is conditional on the selected Healthy-correct set. The successful CI artifact and screening protocol are documented in docs/EXTENDED_HELDOUT_RESULTS.md.
+These metrics apply only to the canonical committed controlled matrix. In a separate held-out same-CNN evaluation, 50 additional Healthy-correct images were run on Healthy and T1--T5 (300 rows), producing TP=250, TN=50, FP=0 and FN=0. Because images misclassified by the Healthy baseline were screened out, the held-out FPR is conditional on the selected Healthy-correct set. The successful CI artifact and screening protocol are documented in \texttt{docs/EXTENDED\_HELDOUT\_RESULTS.md}.
 
 T1 is localized to region 01 for 10/10 workloads, T2 to region 10 for 10/10, and T3--T5 to shared region 11 for 30/30. Regional localization accuracy is therefore 50/50=100\% at the defined resolution.
 
