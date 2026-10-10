@@ -38,8 +38,12 @@ Cycle-accurate Verilog simulation uses Icarus Verilog. The canonical matrix cont
 \section{Results}
 The canonical simulation ledger contains 10 Healthy and 50 Trojan rows. Therefore TP=50, TN=10, FP=0 and FN=0:
 \begin{equation}
-TPR=1,\quad FPR=0,\quad Precision=1,\quad F1=1.
+TPR=\frac{TP}{TP+FN},\quad FPR=\frac{FP}{FP+TN},
 \end{equation}
+\begin{equation}
+Precision=\frac{TP}{TP+FP},\quad F1=2\frac{Precision\cdot TPR}{Precision+TPR}.
+\end{equation}
+For the canonical matrix, $(TP,TN,FP,FN)=(50,10,0,0)$, so the metrics evaluate to $(TPR,FPR,Precision,F1)=(1,0,1,1)$. The held-out matrix independently gives $(250,50,0,0)$ and the same point estimates within its Healthy-screened sample.
 These metrics apply only to the canonical committed controlled matrix. In a separate held-out same-CNN evaluation, 50 additional Healthy-correct images were run on Healthy and T1--T5 (300 rows), producing TP=250, TN=50, FP=0 and FN=0. Because images misclassified by the Healthy baseline were screened out, the held-out FPR is conditional on the selected Healthy-correct set. The successful CI artifact and screening protocol are documented in docs/EXTENDED_HELDOUT_RESULTS.md.
 
 T1 is localized to region 01 for 10/10 workloads, T2 to region 10 for 10/10, and T3--T5 to shared region 11 for 30/30. Regional localization accuracy is therefore 50/50=100\% at the defined resolution.
@@ -63,7 +67,7 @@ Exact final fitter counts for T3--T5 and exact fresh-C6 Fmax are not archived an
 
 Quartus Power Analyzer estimates are 463.79, 465.51, 466.28, 467.17, 464.75 and 464.27 mW for Healthy and T1--T5 respectively. These are tool estimates rather than physical rail/current measurements.
 
-T1, T2, T3, T4 and T5 were programmed on the physical DE10-Standard with zero programming errors and zero warnings. All LEDR0--LEDR5 were observed ON, corresponding to class 7, detector asserted, and localization code 11.
+T1, T2, T3, T4 and T5 were programmed on the physical DE10-Standard with zero programming errors and zero warnings. The observed LED patterns matched the expected outputs: class 7 and detector asserted for all variants, localization 01 for T1, 10 for T2, and shared code 11 for T3--T5.
 
 \section{Discussion and Limitations}
 The experiment shows that the selected controlled Trojans can be detected and regionally localized even when the evaluated class output remains correct. The 100\% result is not a universal Trojan-detection guarantee. Limitations include absence of physical power instrumentation, incomplete archived final fitter counts for T3--T5, lack of archived fresh-C6 Fmax, a single compact MNIST CNN, and an evaluation-layer rather than independently synthesized numerical ablation.
