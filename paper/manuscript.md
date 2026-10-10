@@ -189,6 +189,126 @@ A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection an
 
 The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, a graded trigger-probability/payload-severity sweep, independently synthesized monitor-ablation variants, additional CNNs, broader datasets, and finer localization.
 
+
+## Figures (Professor-template numbering)
+
+### Figure 13
+
+![Figure 13: Overall proposed runtime detection and localization framework.](figures/figure13_professor.svg)
+
+*Overall proposed runtime detection and localization framework.*
+
+### Figure 14
+
+![Figure 14: Baseline FPGA CNN accelerator architecture.](figures/figure14_professor.svg)
+
+*Baseline FPGA CNN accelerator architecture.*
+
+### Figure 15
+
+![Figure 15: Processing-element/interconnect organization and monitoring points.](figures/figure15_professor.svg)
+
+*Processing-element/interconnect organization and monitoring points.*
+
+### Figure 16
+
+![Figure 16: Controlled Trojan target regions and injection/build flow.](figures/figure16_professor.svg)
+
+*Controlled Trojan target regions and injection/build flow.*
+
+### Figure 17
+
+![Figure 17: Normal-versus-Trojan runtime behavior (selected controlled workloads).](figures/figure17_professor.svg)
+
+*Normal-versus-Trojan runtime behavior (selected controlled workloads).*
+
+### Figure 18
+
+![Figure 18: Normal signature characterization from the canonical workload set.](figures/figure18_professor.svg)
+
+*Normal signature characterization from the canonical workload set.*
+
+### Figure 19
+
+![Figure 19: Runtime multi-signature detection procedure.](figures/figure19_professor.svg)
+
+*Runtime multi-signature detection procedure.*
+
+### Figure 20
+
+![Figure 20: Regional localization map; code 11 is shared by T3/T4/T5.](figures/figure20_professor.svg)
+
+*Regional localization map; code 11 is shared by T3/T4/T5.*
+
+### Figure 21
+
+![Figure 21: Detection confusion matrix for the canonical 60-row simulation matrix.](figures/figure21_professor.svg)
+
+*Detection confusion matrix for the canonical 60-row simulation matrix.*
+
+### Figure 22
+
+![Figure 22: Evaluation-layer channel-masking coverage ablation; not separate synthesis builds.](figures/figure22_professor.svg)
+
+*Evaluation-layer channel-masking coverage ablation; not separate synthesis builds.*
+
+### Figure 23
+
+![Figure 23: Detection latency evidence from the canonical cycle-count ledger.](figures/figure23_professor.svg)
+
+*Detection latency evidence from the canonical cycle-count ledger.*
+
+### Figure 24
+
+![Figure 24: Archived hardware resource evidence; T3–T5 counts are not inferred.](figures/figure24_professor.svg)
+
+*Archived hardware resource evidence; T3–T5 counts are not inferred.*
+
+### Figure 25
+
+![Figure 25: Output-stealthiness and timing observability across the five selected variants.](figures/figure25_professor.svg)
+
+*Output-stealthiness and timing observability across the five selected variants.*
+
+### Figure 26
+
+![Figure 26: Security/overhead evidence layers, with power explicitly labeled as a tool estimate.](figures/figure26_professor.svg)
+
+*Security/overhead evidence layers, with power explicitly labeled as a tool estimate.*
+
+### Figure 27
+
+![Figure 27: Cross-layer mapping from Trojan region to monitor event, localization, and output impact.](figures/figure27_professor.svg)
+
+*Cross-layer mapping from Trojan region to monitor event, localization, and output impact.*
+
 ## References
 
-See `paper/references/references.bib` for the expanded source-checked bibliography.
+[1] R. S. Chakraborty, S. Narasimhan, and S. Bhunia, “Hardware Trojan: Threats and emerging solutions,” *2009 IEEE International High Level Design Validation and Test Workshop*, pp. 166–171, 2009. doi: [10.1109/HLDVT.2009.5340158](https://doi.org/10.1109/HLDVT.2009.5340158).
+
+[2] J. Clements and Y. Lao, “Hardware Trojan Attacks on Neural Networks,” arXiv:1806.05768, 2018. [https://arxiv.org/abs/1806.05768](https://arxiv.org/abs/1806.05768).
+
+[3] S. Mittal, H. Gupta, and S. Srivastava, “A survey on hardware security of DNN models and accelerators,” *Journal of Systems Architecture*, vol. 117, art. 102163, 2021. doi: [10.1016/j.sysarc.2021.102163](https://doi.org/10.1016/j.sysarc.2021.102163).
+
+[4] R. Elnaggar, K. Chakrabarty, and M. B. Tahoori, “Hardware Trojan Detection Using Changepoint-Based Anomaly Detection Techniques,” *IEEE Transactions on Very Large Scale Integration (VLSI) Systems*, vol. 27, no. 12, pp. 2706–2719, 2019. doi: [10.1109/TVLSI.2019.2925807](https://doi.org/10.1109/TVLSI.2019.2925807).
+
+[5] B. J. Mohd, S. Abed, T. Hayajneh, and M. H. Alshayeji, “Run-Time Monitoring and Validation Using Reverse Function (RMVRF) for Hardware Trojans Detection,” *IEEE Transactions on Dependable and Secure Computing*, vol. 18, no. 6, pp. 2689–2704, 2021. doi: [10.1109/TDSC.2019.2961902](https://doi.org/10.1109/TDSC.2019.2961902).
+
+[6] T. A. Odetola et al., “FeSHI: Feature Map-Based Stealthy Hardware Intrinsic Attack,” *IEEE Access*, vol. 9, pp. 115370–115387, 2021. doi: [10.1109/ACCESS.2021.3104520](https://doi.org/10.1109/ACCESS.2021.3104520).
+
+[7] P. Sun, B. Halak, and T. J. Kazmierski, “Towards Hardware Trojan Resilient Design of Convolutional Neural Networks,” *2022 IEEE 35th International System-on-Chip Conference (SOCC)*, pp. 1–6, 2022. doi: [10.1109/SOCC56010.2022.9908104](https://doi.org/10.1109/SOCC56010.2022.9908104).
+
+[8] R. Yasaei, S. Faezi, and M. A. Al Faruque, “Golden Reference-Free Hardware Trojan Localization Using Graph Convolutional Network,” *IEEE Transactions on Very Large Scale Integration (VLSI) Systems*, vol. 30, no. 10, pp. 1401–1411, 2022. doi: [10.1109/TVLSI.2022.3191683](https://doi.org/10.1109/TVLSI.2022.3191683).
+
+[9] H. Lashen et al., “TrojanSAINT: Gate-Level Netlist Sampling-Based Inductive Learning for Hardware Trojan Detection,” *2023 IEEE International Symposium on Hardware Oriented Security and Trust (HOST)*, 2023. [https://arxiv.org/abs/2301.11804](https://arxiv.org/abs/2301.11804).
+
+[10] P. Li, C. Che, and R. Hou, “Nacc-Guard: A Lightweight DNN Accelerator Architecture for Secure Deep Learning,” *Research Square* preprint, 2023. doi: [10.21203/rs.3.rs-3272285/v1](https://doi.org/10.21203/rs.3.rs-3272285/v1). This is a preprint, not represented here as a peer-reviewed journal publication.
+
+[11] J. Hou, Z. Liu, Z. Yang, and C. Yang, “Hardware Trojan Attacks on the Reconfigurable Interconnections of Field-Programmable Gate Array-Based Convolutional Neural Network Accelerators and a Physically Unclonable Function-Based Countermeasure Detection Technique,” *Micromachines*, vol. 15, no. 1, art. 149, 2024. doi: [10.3390/mi15010149](https://doi.org/10.3390/mi15010149).
+
+[12] Z. Liu, J. Hou, J. Wang, and C. Yang, “A Novel Two-Level Protection Scheme against Hardware Trojans on a Reconfigurable CNN Accelerator,” *Cryptography*, vol. 8, no. 3, art. 34, 2024. doi: [10.3390/cryptography8030034](https://doi.org/10.3390/cryptography8030034).
+
+[13] H. Su, W. Hu, X. Zhang, D. Zhu, and L. Wu, “Toward Precise and Explainable Hardware Trojan Localization at LUT Level,” *IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems*, vol. 44, no. 7, pp. 2817–2821, 2025. doi: [10.1109/TCAD.2025.3522266](https://doi.org/10.1109/TCAD.2025.3522266).
+
+[14] P. Sun, B. Halak, and T. J. Kazmierski, “Towards Hardware Trojan Resilient Convolutional Neural Network Accelerators,” *Journal of Hardware and Systems Security*, 2025. doi: [10.1007/s41635-025-00164-y](https://doi.org/10.1007/s41635-025-00164-y).
+
