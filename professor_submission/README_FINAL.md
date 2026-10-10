@@ -16,10 +16,13 @@
 - `CITATION.cff` — citation metadata.
 
 ## Experimental scope
-Board: Terasic DE10-Standard. FPGA: Intel Cyclone V SoC 5CSXFC6D6F31C6. Clock: 50 MHz. Ten deterministic MNIST workloads and six targets give 60 canonical simulation rows.
+Board: Terasic DE10-Standard. FPGA: Intel Cyclone V SoC 5CSXFC6D6F31C6. Clock: 50 MHz. Ten deterministic MNIST workloads and six targets give 60 canonical simulation rows. A separate held-out evaluation adds 50 Healthy-correct images (five per class) × six targets = 300 simulation rows.
 
 ## Main result
 TP=50, TN=10, FP=0, FN=0. TPR/recall=100%, FPR=0%, precision=100%, F1=1.000. Regional localization is 50/50=100% at the defined three-region resolution. These are simulation-regression metrics only.
+
+## Held-out robustness evaluation
+A separate successful CI run evaluated 50 held-out MNIST images after Healthy-baseline screening. Across 300 Healthy/T1–T5 simulations, TP=250, TN=50, FP=0, FN=0 and regional localization was correct in 250/250 Trojan rows. This is same-CNN simulation evidence conditional on Healthy-correct inputs, not physical validation of 300 cases. Details: `docs/EXTENDED_HELDOUT_RESULTS.md`.
 
 ## Physical validation
 T1, T2, T3, T4 and T5 were physically programmed successfully with zero programming errors and zero warnings. T1 produced class 7/detector asserted/localization 01; T2 produced class 7/detector asserted/localization 10; T3/T4/T5 produced class 7/detector asserted/localization 11. Code 11 is shared and does not distinguish the three variants.
