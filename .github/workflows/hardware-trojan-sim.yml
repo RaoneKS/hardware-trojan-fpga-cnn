@@ -29,6 +29,9 @@ jobs:
         run: |
           python3 verification/analyze_ablation_stealthiness.py
 
+      - name: Check manuscript citations and professor figures
+        run: python3 scripts/check_paper_sources.py
+
       - name: Build and verify professor submission ZIP
         if: success()
         run: bash professor_submission/build_submission_zip.sh
