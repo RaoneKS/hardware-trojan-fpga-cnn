@@ -89,6 +89,6 @@ module tb_cnn_small_core;
         $finish;
     end
 
-    initial begin $dumpfile("cnn_full.vcd"); $dumpvars(0, tb_cnn_small_core); end
+    initial begin if ($test$plusargs("DUMP_VCD")) begin $dumpfile("cnn_full.vcd"); $dumpvars(0, tb_cnn_small_core); end end
     initial begin #20000000; $display("TIMEOUT"); $finish; end
 endmodule
