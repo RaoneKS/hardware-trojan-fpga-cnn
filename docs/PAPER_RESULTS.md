@@ -87,6 +87,10 @@ Quartus Power Analyzer estimates:
 
 These are tool estimates, not physical rail/current measurements.
 
+## Separate held-out same-CNN evaluation
+
+The successful [Extended MNIST validation CI run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates using the Healthy baseline and selected five Healthy-correct images per class (50 total). Each selected image was evaluated on Healthy and T1–T5, giving 300 simulation rows. Results: TP=250, TN=50, FP=0, FN=0; TPR/recall=100%, FPR=0%, precision=100%, F1=1.000; expected-class preservation 300/300; regional localization 250/250 Trojan rows. The raw CSV and selection records are in the CI artifact; the documented report is `docs/EXTENDED_HELDOUT_RESULTS.md`. Because Healthy-misclassified inputs were excluded, this is a conditional same-CNN robustness result, not an all-MNIST FPR estimate.
+
 ## Scientific boundary
 
 The project establishes runtime detection and regional localization for the selected controlled T1–T5 implementations within the evaluated simulation matrix and physical board-output demonstrations. It does not establish universal Hardware Trojan detection, exact identification among T3/T4/T5 from localization code 11, or physical power overhead.
