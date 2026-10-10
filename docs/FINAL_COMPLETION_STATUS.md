@@ -10,6 +10,7 @@ The repository contains the reproducibility pipeline, evidence-cleanup changes, 
 - T1–T5 controlled Trojan RTL and testbenches
 - Workload-aware Trojan testbenches
 - Ten deterministic MNIST workloads covering digits 0–9
+- Separate held-out 50-image / 300-run same-CNN validation (five Healthy-correct images per class); detailed report in `docs/EXTENDED_HELDOUT_RESULTS.md`
 - Canonical 10 workloads × 6 targets regression ledger
 - Automated TP/TN/FP/FN and derived metrics
 - CI execution of the canonical matrix
