@@ -8,7 +8,7 @@
 
 This repository presents a reproducible study of **runtime detection and regional localization of controlled Hardware Trojans in an FPGA-based CNN**.
 
-The project combines an INT8 CNN, five controlled Trojan variants, ten deterministic MNIST workloads, RTL simulation, Quartus implementation evidence, and physical DE10-Standard board validation.
+The project combines an INT8 CNN, five controlled Trojan variants, a canonical ten-workload regression, an additional held-out 50-image / 300-run same-CNN simulation evaluation, Quartus implementation evidence, and physical DE10-Standard board validation.
 
 > **Research scope:** the reported 100% detection / 0% false-positive result applies to the committed 60-case controlled simulation matrix. It is not a claim of universal Hardware Trojan detection.
 
@@ -97,6 +97,10 @@ Regional localization was correct for all 50 evaluated Trojan rows at the define
 Block memory bits for Healthy/T1/T2: **455,104**.
 
 Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact final fitter resource counts for T3/T4/T5 are also not inferred.
+
+## Extended held-out simulation evaluation
+
+A separate successful [GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates with the Healthy baseline and selected five Healthy-correct images per class (50 images). Healthy and T1–T5 were run for each image, yielding 300 additional simulation rows: TP=250, TN=50, FP=0, FN=0, TPR=100%, FPR=0%, precision=100%, F1=1.000, and 250/250 correct regional codes. These metrics are conditional on the Healthy-screened inputs and are not physical measurements or a universal guarantee. See [the held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
 
 ## Physical DE10-Standard validation
 
