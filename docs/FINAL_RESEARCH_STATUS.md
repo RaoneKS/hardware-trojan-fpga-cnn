@@ -9,6 +9,7 @@ The controlled course/research implementation is complete for the defined eviden
 - T1–T5 controlled Trojan RTL variants and workload-aware testbenches.
 - Ten deterministic MNIST workloads covering classes 0–9.
 - Canonical 10-workload × 6-target simulation matrix.
+- Additional held-out same-CNN evaluation: 50 Healthy-correct MNIST images (five per class) × six targets = 300 successful simulation rows; see `docs/EXTENDED_HELDOUT_RESULTS.md`.
 - 60-row committed simulation ledger with TP/TN/FP/FN metrics.
 - Quartus implementation/timing evidence.
 - Physical DE10-Standard board-output validation for T1, T2, T3, T4 and T5.
@@ -23,6 +24,9 @@ The committed verification/results/runs.csv contains 60 PASS rows:
 - Regional localization code matches the expected region for all 50 Trojan rows.
 
 These are simulation-regression results for the selected workload set, not universal detection guarantees and not 60 physical measurements.
+
+### Extended held-out simulation result
+A successful GitHub Actions run evaluated 50 additional MNIST images, five per class, after Healthy-baseline screening. The 300-row matrix reports TP=250, TN=50, FP=0, FN=0; 100% detection/precision/recall, 0% FPR, expected-class preservation in all 300 rows, and correct regional localization in all 250 Trojan-present rows. These metrics are conditional on inputs correctly classified by the Healthy baseline and are simulation-only. The archived CI run is [here](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036).
 
 ### Canonical timing result
 At 50 MHz:
