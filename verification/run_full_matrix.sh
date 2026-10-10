@@ -52,6 +52,8 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
     iverilog -g2012 -o "${RUN}/sim.out" "${TB}" "${RTL}"
     LOG="${RUN}/simulation.log"
     (cd "${RUN}" && timeout 45s vvp sim.out +EXPECTED="${expected}" +WORKLOAD="${workload_id}" +NAME="${base}") > "${LOG}" 2>&1
+    # VCDs are not part of the canonical CSV evidence; discard them per run to keep CI disk use bounded.
+    rm -f "${RUN}/cnn_full.vcd"
 
     pred=$(grep "Predicted class" "${LOG}" | tail -1 | awk '{print $NF}')
     cyc=$(grep "Cycle count" "${LOG}" | tail -1 | awk '{print $NF}')
