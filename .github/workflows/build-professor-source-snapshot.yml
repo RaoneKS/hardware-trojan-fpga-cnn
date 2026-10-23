@@ -1,0 +1,44 @@
+name: Build professor source snapshot
+
+on:
+  push:
+    branches:
+      - chatgpt-source-bundle-20261023
+
+permissions:
+  contents: read
+
+jobs:
+  package-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository snapshot
+        uses: actions/checkout@v4
+      - name: Archive tracked project files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git archive --format=zip --output=hardware-trojan-fpga-cnn-source.zip HEAD
+          git ls-files > source_manifest.txt
+          {
+            echo "Repository: RaoneKS/hardware-trojan-fpga-cnn"
+            echo "Branch: ${GITHUB_REF_NAME}"
+            echo "Commit: ${GITHUB_SHA}"
+            echo "Tracked file count: $(wc -l < source_manifest.txt)"
+          } > SOURCE_SNAPSHOT_INFO.txt
+          unzip -t hardware-trojan-fpga-cnn-source.zip
+          test -s hardware-trojan-fpga-cnn-source.zip
+          # Required source and verification files; fail if any are absent.
+          for f in             README.md             paper/ieee_paper.tex             paper/references/references.bib             rtl/cnn_fpga_top.v             cnn_full_small/rtl/cnn_small_core_m10k.v             trojan_T1/rtl/cnn_small_core_m10k.v             trojan_T2/rtl/cnn_small_core_m10k.v             trojan_T3/rtl/cnn_small_core_m10k.v             trojan_T4/rtl/cnn_small_core_m10k.v             trojan_T5/rtl/cnn_small_core_m10k.v             trojan_T1/tb/tb_cnn_small_core.v             trojan_T2/tb/tb_cnn_small_core.v             trojan_T3/tb/tb_cnn_small_core.v             trojan_T4/tb/tb_cnn_small_core.v             trojan_T5/tb/tb_cnn_small_core.v             verification/run_full_matrix.sh             verification/run_extended_matrix.sh             docs/REPRODUCIBILITY.md; do
+            test -f "$f" || { echo "MISSING REQUIRED FILE: $f"; exit 1; }
+          done
+          echo "Required files: PASS" >> SOURCE_SNAPSHOT_INFO.txt
+      - name: Upload complete source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-project-source
+          path: |
+            hardware-trojan-fpga-cnn-source.zip
+            source_manifest.txt
+            SOURCE_SNAPSHOT_INFO.txt
+          retention-days: 7
