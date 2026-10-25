@@ -145,7 +145,7 @@ module cnn_small_core (
 
     // ================================================================
     // T2 HARDWARE TROJAN (Disabled for T4 experiment)
-    // Type    : Conv2 Weight Memory Data-Path Alteration
+    // Type    : Conv2 Weight-Operand Data-Path Bit Flip
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
     // Payload : flip exactly 1 bit of c2w_q before multiplication
@@ -166,7 +166,7 @@ module cnn_small_core (
     // Localization encoding:
     // 2'b00 = No Trojan
     // 2'b01 = Conv2 PE computation region (T1)
-    // 2'b10 = Conv2 Weight Memory region (T2)
+    // 2'b10 = Conv2 Weight/Data-Path region (T2)
     // 2'b11 = Interconnect / Data-Path region (T4)
     reg [1:0] localization_code_reg;
 
@@ -445,7 +445,7 @@ module cnn_small_core (
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
                     trusted_product = $signed(p1_q) * $signed(c2w_q);
                     // T4 HARDWARE TROJAN: Interconnect Data-Path Alteration
-                    // Target: MaxPool1-to-Conv2 feature interconnect bus (p1_q) before Conv2 MAC
+                    // Target: Conv2 feature operand p1_q at the MAC input before Conv2 MAC
                     if (t4_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
@@ -463,7 +463,7 @@ module cnn_small_core (
                         product = $signed(p1_q) * $signed(c2w_q);
                         $display("T4_ACTIVE: Selective interconnect routing alteration between MaxPool1 and Conv2");
                     end
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T4)
+                    // T2 HARDWARE TROJAN: Conv2 Weight-Operand Data-Path Bit Flip (Disabled for T4)
                     else if (t2_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
@@ -784,7 +784,7 @@ module trusted_runtime_monitor (
                              (observed_product !== feature_flip_product)) begin
                     localization_code <= 2'b10; // weight/data-path signature
                 end else begin
-                    localization_code <= 2'b11; // feature/interconnect or ambiguous
+                    localization_code <= 2'b11; // feature-data-path or ambiguous
                 end
             end
             if (address_fault) begin
