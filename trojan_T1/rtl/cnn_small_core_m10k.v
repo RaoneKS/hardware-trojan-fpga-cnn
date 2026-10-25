@@ -706,7 +706,7 @@ module trusted_runtime_monitor (
                              (observed_product !== feature_flip_product)) begin
                     localization_code <= 2'b10; // weight/data-path signature
                 end else begin
-                    localization_code <= 2'b11; // feature/interconnect or ambiguous
+                    localization_code <= 2'b11; // feature-data-path or ambiguous
                 end
             end
             if (address_fault) begin
