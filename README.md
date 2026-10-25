@@ -8,7 +8,7 @@
 
 This repository presents a reproducible study of **runtime detection and regional localization of controlled Hardware Trojans in an FPGA-based CNN**.
 
-The project combines an INT8 CNN, five controlled Trojan variants, a canonical ten-workload regression, an additional held-out 50-image / 300-run same-CNN simulation evaluation, Quartus implementation evidence, and physical DE10-Standard board validation.
+The repository contains an INT8 CNN, five controlled Trojan variants, a monitor-enhanced canonical regression, a historical pre-monitor held-out evaluation, and legacy Quartus/DE10 evidence. The current independent-monitor revision is simulation-validated; its Quartus overhead and physical-board validation remain pending.
 
 > **Research scope:** the reported 100% detection / 0% false-positive result applies to the committed 60-case controlled simulation matrix. It is not a claim of universal Hardware Trojan detection.
 
@@ -30,7 +30,7 @@ MNIST → INT8 CNN → Runtime detector → CNN class + Trojan status + regional
 
 The draft branch `independent-runtime-monitor` adds a reference-assisted monitor that checks sampled Conv2 MAC results, expected feature-memory addresses, and the T5 control-stall state. The clean reference core is also instrumented to measure false alarms on healthy workloads instead of assuming zero.
 
-**Validation boundary:** this is a prototype under CI validation. Existing DE10-Standard observations and Quartus reports refer to previously built bitstreams; they do not yet validate the monitor-enhanced RTL. See [the monitor design and validation plan](docs/INDEPENDENT_RUNTIME_MONITOR.md) before using any updated detection or overhead claims.
+**Validation boundary:** the monitor-enhanced RTL passed the canonical 60-case CI regression and a dedicated unit test. Existing DE10-Standard observations and Quartus reports refer to previously built bitstreams; they do not validate the monitor-enhanced RTL. See [the monitor design and validation plan](docs/INDEPENDENT_RUNTIME_MONITOR.md) before using any updated detection or overhead claims.
 
 ### Localization map
 
@@ -83,14 +83,14 @@ Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and 
 | Precision | **100%** |
 | F1 | **1.000** |
 
-Regional localization was correct for all 50 evaluated Trojan rows at the defined regional-code level.
+Regional localization was correct for all 50 evaluated Trojan rows at the defined coarse regional-code level. The 95% Wilson intervals are TPR 92.9–100% (50/50) and FPR 0–27.8% (0/10), reflecting the small controlled sample.
 
 ### Latency
 
 | Target | Inference | Detection latency |
 |---|---:|---:|
-| Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T4: 149,136 cycles / 2.98272 ms |
-| T5 | 634,282 cycles / 12.68564 ms | 149,135 cycles / 2.98270 ms |
+| Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T3: 149,137 cycles / 2.98274 ms; T4: 149,135 cycles / 2.98270 ms |
+| T5 | 634,282 cycles / 12.68564 ms | 149,136 cycles / 2.98272 ms |
 
 ### Legacy pre-monitor C6 implementation evidence
 
