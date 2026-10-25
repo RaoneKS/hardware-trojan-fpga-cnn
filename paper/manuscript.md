@@ -50,7 +50,7 @@ The attacker is not assumed to bypass or compromise the runtime monitor itself. 
 
 The literature is grouped into CNN accelerator Trojan attacks, runtime/behavioral detection, Trojan localization, and lightweight accelerator security. Recent representative works include FeSHI [6], CNN resilience studies [7], [14], golden-reference-free localization [8], TrojanSAINT [9], interconnect attacks [11], two-level protection [12], and explainable LUT localization [13].
 
-The project occupies a narrower runtime position: a compact digital monitor is embedded in the accelerator, controlled Trojans are inserted into multiple architectural regions, ten deterministic MNIST workloads are exercised, and selected variants are physically demonstrated on a Cyclone V DE10-Standard. Fine-grained graph/netlist localization and runtime architectural-region localization are complementary objectives rather than directly interchangeable methods.
+The project occupies a narrower runtime position: a compact digital monitor is embedded in the accelerator RTL, controlled Trojans are inserted into multiple architectural regions, and ten deterministic MNIST workloads are exercised. Physical DE10 demonstrations exist for the earlier pre-monitor RTL revision; the current monitor-enhanced revision is validated in simulation only. Fine-grained graph/netlist localization and runtime architectural-region localization are complementary objectives rather than directly interchangeable methods.
 
 ## IV. Baseline FPGA CNN Accelerator
 
@@ -78,7 +78,7 @@ Healthy uses localization 00. T1 uses 01 for Conv2 PE computation. T2 uses 10 fo
 | T4 | Conv2 routing | selected source-address/routing alteration | 11 |
 | T5 | Conv2 control | one-cycle control-path stall | 11 |
 
-The injection/build flow is Healthy RTL -> controlled Trojan RTL -> Icarus simulation -> Quartus compile -> SOF -> DE10 programming. The same workload and clock configuration are retained across variants.
+The historical board-demonstration flow was Healthy RTL -> controlled Trojan RTL -> Icarus simulation -> Quartus compile -> SOF -> DE10 programming. The independent-monitor revision has passed Icarus simulation but still requires a fresh Quartus compile and DE10 programming; legacy SOFs must not be treated as monitor-enhanced evidence.
 
 For this work, output-stealthy means that the selected Trojan-present run retains the same top-1 class as the corresponding Healthy run while the runtime monitor detects the internal anomaly. This is a workload-scoped definition.
 
@@ -133,7 +133,7 @@ The archived Quartus Power Analyzer estimates (463.79–467.17 mW across Healthy
 
 ### F. Ablation and security-overhead trade-off
 
-An evidence-bounded numerical evaluation-layer ablation is derived from the committed 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/memory-only hardware builds, so no independent resource-overhead delta is claimed.
+A historical, pre-monitor evidence-bounded numerical evaluation-layer ablation was derived from the earlier 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/memory-only hardware builds, so no independent resource-overhead delta is claimed.
 
 ## XI. Robustness, Stealthiness, and Generalization
 
