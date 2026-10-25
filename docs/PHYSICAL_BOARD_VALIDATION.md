@@ -1,4 +1,6 @@
-# Physical DE10-Standard Board Validation — T1/T2/T3/T4/T5
+# Legacy Physical DE10-Standard Validation — Pre-Monitor T1/T2/T3/T4/T5
+
+**Revision boundary:** These SOFs were built from the pre-monitor RTL. The independent-monitor revision has not yet been rebuilt/programmed, so this document does not physically validate the new monitor.
 
 Validation date: 2026-10-07  
 Board: Terasic DE10-Standard  
@@ -94,9 +96,9 @@ They do not constitute physical power/current measurements. They also do not imp
   - LEDR[5:4] = `10` → T2 / weight-memory region
 - Raw programmer log: `verification/results/physical_T2_program.log`
 
-## Complete physical validation coverage
+## Complete legacy physical validation coverage
 
-T1, T2, T3, T4, and T5 have now each been physically programmed on the DE10-Standard and observed at the board LED interface.
+T1, T2, T3, T4, and T5 pre-monitor bitstreams were physically programmed on the DE10-Standard and observed at the board LED interface. These observations are legacy evidence only.
 
 Physical evidence demonstrates programming success, predicted class, detector assertion, and regional localization code for each variant.
 
