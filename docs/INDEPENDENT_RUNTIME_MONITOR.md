@@ -9,7 +9,7 @@ The original variant RTL exposed detector outputs that were driven by Trojan-spe
 1. **MAC arithmetic consistency.** At each valid Conv2 MAC, the core samples the post-payload product and a reference product independently computed from the unmodified feature/weight operands. The monitor raises a sticky alert when the sampled products differ.
 2. **Feature-memory address consistency.** During Conv2's address-wait state, the monitor compares the registered feature read address with the address implied by the current channel/row/column/kernel counters.
 3. **Control-path anomaly.** In T5, the monitor flags the inserted T5STALL state rather than consuming the Trojan's t5_detected flag.
-4. **Healthy false-alarm measurement.** The clean reference core now instantiates the same monitor. The canonical regression must explicitly observe no alert and localization code 00 for each healthy workload.
+4. **Healthy false-alarm measurement.** The clean reference core now instantiates the same monitor. The canonical regression explicitly observes no alert and localization code 00 for each healthy workload.
 
 The monitor does not read the Trojan-specific t1_detected/t2_detected/... flags. The public detector outputs in the variants are driven by the monitor alert, and the public localization output is driven by the monitor's localization register.
 
