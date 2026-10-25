@@ -445,8 +445,8 @@ module cnn_small_core (
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
                     trusted_product = $signed(p1_q) * $signed(c2w_q);
-                    // T3 HARDWARE TROJAN: Interconnect Data-Path Alteration
-                    // Target: MaxPool1-to-Conv2 feature interconnect bus (p1_q) before Conv2 MAC
+                    // T3 HARDWARE TROJAN: Feature-Operand Data-Path Bit Flip
+                    // Target: feature operand p1_q as consumed by the Conv2 MAC
                     if (t3_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
