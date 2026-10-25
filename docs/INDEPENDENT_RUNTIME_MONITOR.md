@@ -58,6 +58,22 @@ The design is a small, reference-assisted functional monitor. It should be compa
 - Design for Assurance / functional verification tools: https://arxiv.org/abs/2311.12321
 - UniGuard: https://arxiv.org/abs/2311.16684
 
-## Status
+## Current measured status
 
-**Prototype integrated into a draft branch; CI validation is in progress.** Do not quote updated detection rates, hardware overhead, or physical validation until the corresponding run/build evidence is archived.
+The monitor-enhanced RTL passed the canonical 60-case GitHub Actions regression (10 healthy + 50 controlled Trojan rows). The run recorded TP=50, TN=10, FP=0, FN=0 and 50/50 correct coarse regional codes. The dedicated monitor unit test also passes healthy, T1/T2/T3 arithmetic signatures, address fault, control fault, and reset/re-arm checks.
+
+For context, the 95% Wilson score intervals for this small sample are approximately 92.9–100% for TPR (50/50) and 0–27.8% for FPR (0/10). The point estimates are conditional on these selected controlled cases; the interval width shows why zero observed false alarms in ten healthy workloads does not establish a low population-wide FPR.
+
+| Variant | Monitor detection latency | Time at 50 MHz | Region code |
+|---|---:|---:|---:|
+| T1 | 149,137 cycles | 2.98274 ms | 01 |
+| T2 | 149,137 cycles | 2.98274 ms | 10 |
+| T3 | 149,137 cycles | 2.98274 ms | 11 |
+| T4 | 149,135 cycles | 2.98270 ms | 11 |
+| T5 | 149,136 cycles | 2.98272 ms | 11 |
+
+These latencies are from the monitor-facing simulation ledger and are measured from the runner's recorded inference-start reference.
+
+**Still pending:** rerun the 300-row held-out campaign against the monitor-enhanced RTL; synthesize all variants with the monitor using identical Quartus constraints and record resource/timing deltas; rebuild and program monitor-enhanced SOFs on the DE10-Standard; archive new physical evidence. The older held-out results, Quartus tables, and physical observations belong to the pre-monitor revision and are not evidence for this new monitor.
+
+Do not claim universal Trojan detection, arbitrary unknown-Trojan coverage, current monitor hardware overhead, or physical validation of the monitor-enhanced revision until those additional experiments are complete.
