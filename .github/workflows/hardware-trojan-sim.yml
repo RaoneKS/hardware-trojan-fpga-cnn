@@ -6,7 +6,7 @@ on:
   pull_request:
 
 concurrency:
-  group: hardware-trojan-${{ github.workflow }}-${{ github.ref }}
+  group: hardware-trojan-\${{ github.workflow }}-\${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -20,10 +20,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y iverilog
 
+      - name: Unit-test robustness metrics
+        run: python3 -m unittest discover -s verification/tests -v
+
       - name: Run full 10-workload x 6-target regression
         run: |
           chmod +x verification/run_full_matrix.sh
           ./verification/run_full_matrix.sh
+
+      - name: Compute confidence intervals from regenerated run ledger
+        run: |
+          python3 verification/robustness_metrics.py
+          test -s verification/results/ROBUSTNESS_METRICS.md
+          test -s verification/results/ROBUSTNESS_METRICS.json
 
       - name: Run evidence-bounded ablation and stealthiness analysis
         run: |
@@ -52,6 +61,8 @@ jobs:
             verification/results/full_matrix/**/simulation.log
             verification/results/runs.csv
             verification/results/METRICS_SUMMARY.md
+            verification/results/ROBUSTNESS_METRICS.md
+            verification/results/ROBUSTNESS_METRICS.json
             verification/results/ablation_summary.csv
             verification/results/stealthiness_sensitivity.csv
             verification/results/ABLATION_STEALTHINESS_REPORT.md
