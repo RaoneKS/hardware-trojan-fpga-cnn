@@ -433,6 +433,10 @@ module cnn_small_core (
             /* ---------- Conv2 ---------- */
             C2A: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
+                if (out_f == 1 && out_r == 0 && out_c == 0 &&
+                    in_ch == 1 && kr == 1 && kc == 1)
+                    $display("T4_C2A_DEBUG trigger=%b actual_candidate=%0d state=%0d",
+                             t4_trigger, in_ch*196+ir*14+ic, state);
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
                     if (t4_trigger &&
                         out_f == 1 && out_r == 0 && out_c == 0 &&
