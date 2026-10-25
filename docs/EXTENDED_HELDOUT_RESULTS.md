@@ -1,4 +1,8 @@
-# Extended Held-Out MNIST Validation
+# Historical Extended Held-Out MNIST Validation — Pre-Monitor RTL
+
+## Critical revision boundary
+
+**This 300-row held-out campaign used the pre-monitor RTL and Trojan-specific self-reporting flags. It is not a result for the independent-monitor revision on branch `independent-runtime-monitor`. Rerun the full campaign with the monitor-enhanced RTL before citing held-out detection performance for the current design.**
 
 ## Evidence provenance
 - GitHub Actions workflow: [Extended MNIST validation](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036)

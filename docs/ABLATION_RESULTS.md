@@ -1,13 +1,17 @@
-# Ablation and Architectural Evaluation
+# Historical Ablation and Architectural Evaluation — Pre-Monitor Ledger
+
+## Revision boundary
+
+The channel-masking results below were computed from the pre-monitor ledger and do not evaluate the independent runtime monitor added on the current draft branch. Do not use these ablation figures as proof of current monitor coverage or hardware overhead.
 
 ## Evidence status
 
-The repository contains an **evidence-bounded evaluation-layer channel-masking ablation** derived from the committed 60-row simulation ledger. It is reproducible from `verification/analyze_ablation_stealthiness.py` and the archived CSV outputs. It is **not** a set of independently synthesized no-monitor, PE-only, memory-only, and full-monitor hardware builds, so no build-level resource overhead is claimed.
+The repository contains an **evidence-bounded evaluation-layer channel-masking ablation** derived from the committed 60-row simulation ledger. It is reproducible from `verification/analyze_ablation_stealthiness.py` and the archived CSV outputs. It is **not** a set of independently synthesized no-monitor, PE-only, weight/data-path-only, and full-monitor hardware builds, so no build-level resource overhead is claimed.
 
 ## Supported design rationale
 
-- A PE-only monitor can directly cover T1 but does not, by construction, cover memory, interconnect, routing, or control Trojans.
-- A memory-only monitor directly covers T2 but does not cover the other Trojan regions.
+- A PE-only monitor can directly cover T1 but does not, by construction, cover weight/feature data-path, routing, or control Trojans.
+- A weight/data-path-only monitor directly covers T2 but does not cover the other Trojan regions.
 - The proposed multi-region monitor exposes a 1-bit detection flag plus a 2-bit regional code.
 - T3, T4 and T5 intentionally share regional code `2'b11`; this is regional localization rather than exact Trojan identity.
 
@@ -21,7 +25,7 @@ The committed ledger yields TPR values of 0% for functional-only classification,
 
 ## What is still required for a true build-level ablation study
 
-1. Create independently synthesized monitor variants (output-only, PE-only, memory-only, full regional).
+1. Create independently synthesized monitor variants (output-only, PE-only, weight/data-path-only, full regional).
 2. Record fitted resources and detection outcomes from each build.
 3. Archive raw build/simulation logs and regenerate the comparison table.
 4. Add a graded trigger-probability/payload-severity sweep only after a controlled RTL parameter is available.

@@ -12,11 +12,15 @@ module tb_cnn_small_core;
     wire done;
     wire [3:0] predicted_class;
     wire [63:0] cycle_count;
+    wire monitor_detected_out;
+    wire [1:0] monitor_localization_code;
 
     cnn_small_core dut (
         .clk(clk), .rst(rst), .start(start),
         .done(done), .predicted_class(predicted_class),
-        .cycle_count(cycle_count)
+         .cycle_count(cycle_count),
+        .monitor_detected_out(monitor_detected_out),
+        .monitor_localization_code(monitor_localization_code)
     );
 
     initial begin
@@ -39,6 +43,8 @@ module tb_cnn_small_core;
         $display("Cycle count      = %0d", cycle_count);
         $display("Predicted class  = %0d", predicted_class);
         $display("Expected class   = %0d", expected_class);
+        $display("MONITOR_DETECTED = %0b", monitor_detected_out);
+        $display("LOCALIZATION_OUTPUT = 2'b%b", monitor_localization_code);
         if (predicted_class == expected_class[3:0]) begin
             $display("PASS: CNN predicted expected digit %0d", expected_class);
         end else begin

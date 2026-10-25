@@ -13,6 +13,14 @@ def f(v):
     try: return float(v)
     except (TypeError,ValueError): return math.nan
 def metric(a,d): return a/d if d else math.nan
+def wilson(k,n,z=1.959963984540054):
+    """95% Wilson score interval; informative for small denominators."""
+    if n == 0: return (math.nan, math.nan)
+    p = k / n
+    den = 1 + z*z/n
+    center = (p + z*z/(2*n)) / den
+    half = z * math.sqrt(p*(1-p)/n + z*z/(4*n*n)) / den
+    return max(0.0, center-half), min(1.0, center+half)
 with PATH.open(newline="") as fh: rows=list(csv.DictReader(fh))
 if not rows: print("No measured runs. Nothing synthetic was generated."); raise SystemExit(0)
 missing=REQUIRED-set(rows[0])
@@ -33,6 +41,9 @@ with out.open("w") as fh:
     fh.write("Generated only from measured rows in verification/results/runs.csv; no synthetic measurements are inserted.\n\n")
     fh.write(f"TP={tp}, TN={tn}, FP={fp}, FN={fn}\n\n")
     fh.write(f"TPR={metric(tp,tp+fn):.6f}\nFPR={metric(fp,fp+tn):.6f}\nPrecision={metric(tp,tp+fp):.6f}\nF1={metric(2*tp,2*tp+fp+fn):.6f}\n\n")
+    tpr_ci=wilson(tp,tp+fn); fpr_ci=wilson(fp,fp+tn)
+    fh.write(f"TPR 95% Wilson CI=[{tpr_ci[0]:.4f}, {tpr_ci[1]:.4f}] (n={tp+fn})\n")
+    fh.write(f"FPR 95% Wilson CI=[{fpr_ci[0]:.4f}, {fpr_ci[1]:.4f}] (n={fp+tn})\n\n")
     fh.write(f"Localization accuracy={metric(correct,len(loc)):.6f}\n\n")
     fh.write(f"Measured rows={len(rows)}\n")
     fh.write(f"Workloads={len(set(r["workload_id"] for r in rows))}\n\n")

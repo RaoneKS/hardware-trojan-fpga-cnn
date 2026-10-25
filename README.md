@@ -8,7 +8,7 @@
 
 This repository presents a reproducible study of **runtime detection and regional localization of controlled Hardware Trojans in an FPGA-based CNN**.
 
-The project combines an INT8 CNN, five controlled Trojan variants, a canonical ten-workload regression, an additional held-out 50-image / 300-run same-CNN simulation evaluation, Quartus implementation evidence, and physical DE10-Standard board validation.
+The repository contains an INT8 CNN, five controlled Trojan variants, a monitor-enhanced canonical regression, a historical pre-monitor held-out evaluation, and legacy Quartus/DE10 evidence. The current independent-monitor revision is simulation-validated; its Quartus overhead and physical-board validation remain pending.
 
 > **Research scope:** the reported 100% detection / 0% false-positive result applies to the committed 60-case controlled simulation matrix. It is not a claim of universal Hardware Trojan detection.
 
@@ -25,6 +25,12 @@ MNIST → INT8 CNN → Runtime detector → CNN class + Trojan status + regional
              ├─ Conv2 → ReLU → Pool
              └─ FC → Argmax
 ~~~
+
+## Independent runtime monitor prototype
+
+The draft branch `independent-runtime-monitor` adds a reference-assisted monitor that checks sampled Conv2 MAC results, expected feature-memory addresses, and the T5 control-stall state. The clean reference core is also instrumented to measure false alarms on healthy workloads instead of assuming zero.
+
+**Validation boundary:** the monitor-enhanced RTL passed the canonical 60-case CI regression and a dedicated unit test. Existing DE10-Standard observations and Quartus reports refer to previously built bitstreams; they do not validate the monitor-enhanced RTL. See [the monitor design and validation plan](docs/INDEPENDENT_RUNTIME_MONITOR.md) before using any updated detection or overhead claims.
 
 ### Localization map
 
@@ -55,8 +61,8 @@ Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and 
 | ID | Target region | Controlled perturbation |
 |---|---|---|
 | T1 | Conv2 PE | Computation corruption |
-| T2 | Conv2 weight/data path | Weight/data corruption |
-| T3 | Conv2 interconnect | Feature-interconnect alteration |
+| T2 | Conv2 weight operand/data path | Weight-operand bit flip |
+| T3 | Conv2 feature operand/data path | Feature-operand bit flip at MAC input |
 | T4 | Conv2 routing | Selective source-routing alteration |
 | T5 | Conv2 control | One-cycle control-path stall |
 
@@ -77,16 +83,16 @@ Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and 
 | Precision | **100%** |
 | F1 | **1.000** |
 
-Regional localization was correct for all 50 evaluated Trojan rows at the defined regional-code level.
+Regional localization was correct for all 50 evaluated Trojan rows at the defined coarse regional-code level. The 95% Wilson intervals are TPR 92.9–100% (50/50) and FPR 0–27.8% (0/10), reflecting the small controlled sample.
 
 ### Latency
 
 | Target | Inference | Detection latency |
 |---|---:|---:|
-| Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T4: 149,136 cycles / 2.98272 ms |
-| T5 | 634,282 cycles / 12.68564 ms | 149,135 cycles / 2.98270 ms |
+| Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T3: 149,137 cycles / 2.98274 ms; T4: 149,135 cycles / 2.98270 ms |
+| T5 | 634,282 cycles / 12.68564 ms | 149,136 cycles / 2.98272 ms |
 
-### Fresh C6 implementation evidence
+### Legacy pre-monitor C6 implementation evidence
 
 | Target | ALMs | Registers | RAM blocks | DSPs | Setup slack | Hold slack |
 |---|---:|---:|---:|---:|---:|---:|
@@ -96,15 +102,15 @@ Regional localization was correct for all 50 evaluated Trojan rows at the define
 
 Block memory bits for Healthy/T1/T2: **455,104**.
 
-Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact final fitter resource counts for T3/T4/T5 are also not inferred.
+These resource/timing snapshots are from the pre-monitor RTL and cannot be used to estimate the monitor's hardware overhead. Exact fresh C6 Fmax is not archived, and exact final fitter counts for T3/T4/T5 are not inferred.
 
-## Extended held-out simulation evaluation
+## Historical held-out simulation evaluation (pre-monitor RTL)
 
-A separate successful [GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates with the Healthy baseline and selected five Healthy-correct images per class (50 images). Healthy and T1–T5 were run for each image, yielding 300 additional simulation rows: TP=250, TN=50, FP=0, FN=0, TPR=100%, FPR=0%, precision=100%, F1=1.000, and 250/250 correct regional codes. These metrics are conditional on the Healthy-screened inputs and are not physical measurements or a universal guarantee. See [the held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
+The earlier [held-out GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) evaluated 50 Healthy-correct images across Healthy and T1–T5 (300 simulation rows). That matrix predates the independent monitor and is **not a result for the monitor-enhanced revision**. It must be rerun before claiming held-out performance for the current monitor. See [the historical held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
 
-## Physical DE10-Standard validation
+## Legacy physical DE10-Standard validation
 
-T1, T2, T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. T1 produced class 7, detector asserted, localization code 01; T2 produced class 7, detector asserted, localization code 10; T3/T4/T5 produced class 7, detector asserted, shared localization code 11.
+T1–T5 bitstreams from the **pre-monitor RTL revision** were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. Those observations document the earlier design only. The monitor-enhanced RTL has passed simulation but still requires a fresh Quartus build and new physical-board validation.
 
 - 0 programming errors / 0 warnings
 - LEDR0–LEDR5 observed ON
@@ -181,7 +187,8 @@ hardware-trojan-fpga-cnn/
 5. Exact fresh C6 Fmax is not archived.
 6. Exact final fitter resource counts for T3/T4/T5 are not archived.
 7. Broader datasets and cross-CNN generalization remain future work.
-8. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis over the committed 60-row ledger; independently synthesized ablation builds are not claimed.
+8. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis over the pre-monitor 60-row ledger; independently synthesized ablation builds are not claimed.
+9. The independent monitor has only been validated in the canonical RTL simulation matrix and unit tests; the held-out 300-row matrix, Quartus overhead, and physical board validation remain pending.
 
 ## Project status
 

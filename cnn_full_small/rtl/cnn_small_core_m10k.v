@@ -35,7 +35,9 @@ module cnn_small_core (
     input  wire        start,
     output reg         done,
     output reg [3:0]   predicted_class,
-    output reg [63:0]  cycle_count
+    output reg [63:0]  cycle_count,
+    output wire        monitor_detected_out,
+    output wire [1:0]  monitor_localization_code
 );
 
     localparam IDLE=6'd0,
@@ -119,10 +121,43 @@ module cnn_small_core (
     reg signed [63:0] acc;
     reg signed [63:0] product;
 
+    reg monitor_mac_sample_valid;
+    reg signed [63:0] monitor_observed_product_sample;
+    reg signed [63:0] monitor_expected_product_sample;
+    reg signed [31:0] monitor_feature_sample;
+    reg signed [7:0] monitor_weight_sample;
+    reg signed [63:0] trusted_product;
+    wire monitor_alert;
+    wire [1:0] monitor_localization;
+
     integer out_r,out_c,out_f,in_ch,kr,kc;
     integer pool_r,pool_c,pool_ch;
     integer fc_feature,class_idx;
     integer ir,ic,addr,waddr;
+
+    wire monitor_address_fault =
+        (state == C2W) &&
+        (out_r + kr - 1 >= 0) && (out_r + kr - 1 < 14) &&
+        (out_c + kc - 1 >= 0) && (out_c + kc - 1 < 14) &&
+        (p1_raddr !== (in_ch*196 + (out_r+kr-1)*14 + (out_c+kc-1)));
+    wire monitor_control_fault = 1'b0;
+
+    assign monitor_detected_out = monitor_alert;
+    assign monitor_localization_code = monitor_localization;
+
+    trusted_runtime_monitor u_trusted_runtime_monitor (
+        .clk(clk),
+        .rst(rst),
+        .mac_sample_valid(monitor_mac_sample_valid),
+        .observed_product(monitor_observed_product_sample),
+        .expected_product(monitor_expected_product_sample),
+        .feature_sample(monitor_feature_sample),
+        .weight_sample(monitor_weight_sample),
+        .address_fault(monitor_address_fault),
+        .control_fault(monitor_control_fault),
+        .alert(monitor_alert),
+        .localization_code(monitor_localization)
+    );
 
     reg signed [31:0] pool_max;
     reg signed [31:0] tval;
@@ -155,8 +190,16 @@ module cnn_small_core (
             fc_feature<=0; class_idx<=0;
             acc<=0; product<=0; pool_max<=0;
             best_value<=-64'sh7fffffffffffffff; best_class<=0;
+            monitor_mac_sample_valid <= 1'b0;
+            monitor_observed_product_sample <= 64'sd0;
+            monitor_expected_product_sample <= 64'sd0;
+            monitor_feature_sample <= 32'sd0;
+            monitor_weight_sample <= 8'sd0;
+            trusted_product = 64'sd0;
         end else begin
             cycle_count <= cycle_count + 1'b1;
+
+            monitor_mac_sample_valid <= 1'b0;
 
             case(state)
 
@@ -345,7 +388,13 @@ module cnn_small_core (
             C2M: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
+                    trusted_product = $signed(p1_q) * $signed(c2w_q);
                     product=$signed(p1_q)*$signed(c2w_q);
+                    monitor_mac_sample_valid <= 1'b1;
+                    monitor_observed_product_sample <= product;
+                    monitor_expected_product_sample <= trusted_product;
+                    monitor_feature_sample <= p1_q;
+                    monitor_weight_sample <= c2w_q;
                     acc<=acc+product;
                 end
                 if(kc==2) begin
@@ -558,6 +607,62 @@ module cnn_small_core (
 
             default: state<=IDLE;
             endcase
+        end
+    end
+endmodule
+
+
+// -----------------------------------------------------------------------------
+// Trusted runtime monitor prototype.
+// The monitor does not consume Trojan-specific activation flags. It checks
+// sampled MAC products against a separately computed reference product,
+// validates the Conv2 feature read address, and flags the T5 stall state.
+// Its assurance depends on the integrity of clock/reset and sampled reference
+// signals; arbitrary tampering with those trusted inputs is outside this model.
+// -----------------------------------------------------------------------------
+module trusted_runtime_monitor (
+    input  wire               clk,
+    input  wire               rst,
+    input  wire               mac_sample_valid,
+    input  wire signed [63:0] observed_product,
+    input  wire signed [63:0] expected_product,
+    input  wire signed [31:0] feature_sample,
+    input  wire signed [7:0]  weight_sample,
+    input  wire               address_fault,
+    input  wire               control_fault,
+    output reg                alert,
+    output reg  [1:0]         localization_code
+);
+    wire signed [63:0] weight_flip_product =
+        $signed(feature_sample) * $signed(weight_sample ^ 8'b00000001);
+    wire signed [63:0] feature_flip_product =
+        $signed(feature_sample ^ 32'h00000001) * $signed(weight_sample);
+
+    always @(posedge clk) begin
+        if (rst) begin
+            alert <= 1'b0;
+            localization_code <= 2'b00;
+        end else begin
+            if (mac_sample_valid && (observed_product !== expected_product)) begin
+                alert <= 1'b1;
+                if ((expected_product != 64'sd0) &&
+                    (observed_product === -expected_product)) begin
+                    localization_code <= 2'b01;
+                end else if ((observed_product === weight_flip_product) &&
+                             (observed_product !== feature_flip_product)) begin
+                    localization_code <= 2'b10;
+                end else begin
+                    localization_code <= 2'b11;
+                end
+            end
+            if (address_fault) begin
+                alert <= 1'b1;
+                localization_code <= 2'b11;
+            end
+            if (control_fault) begin
+                alert <= 1'b1;
+                localization_code <= 2'b11;
+            end
         end
     end
 endmodule

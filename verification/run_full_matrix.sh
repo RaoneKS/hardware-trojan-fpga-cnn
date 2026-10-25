@@ -59,8 +59,12 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
     cyc=$(grep "Cycle count" "${LOG}" | tail -1 | awk '{print $NF}')
 
     if [[ "${T}" == "Healthy" ]]; then
-      detected=0; loc="00"; dcycle=0; latency=0
-      if grep -q "PASS: CNN predicted expected digit" "${LOG}" && [[ "${pred}" == "${expected}" ]]; then
+      detected=$(grep "MONITOR_DETECTED" "${LOG}" | tail -1 | awk '{print $NF}' || true)
+      [[ "${detected}" == "1" ]] || detected=0
+      loc=$(grep "LOCALIZATION_OUTPUT" "${LOG}" | tail -1 | sed "s/.*2'b//" || true)
+      dcycle=0; latency=0
+      if grep -q "PASS: CNN predicted expected digit" "${LOG}" &&
+         [[ "${pred}" == "${expected}" && "${detected}" == "0" && "${loc}" == "00" ]]; then
         status=PASS
       else
         status=FAIL

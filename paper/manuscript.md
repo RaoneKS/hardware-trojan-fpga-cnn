@@ -5,7 +5,7 @@
 
 ## Abstract
 
-Field-programmable gate arrays (FPGAs) provide a practical platform for deploying convolutional neural networks (CNNs) at the edge, but their programmable datapaths, third-party intellectual property, and distributed design flows also create opportunities for malicious hardware modification. Hardware Trojans are particularly difficult to expose when their payload changes an internal computation without necessarily changing the final classification. This work presents a lightweight runtime monitoring and regional localization framework integrated with an INT8 LeNet-style CNN accelerator for MNIST inference. Five controlled Trojan variants are introduced at distinct microarchitectural regions: Conv2 processing-element arithmetic, Conv2 weight memory, Conv2 feature interconnect, Conv2 spatial routing, and the Conv2 control sequencer. The accelerator is implemented for the Intel Cyclone V SoC FPGA on the Terasic DE10-Standard and evaluated using cycle-accurate Verilog simulation, Quartus implementation, and physical board programming. The canonical 60-row simulation matrix covers ten MNIST workloads (one per digit class) and six hardware targets (Healthy and T1–T5). A separate held-out evaluation screened additional MNIST inputs against the Healthy baseline and evaluated 50 correctly classified images (five per class) across all six targets, yielding 300 additional cycle-accurate simulation rows. For this controlled matrix, the detector obtains TP=50, TN=10, FP=0 and FN=0, corresponding to 100% TPR/recall, 0% FPR, 100% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1–T4 trigger after 149,136 cycles (2.98272 ms at 50 MHz), while T5 triggers after 149,135 cycles because its one-cycle control stall shifts the reference point. T1, T2, T3, T4 and T5 bitstreams were also successfully programmed on the physical DE10-Standard and produced the expected class/detector/localization LED patterns. Quartus Power Analyzer results are reported only as tool estimates; physical rail/current power measurements were not performed. Likewise, exact final fitter resource counts for T3–T5 and exact fresh C6 Fmax values are not claimed where they are not archived.
+FPGAs are practical platforms for CNN inference but their datapaths, memories, interconnects, and control logic can be modified maliciously. This work integrates a reference-assisted runtime monitor into an INT8 LeNet-style CNN RTL design. The monitor does not consume Trojan-specific activation flags: it compares sampled Conv2 MAC products against reference products, checks the expected Conv2 feature address, and flags the T5 stall state. The clean reference also runs the monitor so false alarms are measured. The canonical 60-row matrix (ten MNIST workloads × Healthy/T1–T5) passed with TP=50, TN=10, FP=0 and FN=0; coarse regional localization was correct on 50/50 Trojan rows. The 95% Wilson intervals are 92.9–100% for TPR (50/50) and 0–27.8% for FPR (0/10), reflecting the small sample. Monitor detection latency is 149,137 cycles for T1–T3, 149,135 for T4, and 149,136 for T5 at 50 MHz. The separate 300-row held-out evaluation, Quartus resource/power reports, and physical DE10 observations are from the pre-monitor RTL revision and are not claimed as evidence for the current monitor. Fresh Quartus implementation and physical validation remain pending.
 
 **Keywords:** Hardware Trojans, FPGA security, CNN accelerator, runtime detection, hardware monitoring, regional localization, INT8, MNIST, Cyclone V.
 
@@ -22,7 +22,7 @@ The contributions are:
 2. five controlled Trojan variants spanning arithmetic, memory, interconnect, routing, and control regions;
 3. a runtime detector with three regional localization classes;
 4. a deterministic ten-workload simulation matrix covering Healthy and T1–T5;
-5. Quartus implementation evidence and physical DE10-Standard validation for T1–T5; and
+5. a documented separation between current monitor-enhanced simulation evidence and pre-monitor Quartus/physical-board evidence; and
 6. an evidence-cleaned reporting methodology that explicitly separates simulation metrics, FPGA implementation results, tool-estimated power, and physical observations.
 
 ## 2. Background and Threat Model
@@ -39,8 +39,8 @@ The attacker is assumed to have RTL/netlist-level access during an untrusted des
 
 The controlled payload families are:
 - **T1:** arithmetic corruption in a Conv2 processing element;
-- **T2:** Conv2 weight-memory/data-path corruption;
-- **T3:** feature-interconnect alteration between Pool1 and Conv2;
+- **T2:** Conv2 weight-operand/data-path bit flip;
+- **T3:** feature-operand bit flip at the Conv2 MAC input;
 - **T4:** selective spatial source-routing alteration;
 - **T5:** one-cycle control-sequencer stall.
 
@@ -50,7 +50,7 @@ The attacker is not assumed to bypass or compromise the runtime monitor itself. 
 
 The literature is grouped into CNN accelerator Trojan attacks, runtime/behavioral detection, Trojan localization, and lightweight accelerator security. Recent representative works include FeSHI [6], CNN resilience studies [7], [14], golden-reference-free localization [8], TrojanSAINT [9], interconnect attacks [11], two-level protection [12], and explainable LUT localization [13].
 
-The project occupies a narrower runtime position: a compact digital monitor is embedded in the accelerator, controlled Trojans are inserted into multiple architectural regions, ten deterministic MNIST workloads are exercised, and selected variants are physically demonstrated on a Cyclone V DE10-Standard. Fine-grained graph/netlist localization and runtime architectural-region localization are complementary objectives rather than directly interchangeable methods.
+The project occupies a narrower runtime position: a compact digital monitor is embedded in the accelerator RTL, controlled Trojans are inserted into multiple architectural regions, and ten deterministic MNIST workloads are exercised. Physical DE10 demonstrations exist for the earlier pre-monitor RTL revision; the current monitor-enhanced revision is validated in simulation only. Fine-grained graph/netlist localization and runtime architectural-region localization are complementary objectives rather than directly interchangeable methods.
 
 ## IV. Baseline FPGA CNN Accelerator
 
@@ -74,11 +74,11 @@ Healthy uses localization 00. T1 uses 01 for Conv2 PE computation. T2 uses 10 fo
 |---|---|---|---|
 | T1 | Conv2 PE | selected MAC product sign inversion | 01 |
 | T2 | Conv2 weight/data path | selected weight bit flip | 10 |
-| T3 | Conv2 interconnect | selected feature-interconnect alteration | 11 |
+| T3 | Conv2 feature data path | selected feature-operand bit flip | 11 |
 | T4 | Conv2 routing | selected source-address/routing alteration | 11 |
 | T5 | Conv2 control | one-cycle control-path stall | 11 |
 
-The injection/build flow is Healthy RTL -> controlled Trojan RTL -> Icarus simulation -> Quartus compile -> SOF -> DE10 programming. The same workload and clock configuration are retained across variants.
+The historical board-demonstration flow was Healthy RTL -> controlled Trojan RTL -> Icarus simulation -> Quartus compile -> SOF -> DE10 programming. The independent-monitor revision has passed Icarus simulation but still requires a fresh Quartus compile and DE10 programming; legacy SOFs must not be treated as monitor-enhanced evidence.
 
 For this work, output-stealthy means that the selected Trojan-present run retains the same top-1 class as the corresponding Healthy run while the runtime monitor detects the internal anomaly. This is a workload-scoped definition.
 
@@ -88,9 +88,9 @@ All ten Healthy rows report the expected class, detector 0, localization 00, and
 
 ## VIII. Proposed Lightweight Multi-Signature Anomaly Detection
 
-The detector observes selected architectural invariants and trigger-state information near the controlled Trojan regions. It latches a detector bit and a corresponding regional code when the selected anomaly occurs.
+The monitor checks three signals: (1) a sampled post-payload Conv2 MAC product against a reference product recomputed from the original feature/weight operands, (2) the registered Conv2 feature read address against the address implied by the operation counters, and (3) the T5 stall state. The public detector and localization outputs are driven by this monitor, not by the Trojan-specific t*_detected flags. The clean reference instantiates the same monitor so the ten Healthy rows measure false alarms.
 
-The runtime procedure is: start inference, monitor the selected event, latch detection, expose the region code, and complete inference. The monitor is integrated in RTL and does not require an external software classification oracle during runtime.
+The monitor assumes trusted clock/reset, operation counters, sampled reference operands, and monitor logic. It is a reference-assisted checker for this controlled Trojan campaign, not a tamper-proof security island or a general detector for arbitrary unknown Trojans.
 
 ## IX. Trojan Localization
 
@@ -99,25 +99,25 @@ The localization map is:
 - 00: Healthy;
 - 01: Conv2 PE computation;
 - 10: Conv2 weight/data path;
-- 11: shared interconnect/routing/control.
+- 11: shared feature-data-path/routing/control.
 
-The 11 code intentionally does not distinguish T3 from T4 or T5. In the committed simulation matrix, T1 is correct on 10/10 rows, T2 on 10/10, and T3-T5 on 30/30, giving 50/50 = 100% regional localization accuracy.
+The 11 code intentionally does not distinguish T3 from T4 or T5; it also represents ambiguous arithmetic signatures. In the monitor-enhanced canonical simulation matrix, T1 is localized to 01 on 10/10 rows, T2 to 10 on 10/10, and T3–T5 to shared code 11 on 30/30 rows.
 
 ## X. Results and Discussion
 
 ### A. Detection performance
 
-The 60 simulation rows contain 10 Healthy and 50 Trojan cases. The resulting counts are TP=50, TN=10, FP=0, FN=0. Therefore TPR/recall = 100%, FPR = 0%, precision = 100%, and F1 = 1.000. These values apply only to the committed controlled matrix.
+The monitor-enhanced 60 simulation rows contain ten Healthy and 50 Trojan cases: TP=50, TN=10, FP=0, FN=0. Point estimates are TPR/recall=100%, FPR=0%, precision=100%, and F1=1.000. The 95% Wilson intervals are 92.9–100% for TPR and 0–27.8% for FPR. These values apply only to the selected controlled matrix and do not imply universal detection.
 
 ### B. Detection latency
 
-T1-T4 detect at 149,136 cycles = 2.98272 ms at 50 MHz. T5 detects at 149,135 cycles = 2.98270 ms. The committed ten-workload matrix shows the same latency for every row of a given Trojan class.
+The monitor-facing ledger records T1–T3 detection latency of 149,137 cycles (2.98274 ms), T4 of 149,135 cycles (2.98270 ms), and T5 of 149,136 cycles (2.98272 ms) at 50 MHz. The same per-variant latency was recorded across the ten canonical workloads.
 
 ### C. CNN functional impact
 
 All 50 Trojan-present rows retain the expected top-1 class. This demonstrates output-stealthy behavior for the selected controlled cases and does not prove universal stealthiness.
 
-### D. Hardware resource evidence
+### D. Legacy pre-monitor hardware resource evidence
 
 | Target | ALMs | Registers | RAM | DSP | Setup slack | Hold slack |
 |---|---:|---:|---:|---:|---:|---:|
@@ -125,21 +125,21 @@ All 50 Trojan-present rows retain the expected top-1 class. This demonstrates ou
 | T1 | 1170 | 918 | 71 | 13 | +0.141 ns | +0.141 ns |
 | T2 | 1192 | 919 | 71 | 15 | +0.163 ns | +0.163 ns |
 
-Exact final T3-T5 fitter counts and exact fresh-C6 Fmax are not archived and are not inferred.
+The table above describes the pre-monitor RTL and cannot quantify the independent monitor's hardware overhead. The monitor-enhanced RTL needs a fresh Quartus rebuild under identical constraints; exact final T3–T5 fitter counts and fresh-C6 Fmax remain unavailable.
 
 ### E. Power estimates
 
-Quartus Power Analyzer estimates are Healthy 463.79 mW, T1 465.51 mW, T2 466.28 mW, T3 467.17 mW, T4 464.75 mW, and T5 464.27 mW. These are tool estimates, not physical rail/current measurements.
+The archived Quartus Power Analyzer estimates (463.79–467.17 mW across Healthy/T1–T5) belong to the pre-monitor RTL. They are tool estimates, not physical rail/current measurements, and do not quantify the monitor-enhanced revision.
 
 ### F. Ablation and security-overhead trade-off
 
-An evidence-bounded numerical evaluation-layer ablation is derived from the committed 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/memory-only hardware builds, so no independent resource-overhead delta is claimed.
+A historical, pre-monitor evidence-bounded numerical evaluation-layer ablation was derived from the earlier 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/weight-data-path-only hardware builds, so no independent resource-overhead delta is claimed.
 
 ## XI. Robustness, Stealthiness, and Generalization
 
-The canonical ten-workload matrix has zero detector assertions in ten Healthy runs and 50 detections in 50 Trojan-present runs. To reduce dependence on one image per class, a separate held-out same-CNN experiment screened candidates with the Healthy synchronous-M10K implementation, excluded the ten canonical MNIST indices, and selected five Healthy-correct images per digit class (50 images total). The successful CI run evaluated each selected image on Healthy and T1–T5, producing 300 additional simulation rows: 250/250 Trojan detections, 50/50 Healthy non-detections, no recorded false positives or false negatives, expected-class preservation in 300/300 rows, and correct regional codes in 250/250 Trojan rows. T1–T4 detection latency was 149,136 cycles and T5 was 149,135 cycles across the selected set.
+A historical held-out same-CNN experiment evaluated 50 Healthy-correct images across Healthy/T1–T5 (300 simulation rows) using the pre-monitor RTL and Trojan-self-reporting flags. Those results are not evidence for the independent monitor and are excluded from current monitor metrics. The 300-row campaign must be rerun with this monitor-enhanced revision before claiming held-out performance.
 
-The held-out FPR is conditional on the Healthy-screened set; samples misclassified by the Healthy baseline were excluded, so this is not an estimate of FPR across all MNIST inputs. The combined results support robustness across the selected same-CNN, Healthy-correct workload subset, not cross-CNN generalization. All five selected Trojan variants preserve the expected top-1 class across the evaluated cases. T1–T4 are timing-invisible at measured inference-cycle granularity, whereas T5 introduces a one-cycle timing deviation. This is an evidence-bounded observability analysis, not a graded payload-severity sweep. Only one compact CNN is evaluated, so cross-CNN generalization remains future work. See `docs/EXTENDED_HELDOUT_RESULTS.md` and the archived [CI evidence artifact](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036).
+The prior held-out result is conditional on Healthy-correct images and is not an estimate across all MNIST inputs. It is also a pre-monitor result. The current monitor is validated only on the canonical ten-workload matrix; cross-CNN generalization, a monitor-enhanced held-out evaluation, and trigger/payload-severity sweeps remain future work.
 
 ## XII. Cross-Layer Security Analysis
 
@@ -155,16 +155,17 @@ Each controlled Trojan maps from a defined architectural region to a detector ev
 | TrojanSAINT | Detection + localization | Gate level | No | No |
 | Hou et al. | CNN interconnect attack + PUF defense | Interconnect | Yes | Yes |
 | Su et al. | Explainable LUT localization | LUT/node | No | No |
-| This work | Runtime detection + regional localization | 3 architectural regions | Yes | T1-T5 |
+| This work | Reference-assisted runtime detection + regional localization | 3 coarse regions | Canonical RTL simulation | Legacy pre-monitor only; monitor-enhanced hardware pending |
 
 This comparison is by objective and evidence layer, not a universal performance ranking.
 
 ## XIV. Reproducibility
 
-Canonical simulation:
+Canonical simulation and monitor unit tests:
 
 ~~~bash
 cd ~/hardware-trojan-fpga-cnn
+bash verification/run_monitor_unit_tests.sh
 chmod +x verification/run_full_matrix.sh
 ./verification/run_full_matrix.sh
 ~~~
@@ -173,19 +174,20 @@ The repository contains the workload manifest, 60-row simulation ledger, RTL/tes
 
 ## XV. Limitations and Threats to Validity
 
-1. The 60-row matrix is controlled simulation, not 60 independent physical measurements.
-2. Physical rail/current power was not measured.
-3. Quartus Power Analyzer values are estimates.
-4. Exact final T3-T5 fitter counts and fresh C6 Fmax are not archived.
-5. T3-T5 share localization code 11.
-6. Only one compact MNIST CNN is evaluated.
-7. The ablation is evaluation-layer channel masking over the committed ledger rather than independently synthesized monitor variants.
-8. No continuous trigger-probability or payload-severity sweep was performed.
-9. The monitor itself is outside the attacker-compromise model.
+1. The 60-row matrix is controlled RTL simulation, not 60 independent physical measurements.
+2. The held-out 300-row matrix has not been rerun with the independent monitor.
+3. The monitor-enhanced RTL has no fresh Quartus resource/timing report or physical DE10 validation yet.
+4. Legacy Quartus Power Analyzer values are estimates; physical rail/current power was not measured.
+5. Exact legacy T3–T5 fitter counts and fresh C6 Fmax are not archived.
+6. Code 11 is shared by T3/T4/T5 and ambiguous arithmetic signatures.
+7. Only one compact MNIST CNN is evaluated.
+8. The ablation is evaluation-layer channel masking, not independently synthesized monitor variants.
+9. No trigger-probability or payload-severity sweep was performed.
+10. The monitor assumes trusted clock/reset, operation counters, sampled reference operands, and monitor logic.
 
 ## XVI. Conclusion and Future Perspective
 
-A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. T1, T2, T3, T4 and T5 were physically programmed and validated on the DE10-Standard.
+The monitor-enhanced INT8 FPGA-CNN RTL passed the canonical 60-row simulation matrix and dedicated monitor unit tests. It detected all 50 controlled Trojan rows, raised no alerts on ten healthy rows, and localized the anomalies at the defined coarse resolution. The older Quartus and DE10 evidence belongs to the pre-monitor RTL. Fresh synthesis, held-out evaluation, and physical validation are required before claiming hardware overhead or on-board effectiveness for the independent monitor.
 
 The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, a graded trigger-probability/payload-severity sweep, independently synthesized monitor-ablation variants, additional CNNs, broader datasets, and finer localization.
 
@@ -260,9 +262,9 @@ The result is a controlled research prototype rather than a universal detector. 
 
 ### Figure 24
 
-![Figure 24: Archived hardware resource evidence; T3–T5 counts are not inferred.](figures/figure24_professor.svg)
+![Figure 24: Legacy pre-monitor hardware resource evidence; it does not quantify the independent monitor overhead.](figures/figure24_professor.svg)
 
-*Archived hardware resource evidence; T3–T5 counts are not inferred.*
+*Legacy pre-monitor hardware resource evidence; it does not quantify the independent monitor overhead.*
 
 ### Figure 25
 

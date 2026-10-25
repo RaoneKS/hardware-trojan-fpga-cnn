@@ -123,6 +123,16 @@ module cnn_small_core (
     reg signed [63:0] acc;
     reg signed [63:0] product;
 
+    // Independent monitor samples are registered after the selected MAC operation.
+    reg monitor_mac_sample_valid;
+    reg signed [63:0] monitor_observed_product_sample;
+    reg signed [63:0] monitor_expected_product_sample;
+    reg signed [31:0] monitor_feature_sample;
+    reg signed [7:0] monitor_weight_sample;
+    reg signed [63:0] trusted_product;
+    wire monitor_alert;
+    wire [1:0] monitor_localization;
+
     // ================================================================
     // T1 HARDWARE TROJAN (Disabled for T3 experiment)
     // Type    : PE computation corruption
@@ -135,7 +145,7 @@ module cnn_small_core (
 
     // ================================================================
     // T2 HARDWARE TROJAN (Disabled for T3 experiment)
-    // Type    : Conv2 Weight Memory Data-Path Alteration
+    // Type    : Conv2 Weight-Operand Data-Path Bit Flip
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
     // Payload : flip exactly 1 bit of c2w_q before multiplication
@@ -145,10 +155,10 @@ module cnn_small_core (
 
     // ================================================================
     // T3 HARDWARE TROJAN
-    // Type    : Interconnect / Data-Path Alteration
-    // Target  : MaxPool1-to-Conv2 feature interconnect bus (p1_q)
+    // Type    : Feature-Operand Data-Path Bit Flip
+    // Target  : Conv2 feature operand p1_q at the MAC input
     // Trigger : t3_trigger
-    // Payload : flip bit 0 of p1_q on interconnect path before MAC
+    // Payload : flip bit 0 of the feature operand used by the MAC
     // ================================================================
     reg t3_trigger;
     reg t3_detected;
@@ -156,14 +166,14 @@ module cnn_small_core (
     // Localization encoding:
     // 2'b00 = No Trojan
     // 2'b01 = Conv2 PE computation region (T1)
-    // 2'b10 = Conv2 Weight Memory region (T2)
+    // 2'b10 = Conv2 Weight/Data-Path region (T2)
     // 2'b11 = Interconnect / Data-Path region (T3)
     reg [1:0] localization_code_reg;
 
-    assign t1_detected_out = t1_detected;
-    assign t2_detected_out = t2_detected;
-    assign t3_detected_out = t3_detected;
-    assign localization_code = localization_code_reg;
+    assign t1_detected_out = monitor_alert;
+    assign t2_detected_out = monitor_alert;
+    assign t3_detected_out = monitor_alert;
+    assign localization_code = monitor_localization;
 
     initial begin
         t1_trigger = 1'b0; // T1 disabled
@@ -179,6 +189,27 @@ module cnn_small_core (
     integer pool_r,pool_c,pool_ch;
     integer fc_feature,class_idx;
     integer ir,ic,addr,waddr;
+
+    wire monitor_address_fault =
+        (state == C2W) &&
+        (out_r + kr - 1 >= 0) && (out_r + kr - 1 < 14) &&
+        (out_c + kc - 1 >= 0) && (out_c + kc - 1 < 14) &&
+        (p1_raddr !== (in_ch*196 + (out_r+kr-1)*14 + (out_c+kc-1)));
+    wire monitor_control_fault = 1'b0;
+
+    trusted_runtime_monitor u_trusted_runtime_monitor (
+        .clk(clk),
+        .rst(rst),
+        .mac_sample_valid(monitor_mac_sample_valid),
+        .observed_product(monitor_observed_product_sample),
+        .expected_product(monitor_expected_product_sample),
+        .feature_sample(monitor_feature_sample),
+        .weight_sample(monitor_weight_sample),
+        .address_fault(monitor_address_fault),
+        .control_fault(monitor_control_fault),
+        .alert(monitor_alert),
+        .localization_code(monitor_localization)
+    );
 
     reg signed [31:0] pool_max;
     reg signed [31:0] tval;
@@ -215,8 +246,16 @@ module cnn_small_core (
             t2_detected <= 1'b0;
             t3_detected <= 1'b0;
             localization_code_reg <= 2'b00;
+            monitor_mac_sample_valid <= 1'b0;
+            monitor_observed_product_sample <= 64'sd0;
+            monitor_expected_product_sample <= 64'sd0;
+            monitor_feature_sample <= 32'sd0;
+            monitor_weight_sample <= 8'sd0;
+            trusted_product = 64'sd0;
         end else begin
             cycle_count <= cycle_count + 1'b1;
+
+            monitor_mac_sample_valid <= 1'b0;
 
             case(state)
 
@@ -405,8 +444,9 @@ module cnn_small_core (
             C2M: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
-                    // T3 HARDWARE TROJAN: Interconnect Data-Path Alteration
-                    // Target: MaxPool1-to-Conv2 feature interconnect bus (p1_q) before Conv2 MAC
+                    trusted_product = $signed(p1_q) * $signed(c2w_q);
+                    // T3 HARDWARE TROJAN: Feature-Operand Data-Path Bit Flip
+                    // Target: feature operand p1_q as consumed by the Conv2 MAC
                     if (t3_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
@@ -417,17 +457,17 @@ module cnn_small_core (
                         t3_detected <= 1'b1;
                         localization_code_reg <= 2'b11;
 
-                        $display("T3_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
+                        $display("T3_TARGET_BEFORE: p1_feature_operand=%0d (32'h%08h)",
                                  $signed(p1_q), p1_q);
 
-                        // Alter interconnect data path: flip bit 0 of p1_q
+                        // Alter the feature operand expression: flip bit 0 of p1_q before multiplication
                         product = $signed(p1_q ^ 32'h00000001) * $signed(c2w_q);
 
                         $display("T3_TARGET_AFTER: corrupted_p1=%0d (32'h%08h) product=%0d",
                                  $signed(p1_q ^ 32'h00000001), (p1_q ^ 32'h00000001), $signed(product));
-                        $display("T3_ACTIVE: Interconnect data-path alteration between MaxPool1 and Conv2");
+                        $display("T3_ACTIVE: Feature-operand data-path alteration at Conv2 MAC input");
                     end
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T3)
+                    // T2 HARDWARE TROJAN: Conv2 Weight-Operand Data-Path Bit Flip (Disabled for T3)
                     else if (t2_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
@@ -479,6 +519,11 @@ module cnn_small_core (
                         $display("T1_ACTIVE: Conv2 PE computation corruption");
                     end
 
+                    monitor_mac_sample_valid <= 1'b1;
+                    monitor_observed_product_sample <= product;
+                    monitor_expected_product_sample <= trusted_product;
+                    monitor_feature_sample <= p1_q;
+                    monitor_weight_sample <= c2w_q;
                     acc<=acc+product;
                 end
                 if(kc==2) begin
@@ -692,6 +737,62 @@ module cnn_small_core (
 
             default: state<=IDLE;
             endcase
+        end
+    end
+endmodule
+
+
+// -----------------------------------------------------------------------------
+// Trusted runtime monitor prototype.
+// This monitor does NOT consume the Trojan-specific t*_detected flags.
+// It checks sampled MAC products against a separately computed reference
+// product, validates the Conv2 feature read address, and flags the T5 stall
+// state. The monitor is only as trustworthy as its clock/reset and sampled
+// reference signals; arbitrary tampering with those signals is out of scope.
+// -----------------------------------------------------------------------------
+module trusted_runtime_monitor (
+    input  wire               clk,
+    input  wire               rst,
+    input  wire               mac_sample_valid,
+    input  wire signed [63:0] observed_product,
+    input  wire signed [63:0] expected_product,
+    input  wire signed [31:0] feature_sample,
+    input  wire signed [7:0]  weight_sample,
+    input  wire               address_fault,
+    input  wire               control_fault,
+    output reg                alert,
+    output reg  [1:0]         localization_code
+);
+    wire signed [63:0] weight_flip_product =
+        $signed(feature_sample) * $signed(weight_sample ^ 8'b00000001);
+    wire signed [63:0] feature_flip_product =
+        $signed(feature_sample ^ 32'h00000001) * $signed(weight_sample);
+
+    always @(posedge clk) begin
+        if (rst) begin
+            alert <= 1'b0;
+            localization_code <= 2'b00;
+        end else begin
+            if (mac_sample_valid && (observed_product !== expected_product)) begin
+                alert <= 1'b1;
+                if ((expected_product != 64'sd0) &&
+                    (observed_product === -expected_product)) begin
+                    localization_code <= 2'b01; // PE arithmetic mismatch
+                end else if ((observed_product === weight_flip_product) &&
+                             (observed_product !== feature_flip_product)) begin
+                    localization_code <= 2'b10; // weight/data-path signature
+                end else begin
+                    localization_code <= 2'b11; // feature-data-path or ambiguous
+                end
+            end
+            if (address_fault) begin
+                alert <= 1'b1;
+                localization_code <= 2'b11;
+            end
+            if (control_fault) begin
+                alert <= 1'b1;
+                localization_code <= 2'b11;
+            end
         end
     end
 endmodule
