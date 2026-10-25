@@ -61,8 +61,8 @@ Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and 
 | ID | Target region | Controlled perturbation |
 |---|---|---|
 | T1 | Conv2 PE | Computation corruption |
-| T2 | Conv2 weight/data path | Weight/data corruption |
-| T3 | Conv2 interconnect | Feature-interconnect alteration |
+| T2 | Conv2 weight operand/data path | Weight-operand bit flip |
+| T3 | Conv2 feature operand/data path | Feature-operand bit flip at MAC input |
 | T4 | Conv2 routing | Selective source-routing alteration |
 | T5 | Conv2 control | One-cycle control-path stall |
 
