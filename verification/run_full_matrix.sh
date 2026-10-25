@@ -33,7 +33,7 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
       # Canonical healthy reference is the verified synchronous-M10K implementation.
       RTL="${ROOT}/cnn_full_small/rtl/cnn_small_core_m10k.v"
       TB="${ROOT}/cnn_full_small/tb/tb_cnn_small_core.v"
-      loc_expected="00"
+      loc_expected="000"
       present=0
       trigger="NONE"
     else
@@ -41,11 +41,11 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
       TB="${ROOT}/trojan_${T}/tb/tb_cnn_small_core.v"
       present=1
       case "${T}" in
-        T1) loc_expected="01"; trigger="Conv2_PE";;
-        T2) loc_expected="10"; trigger="Conv2_Weight";;
-        T3) loc_expected="11"; trigger="Conv2_Interconnect";;
-        T4) loc_expected="11"; trigger="Conv2_Routing";;
-        T5) loc_expected="11"; trigger="Conv2_Control";;
+        T1) loc_expected="001"; trigger="Conv2_PE";;
+        T2) loc_expected="010"; trigger="Conv2_Weight";;
+        T3) loc_expected="011"; trigger="Conv2_Interconnect";;
+        T4) loc_expected="100"; trigger="Conv2_Routing";;
+        T5) loc_expected="101"; trigger="Conv2_Control";;
       esac
     fi
 
@@ -59,7 +59,7 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
     cyc=$(grep "Cycle count" "${LOG}" | tail -1 | awk '{print $NF}')
 
     if [[ "${T}" == "Healthy" ]]; then
-      detected=0; loc="00"; dcycle=0; latency=0
+      detected=0; loc="000"; dcycle=0; latency=0
       if grep -q "PASS: CNN predicted expected digit" "${LOG}" && [[ "${pred}" == "${expected}" ]]; then
         status=PASS
       else
@@ -68,7 +68,7 @@ while IFS=, read -r workload_id mnist_index expected mem_path; do
     else
       detected=$(grep "DETECTED" "${LOG}" | tail -1 | awk '{print $NF}' || true)
       [[ "${detected}" == "1" ]] || detected=0
-      loc=$(grep "LOCALIZATION_OUTPUT" "${LOG}" | tail -1 | sed "s/.*2'b//" || true)
+      loc=$(grep "LOCALIZATION_OUTPUT" "${LOG}" | tail -1 | sed "s/.*3'b//" || true)
       dcycle=$(grep "DETECTION_CYCLE" "${LOG}" | tail -1 | awk '{print $NF}' || true)
       latency=$(grep "DETECTION_LATENCY" "${LOG}" | tail -1 | awk '{print $NF}' || true)
       if grep -q "PASS:" "${LOG}" && [[ "${pred}" == "${expected}" && "${detected}" == "1" && "${loc}" == "${loc_expected}" ]]; then
