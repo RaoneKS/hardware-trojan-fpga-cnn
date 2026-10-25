@@ -145,7 +145,7 @@ module cnn_small_core (
 
     // ================================================================
     // T2 HARDWARE TROJAN (Disabled for T3 experiment)
-    // Type    : Conv2 Weight Memory Data-Path Alteration
+    // Type    : Conv2 Weight-Operand Data-Path Bit Flip
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
     // Payload : flip exactly 1 bit of c2w_q before multiplication
@@ -155,10 +155,10 @@ module cnn_small_core (
 
     // ================================================================
     // T3 HARDWARE TROJAN
-    // Type    : Interconnect / Data-Path Alteration
-    // Target  : MaxPool1-to-Conv2 feature interconnect bus (p1_q)
+    // Type    : Feature-Operand Data-Path Bit Flip
+    // Target  : Conv2 feature operand p1_q at the MAC input
     // Trigger : t3_trigger
-    // Payload : flip bit 0 of p1_q on interconnect path before MAC
+    // Payload : flip bit 0 of the feature operand used by the MAC
     // ================================================================
     reg t3_trigger;
     reg t3_detected;
@@ -166,7 +166,7 @@ module cnn_small_core (
     // Localization encoding:
     // 2'b00 = No Trojan
     // 2'b01 = Conv2 PE computation region (T1)
-    // 2'b10 = Conv2 Weight Memory region (T2)
+    // 2'b10 = Conv2 Weight/Data-Path region (T2)
     // 2'b11 = Interconnect / Data-Path region (T3)
     reg [1:0] localization_code_reg;
 
@@ -457,17 +457,17 @@ module cnn_small_core (
                         t3_detected <= 1'b1;
                         localization_code_reg <= 2'b11;
 
-                        $display("T3_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
+                        $display("T3_TARGET_BEFORE: p1_feature_operand=%0d (32'h%08h)",
                                  $signed(p1_q), p1_q);
 
-                        // Alter interconnect data path: flip bit 0 of p1_q
+                        // Alter the feature operand expression: flip bit 0 of p1_q before multiplication
                         product = $signed(p1_q ^ 32'h00000001) * $signed(c2w_q);
 
                         $display("T3_TARGET_AFTER: corrupted_p1=%0d (32'h%08h) product=%0d",
                                  $signed(p1_q ^ 32'h00000001), (p1_q ^ 32'h00000001), $signed(product));
-                        $display("T3_ACTIVE: Interconnect data-path alteration between MaxPool1 and Conv2");
+                        $display("T3_ACTIVE: Feature-operand data-path alteration at Conv2 MAC input");
                     end
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration (Disabled for T3)
+                    // T2 HARDWARE TROJAN: Conv2 Weight-Operand Data-Path Bit Flip (Disabled for T3)
                     else if (t2_trigger &&
                         out_f == 1 &&
                         out_r == 0 &&
@@ -782,7 +782,7 @@ module trusted_runtime_monitor (
                              (observed_product !== feature_flip_product)) begin
                     localization_code <= 2'b10; // weight/data-path signature
                 end else begin
-                    localization_code <= 2'b11; // feature/interconnect or ambiguous
+                    localization_code <= 2'b11; // feature-data-path or ambiguous
                 end
             end
             if (address_fault) begin
