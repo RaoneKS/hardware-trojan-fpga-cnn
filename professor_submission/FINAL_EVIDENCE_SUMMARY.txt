@@ -1,79 +1,46 @@
 HARDWARE TROJAN DETECTION IN FPGA-CNNS
-FINAL EVIDENCE SUMMARY
+CURRENT EVIDENCE SUMMARY — INDEPENDENT MONITOR REVISION
 
 PLATFORM
-Board: Terasic DE10-Standard
-FPGA: Intel Cyclone V SoC 5CSXFC6D6F31C6
-Clock: 50 MHz
-Toolchain: Intel Quartus Prime Lite 25.1
+Target family: Intel Cyclone V SoC / Terasic DE10-Standard
+Clock used for cycle-to-time conversion: 50 MHz
+Simulation: Icarus Verilog through GitHub Actions
 
-EXPERIMENT MATRIX
-Canonical: 10 MNIST workloads (digits 0-9) x 6 targets = 60 simulation rows
-Healthy = 10
-T1-T5 = 50
+CURRENT MONITOR-ENHANCED SIMULATION
+Canonical matrix: 10 MNIST workloads × Healthy/T1–T5 = 60 rows
+Healthy no-alert cases: 10/10
+Controlled Trojan detections: 50/50
+TP=50, TN=10, FP=0, FN=0
+Point estimates: TPR=100%, FPR=0%, precision=100%, F1=1.000
+Regional localization correct: 50/50 at the defined coarse resolution
+95% Wilson intervals: TPR 92.9–100% (n=50); FPR 0–27.8% (n=10)
+Dedicated monitor unit tests: PASS (healthy, T1/T2/T3 signatures, address, control, reset/re-arm)
+Canonical CI regression: PASS (60/60)
 
-HELD-OUT SAME-CNN ROBUSTNESS MATRIX
-50 additional Healthy-correct MNIST images (5 per class) x 6 targets = 300 simulation rows
-Healthy = 50
-T1-T5 = 250
-TP=250, TN=50, FP=0, FN=0
-TPR=100%, FPR=0%, Precision=100%, F1=1.000
-Regional localization correct in 250/250 Trojan rows
-Scope: FPR is conditional on Healthy-correct inputs; simulation-only, not physical 300-case validation. See docs/EXTENDED_HELDOUT_RESULTS.md.
+MONITOR DETECTION LATENCY
+T1: 149137 cycles = 2.98274 ms, code 01
+T2: 149137 cycles = 2.98274 ms, code 10
+T3: 149137 cycles = 2.98274 ms, code 11
+T4: 149135 cycles = 2.98270 ms, code 11
+T5: 149136 cycles = 2.98272 ms, code 11
+Reference inference: Healthy/T1–T4 634281 cycles = 12.68562 ms; T5 634282 cycles = 12.68564 ms
 
-DETECTION METRICS
-TP = 50
-TN = 10
-FP = 0
-FN = 0
-TPR = 100%
-FPR = 0%
-Precision = 100%
-Recall = 100%
-F1 = 1.000
+INTERPRETATION
+The monitor checks sampled Conv2 MAC products, expected feature-memory addresses, and the T5 stall state. It does not consume Trojan-specific activation flags. Code 11 remains shared by feature/interconnect, routing, control, and ambiguous arithmetic signatures. The metrics apply only to this controlled canonical simulation set; they do not prove detection of arbitrary unknown Trojans.
 
-LOCALIZATION
-Regional localization correct for all 50 Trojan simulation rows.
-T1 = code 01
-T2 = code 10
-T3/T4/T5 = code 11
-Code 11 is a shared regional code and does not distinguish T3/T4/T5.
+LEGACY PRE-MONITOR EVIDENCE — NOT CURRENT MONITOR VALIDATION
+The following records belong to the earlier RTL/bitstream revision:
+- Held-out 50-image / 300-run simulation results.
+- Quartus C6 resource/timing snapshots for Healthy/T1/T2.
+- Quartus Power Analyzer estimates.
+- Physical DE10-Standard programming/LED observations for T1–T5.
+Do not use those records as evidence of monitor-enhanced hardware overhead or physical performance.
 
-CANONICAL LATENCY
-Healthy/T1/T2/T3/T4 = 634281 cycles = 12.68562 ms
-T5 = 634282 cycles = 12.68564 ms
-T1-T4 detection latency = 149136 cycles = 2.98272 ms
-T5 detection latency = 149135 cycles = 2.98270 ms
+REQUIRED BEFORE FINAL RESEARCH CLAIMS
+1. Rerun the 300-row held-out matrix against the monitor-enhanced RTL.
+2. Rebuild all monitor-enhanced Quartus projects under matched constraints and report resource/timing deltas.
+3. Program the new SOFs on DE10-Standard and archive physical evidence.
+4. Test zero-effect payload cases, ambiguous signatures, benign deviations, and a stronger trust boundary.
 
-FRESH C6 RESOURCE/TIMING SNAPSHOT
-Healthy: 1153 ALMs, 912 registers, 455104 block-memory bits, 71 RAM blocks, 13 DSPs, +0.181 ns setup, +0.173 ns hold
-T1: 1170 ALMs, 918 registers, 455104 block-memory bits, 71 RAM blocks, 13 DSPs, +0.141 ns setup, +0.141 ns hold
-T2: 1192 ALMs, 919 registers, 455104 block-memory bits, 71 RAM blocks, 15 DSPs, +0.163 ns setup, +0.163 ns hold
-Fresh C6 Fmax is not archived.
-T3/T4/T5 exact final fitter resource counts are not archived.
-
-POWER
-Quartus Power Analyzer values are tool estimates.
-No physical rail/current power measurement is claimed.
-
-PHYSICAL DE10 VALIDATION
-T1: PASS, 0 programming errors, 0 warnings, LEDR0-LEDR4 ON and LEDR5 OFF, class 7, detector asserted, localization 01.
-T2: PASS, 0 programming errors, 0 warnings, LEDR0,1,2,3,5 ON and LEDR4 OFF, class 7, detector asserted, localization 10.
-T3: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
-T4: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
-T5: PASS, 0 programming errors, 0 warnings, all LEDR0-LEDR5 ON, class 7, detector asserted, localization 11.
-
-ABLATION / STEALTHINESS ANALYSIS
-Evidence-bounded evaluation-layer channel masking over the committed 60-row ledger:
-Functional-only TPR=0%, Timing-only TPR=20%, PE-region-only TPR=20%, Weight/data-region-only TPR=20%, Interconnect/routing/control-region-only TPR=60%, Full regional monitor TPR=100%; FPR=0% for all masked configurations. This is not an independently synthesized no-monitor/PE-only/memory-only hardware ablation.
-All T1-T5 are output-stealthy across the 10 selected workloads. T1-T4 are timing-invisible at inference-cycle granularity; T5 is timing-visible with a one-cycle delta.
-
-FINAL VERDICT
-READY FOR PROFESSOR REVIEW FOR THE DEFINED CONTROLLED PROJECT SCOPE.
-
-DOCUMENTED LIMITATIONS
-1. Physical rail/current power instrumentation is not included.
-2. Exact T3/T4/T5 fitter resource counts are not archived.
-3. Exact fresh C6 Fmax is not archived.
-4. Broader datasets/cross-CNN generalization remain future work.
-5. The current ablation is evaluation-layer channel masking; independently synthesized build-level ablation and graded payload-severity sweeps remain future extensions.
+STATUS
+The independent-monitor RTL is simulation-validated for the canonical controlled matrix. Monitor-enhanced Quartus and physical validation remain pending.
