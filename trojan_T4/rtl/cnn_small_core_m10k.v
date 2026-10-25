@@ -256,12 +256,6 @@ module cnn_small_core (
             cycle_count <= cycle_count + 1'b1;
 
             monitor_mac_sample_valid <= 1'b0;
-            if ((state == C2W) && out_f == 1 && out_r == 0 && out_c == 0 &&
-                in_ch == 1 && kr == 1 && kc == 1)
-                $display("MONITOR_ADDR_DEBUG actual=%0d expected=%0d fault=%b state=%0d",
-                         p1_raddr, in_ch*196+(out_r+kr-1)*14+(out_c+kc-1),
-                         monitor_address_fault, state);
-
             case(state)
 
             IDLE: begin
@@ -433,17 +427,8 @@ module cnn_small_core (
             /* ---------- Conv2 ---------- */
             C2A: begin
                 ir=out_r+kr-1; ic=out_c+kc-1;
-                if (out_f == 1 && out_r == 0 && out_c == 0 &&
-                    in_ch == 1 && kr == 1 && kc == 1)
-                    $display("T4_C2A_DEBUG trigger=%b actual_candidate=%0d state=%0d",
-                             t4_trigger, in_ch*196+ir*14+ic, state);
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
-                    if (t4_trigger &&
-                        out_f == 1 && out_r == 0 && out_c == 0 &&
-                        in_ch == 1 && kr == 1 && kc == 1)
-                        p1_raddr<=in_ch*196+ir*14+ic+1;
-                    else
-                        p1_raddr<=in_ch*196+ir*14+ic;
+                    p1_raddr<=in_ch*196+ir*14+ic;
                     c2w_ra<=out_f*72+in_ch*9+kr*3+kc;
                 end else begin
                     p1_raddr<=0; c2w_ra<=0;
@@ -575,7 +560,13 @@ module cnn_small_core (
                     ir=out_r+kr-1;
                     ic=out_c+(kc+1)-1;
                     if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
-                        p1_raddr <= in_ch*196 + ir*14 + ic;
+                        // The address for kc+1 is prefetched in this C2M cycle.
+                        // Shift the address that will feed the selected next MAC.
+                        if (t4_trigger && out_f == 1 && out_r == 0 && out_c == 0 &&
+                            in_ch == 1 && kr == 1 && kc == 0)
+                            p1_raddr <= in_ch*196 + ir*14 + ic + 1;
+                        else
+                            p1_raddr <= in_ch*196 + ir*14 + ic;
                         c2w_ra <= out_f*72 + in_ch*9 +
                                   kr*3 + (kc+1);
                     end else begin
