@@ -192,3 +192,20 @@ hardware-trojan-fpga-cnn/
 **Jeevan K S**  
 B.Tech — Electronics and Communication Engineering  
 IIIT Dharwad
+
+## Statistical reporting and next experiments
+
+Regenerate the canonical simulation ledger before calculating confidence intervals:
+
+~~~bash
+python3 -m unittest discover -s verification/tests -v
+python3 verification/run_full_matrix.sh
+python3 verification/robustness_metrics.py
+~~~
+
+The uncertainty-aware report is written to `verification/results/ROBUSTNESS_METRICS.md` and `verification/results/ROBUSTNESS_METRICS.json`. TPR, FPR, and precision use two-sided Wilson intervals; F1 uses a deterministic workload-cluster bootstrap. Intervals are descriptive for the supplied evaluation ledger and do not establish generalization.
+
+- [Evaluation limitations and metrics methodology](docs/EVALUATION_LIMITATIONS_AND_METRICS.md)
+- [Unseen-Trojan and cross-model experiment plan](docs/UNSEEN_TROJAN_AND_GENERALIZATION_PLAN.md)
+
+The unseen-Trojan, broader-workload, cross-model, final synthesis-overhead, and physical-power experiments in the plan are **not yet executed**. Do not report them as completed results.
