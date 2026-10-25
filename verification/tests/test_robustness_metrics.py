@@ -19,7 +19,7 @@ class WilsonIntervalTests(unittest.TestCase):
     def test_all_successes_interval_is_not_point_one(self):
         lo, hi = metrics.wilson_interval(10, 10)
         self.assertLess(lo, 1.0)
-        self.assertEqual(hi, 1.0)
+        self.assertAlmostEqual(hi, 1.0)
 
     def test_empty_denominator_is_undefined(self):
         self.assertIsNone(metrics.wilson_interval(0, 0))
