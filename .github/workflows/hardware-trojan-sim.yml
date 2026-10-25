@@ -6,7 +6,7 @@ on:
   pull_request:
 
 concurrency:
-  group: hardware-trojan-\${{ github.workflow }}-\${{ github.ref }}
+  group: hardware-trojan-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
