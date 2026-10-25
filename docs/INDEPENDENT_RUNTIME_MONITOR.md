@@ -20,7 +20,7 @@ The monitor does not read the Trojan-specific t1_detected/t2_detected/... flags.
 | 00 | No monitored anomaly observed during this inference |
 | 01 | Observed product is the negation of the nonzero reference product (PE arithmetic signature) |
 | 10 | Observed product uniquely matches the weight-bit-flip candidate |
-| 11 | Feature/interconnect signature, address mismatch, control anomaly, or ambiguous arithmetic signature |
+| 11 | Feature-operand/data-path signature, address mismatch, control anomaly, or ambiguous arithmetic signature |
 
 Code 11 intentionally remains a shared region. It does not uniquely distinguish T3, T4, and T5. Code 00 means no anomaly was observed by these checks; it is not proof that arbitrary Trojans are absent.
 
