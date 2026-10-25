@@ -4,8 +4,8 @@
 |---|---|---:|---:|---|---|---|
 | H | Reference CNN | 0 | 00 | 10/10 no alerts | Pre-monitor build | Pre-monitor build |
 | T1 | Selected Conv2 MAC product sign inversion | 1 | 01 | 10/10 detected | Pre-monitor build | Pre-monitor build |
-| T2 | Selected Conv2 weight bit flip | 1 | 10 | 10/10 detected | Pre-monitor build | Pre-monitor build |
-| T3 | Selected Conv2 feature interconnect bit alteration | 1 | 11 | 10/10 detected | Pre-monitor build | Pre-monitor build |
+| T2 | Selected Conv2 weight-operand bit flip | 1 | 10 | 10/10 detected | Pre-monitor build | Pre-monitor build |
+| T3 | Selected Conv2 feature-operand bit flip | 1 | 11 | 10/10 detected | Pre-monitor build | Pre-monitor build |
 | T4 | Selected Conv2 source-address/routing alteration | 1 | 11 | 10/10 detected after prefetch-path fix | Pre-monitor build | Pre-monitor build |
 | T5 | Selected Conv2 control-cycle stall | 1 | 11 | 10/10 detected | Pre-monitor build | Pre-monitor build |
 
