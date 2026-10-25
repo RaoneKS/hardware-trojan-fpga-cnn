@@ -1,4 +1,8 @@
-# Ablation and Architectural Evaluation
+# Historical Ablation and Architectural Evaluation — Pre-Monitor Ledger
+
+## Revision boundary
+
+The channel-masking results below were computed from the pre-monitor ledger and do not evaluate the independent runtime monitor added on the current draft branch. Do not use these ablation figures as proof of current monitor coverage or hardware overhead.
 
 ## Evidence status
 
