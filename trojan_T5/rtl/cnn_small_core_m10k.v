@@ -130,6 +130,8 @@ module cnn_small_core (
     reg signed [63:0] monitor_expected_product_sample;
     reg signed [31:0] monitor_feature_sample;
     reg signed [7:0] monitor_weight_sample;
+    reg signed [31:0] monitor_feature_used_sample;
+    reg signed [7:0] monitor_weight_used_sample;
     reg signed [63:0] trusted_product;
     wire monitor_alert;
     wire [1:0] monitor_localization;
@@ -206,6 +208,8 @@ module cnn_small_core (
         .expected_product(monitor_expected_product_sample),
         .feature_sample(monitor_feature_sample),
         .weight_sample(monitor_weight_sample),
+        .feature_used(monitor_feature_used_sample),
+        .weight_used(monitor_weight_used_sample),
         .address_fault(monitor_address_fault),
         .control_fault(monitor_control_fault),
         .alert(monitor_alert),
@@ -252,6 +256,8 @@ module cnn_small_core (
             monitor_expected_product_sample <= 64'sd0;
             monitor_feature_sample <= 32'sd0;
             monitor_weight_sample <= 8'sd0;
+            monitor_feature_used_sample <= 32'sd0;
+            monitor_weight_used_sample <= 8'sd0;
             trusted_product = 64'sd0;
         end else begin
             cycle_count <= cycle_count + 1'b1;
@@ -467,6 +473,8 @@ module cnn_small_core (
                     monitor_expected_product_sample <= trusted_product;
                     monitor_feature_sample <= p1_q;
                     monitor_weight_sample <= c2w_q;
+                    monitor_feature_used_sample <= p1_q;
+                    monitor_weight_used_sample <= c2w_q;
                     acc<=acc+product;
                 end
                 if(kc==2) begin
@@ -694,47 +702,39 @@ endmodule
 // reference signals; arbitrary tampering with those signals is out of scope.
 // -----------------------------------------------------------------------------
 module trusted_runtime_monitor (
-    input  wire               clk,
-    input  wire               rst,
-    input  wire               mac_sample_valid,
-    input  wire signed [63:0] observed_product,
-    input  wire signed [63:0] expected_product,
-    input  wire signed [31:0] feature_sample,
-    input  wire signed [7:0]  weight_sample,
-    input  wire               address_fault,
-    input  wire               control_fault,
-    output reg                alert,
-    output reg  [1:0]         localization_code
+    input wire clk, input wire rst, input wire mac_sample_valid,
+    input wire signed [63:0] observed_product, input wire signed [63:0] expected_product,
+    input wire signed [31:0] feature_sample, input wire signed [7:0] weight_sample,
+    input wire signed [31:0] feature_used, input wire signed [7:0] weight_used,
+    input wire address_fault, input wire control_fault,
+    output reg alert, output reg [1:0] localization_code
 );
     wire signed [63:0] weight_flip_product =
         $signed(feature_sample) * $signed(weight_sample ^ 8'b00000001);
     wire signed [63:0] feature_flip_product =
         $signed(feature_sample ^ 32'h00000001) * $signed(weight_sample);
-
+    // First fault wins. Direct operand checks catch zero-product mutations.
     always @(posedge clk) begin
         if (rst) begin
             alert <= 1'b0;
             localization_code <= 2'b00;
-        end else begin
-            if (mac_sample_valid && (observed_product !== expected_product)) begin
-                alert <= 1'b1;
-                if ((expected_product != 64'sd0) &&
-                    (observed_product === -expected_product)) begin
-                    localization_code <= 2'b01; // PE arithmetic mismatch
-                end else if ((observed_product === weight_flip_product) &&
-                             (observed_product !== feature_flip_product)) begin
-                    localization_code <= 2'b10; // weight/data-path signature
-                end else begin
-                    localization_code <= 2'b11; // feature-data-path or ambiguous
-                end
-            end
-            if (address_fault) begin
-                alert <= 1'b1;
-                localization_code <= 2'b11;
-            end
+        end else if (!alert) begin
             if (control_fault) begin
+                alert <= 1'b1; localization_code <= 2'b11;
+            end else if (address_fault) begin
+                alert <= 1'b1; localization_code <= 2'b11;
+            end else if (mac_sample_valid && (weight_sample !== weight_used)) begin
+                alert <= 1'b1; localization_code <= 2'b10;
+            end else if (mac_sample_valid && (feature_sample !== feature_used)) begin
+                alert <= 1'b1; localization_code <= 2'b11;
+            end else if (mac_sample_valid && (observed_product !== expected_product)) begin
                 alert <= 1'b1;
-                localization_code <= 2'b11;
+                if ((expected_product != 64'sd0) && (observed_product === -expected_product))
+                    localization_code <= 2'b01;
+                else if ((observed_product === weight_flip_product) &&
+                         (observed_product !== feature_flip_product))
+                    localization_code <= 2'b10;
+                else localization_code <= 2'b11;
             end
         end
     end

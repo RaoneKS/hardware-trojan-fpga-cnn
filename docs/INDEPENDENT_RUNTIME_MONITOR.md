@@ -7,6 +7,7 @@ The original variant RTL exposed detector outputs that were driven by Trojan-spe
 ## Checks implemented
 
 1. **MAC arithmetic consistency.** At each valid Conv2 MAC, the core samples the post-payload product and a reference product independently computed from the unmodified feature/weight operands. The monitor raises a sticky alert when the sampled products differ.
+2. **Operand integrity.** The monitor separately compares trusted feature/weight values with the operands actually consumed by the MAC. This catches T2/T3 bit flips even when the corrupted operand's product is numerically unchanged (for example, multiplication by zero).
 2. **Feature-memory address consistency.** During Conv2's address-wait state, the monitor compares the registered feature read address with the address implied by the current channel/row/column/kernel counters.
 3. **Control-path anomaly.** In T5, the monitor flags the inserted T5STALL state rather than consuming the Trojan's t5_detected flag.
 4. **Healthy false-alarm measurement.** The clean reference core now instantiates the same monitor. The canonical regression explicitly observes no alert and localization code 00 for each healthy workload.
@@ -19,7 +20,7 @@ The monitor does not read the Trojan-specific t1_detected/t2_detected/... flags.
 |---|---|
 | 00 | No monitored anomaly observed during this inference |
 | 01 | Observed product is the negation of the nonzero reference product (PE arithmetic signature) |
-| 10 | Observed product uniquely matches the weight-bit-flip candidate |
+| 10 | Trusted weight differs from the consumed weight, or a weight-flip product signature matches |
 | 11 | Feature-operand/data-path signature, address mismatch, control anomaly, or ambiguous arithmetic signature |
 
 Code 11 intentionally remains a shared region. It does not uniquely distinguish T3, T4, and T5. Code 00 means no anomaly was observed by these checks; it is not proof that arbitrary Trojans are absent.
@@ -28,7 +29,7 @@ Code 11 intentionally remains a shared region. It does not uniquely distinguish 
 
 The monitor is independent of the Trojan-specific activation flags, but it is not a tamper-proof security island. It assumes the monitor logic, clock/reset, operation counters, and sampled reference inputs are trusted. A Trojan that also corrupts those trusted signals, avoids the monitored Conv2 operations, or causes a payload with no observable arithmetic effect may evade these checks. The current reference-product comparison is a targeted functional checker for the five controlled variants, not a general unknown-Trojan detector.
 
-The expected product is recomputed from the sampled feature and weight operands. The weight/feature candidate products are used only to assign the coarse region code. If candidate signatures collide, fine-grained localization is not guaranteed.
+The expected product is recomputed from the trusted feature and weight operands. Direct operand comparisons are checked before product signatures. Candidate products remain a fallback for coarse classification. A T1 sign inversion of a zero product remains unobservable through the product comparison alone; this is a limitation of the chosen payload and reference signal, not evidence of universal coverage.
 
 ## Validation plan
 
@@ -44,7 +45,7 @@ The runner now exercises ten healthy cases with the monitor active and requires 
 Additional validation still required before a paper or physical-security claim:
 
 - Run the held-out 50-image / 300-condition matrix against this monitor-enhanced RTL, not only the old self-reporting variants.
-- Add dedicated unit tests for each checker, reset/re-arm behaviour, zero-product/ambiguous-signature cases, and deliberate benign deviations.
+- Dedicated unit tests now include zero-product weight/feature operand mutations and first-fault localization latching. Still add broader benign deviations and unseen fault mutations.
 - Rebuild every affected Quartus project with identical constraints and report ALM/register/RAM/DSP/timing deltas versus the clean reference.
 - Program the newly built monitor-enhanced SOFs on the DE10-Standard and archive programmer logs plus observed outputs. Existing physical-board evidence refers to the previously built SOFs and must not be represented as physical validation of this new monitor.
 - Report monitor latency separately for arithmetic samples, address checks, and control checks.

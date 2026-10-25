@@ -8,6 +8,8 @@ module tb_trusted_runtime_monitor;
     reg signed [63:0] expected_product;
     reg signed [31:0] feature_sample;
     reg signed [7:0] weight_sample;
+    reg signed [31:0] feature_used;
+    reg signed [7:0] weight_used;
     reg address_fault;
     reg control_fault;
     wire alert;
@@ -20,6 +22,8 @@ module tb_trusted_runtime_monitor;
         .expected_product(expected_product),
         .feature_sample(feature_sample),
         .weight_sample(weight_sample),
+        .feature_used(feature_used),
+        .weight_used(weight_used),
         .address_fault(address_fault),
         .control_fault(control_fault),
         .alert(alert),
@@ -39,6 +43,8 @@ module tb_trusted_runtime_monitor;
         expected_product = 64'sd0;
         feature_sample = 32'sd0;
         weight_sample = 8'sd0;
+        feature_used = 32'sd0;
+        weight_used = 8'sd0;
         @(posedge clk); #1;
         if (alert !== 1'b0 || localization_code !== 2'b00)
             $fatal(1, "RESET FAIL: alert=%b localization=%b", alert, localization_code);
@@ -61,6 +67,8 @@ module tb_trusted_runtime_monitor;
         expected_product = expected;
         feature_sample = feature;
         weight_sample = weight;
+        feature_used = feature;
+        weight_used = weight;
         @(posedge clk); #1;
         if (alert !== expected_alert || localization_code !== expected_code)
             $fatal(1, "MAC CASE FAIL: observed=%0d expected=%0d alert=%b/%b localization=%b/%b",
@@ -90,6 +98,38 @@ module tb_trusted_runtime_monitor;
     end
     endtask
 
+    task automatic apply_zero_weight_case;
+    begin
+        @(negedge clk);
+        mac_sample_valid = 1'b1;
+        observed_product = 64'sd0; expected_product = 64'sd0;
+        feature_sample = 32'sd0; feature_used = 32'sd0;
+        weight_sample = 8'sd4; weight_used = 8'sd5;
+        @(posedge clk); #1;
+        if (alert !== 1'b1 || localization_code !== 2'b10)
+            $fatal(1, "ZERO-WEIGHT CASE FAIL: alert=%b localization=%b", alert, localization_code);
+        @(negedge clk); mac_sample_valid = 1'b0; control_fault = 1'b1;
+        @(posedge clk); #1;
+        if (alert !== 1'b1 || localization_code !== 2'b10)
+            $fatal(1, "FIRST-FAULT LATCH FAIL: localization=%b", localization_code);
+        @(negedge clk); control_fault = 1'b0;
+    end
+    endtask
+
+    task automatic apply_zero_feature_case;
+    begin
+        @(negedge clk);
+        mac_sample_valid = 1'b1;
+        observed_product = 64'sd0; expected_product = 64'sd0;
+        feature_sample = 32'sd0; feature_used = 32'sd1;
+        weight_sample = 8'sd0; weight_used = 8'sd0;
+        @(posedge clk); #1;
+        if (alert !== 1'b1 || localization_code !== 2'b11)
+            $fatal(1, "ZERO-FEATURE CASE FAIL: alert=%b localization=%b", alert, localization_code);
+        @(negedge clk); mac_sample_valid = 1'b0;
+    end
+    endtask
+
     initial begin
         rst=1'b1;
         mac_sample_valid=1'b0;
@@ -97,6 +137,8 @@ module tb_trusted_runtime_monitor;
         expected_product=64'sd0;
         feature_sample=32'sd0;
         weight_sample=8'sd0;
+        feature_used=32'sd0;
+        weight_used=8'sd0;
         address_fault=1'b0;
         control_fault=1'b0;
         repeat (2) @(posedge clk);
@@ -114,8 +156,12 @@ module tb_trusted_runtime_monitor;
         reset_monitor();
         apply_control_case();
         reset_monitor();
+        apply_zero_weight_case();
+        reset_monitor();
+        apply_zero_feature_case();
+        reset_monitor();
 
-        $display("PASS: trusted runtime monitor unit tests (healthy, T1, T2, T3, address, control, reset)");
+        $display("PASS: trusted runtime monitor unit tests (healthy, T1, T2, T3, zero-product operand checks, address, control, sticky alarm, reset)");
         $finish;
     end
 
