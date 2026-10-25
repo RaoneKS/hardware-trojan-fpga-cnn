@@ -53,8 +53,8 @@ This evaluation reports the cross-workload rows recorded in the committed cycle-
 2. **Localization Consistency**:
    - Every Trojan variant reported the correct regional 2-bit localization code across all digit classes; T3, T4 and T5 intentionally share code 11 and are not distinguished individually.
    - Code `2'b01` (T1 Conv2 PE): 10/10 correct.
-   - Code `2'b10` (T2 Conv2 Weight Memory): 10/10 correct.
-   - Code `2'b11` (T3 Interconnect, T4 Routing, T5 Control): 30/30 correct.
+   - Code `2'b10` (T2 Conv2 weight operand/data path): 10/10 correct.
+   - Code `2'b11` (T3 feature operand/data path, T4 routing, T5 control): 30/30 correct.
 3. **Temporal Invariance**:
    - For T1, T2, and T3, monitor detection latency was invariant at **149,137 cycles** across all 10 workloads.
    - For T4, address-check latency was **149,135 cycles**; for T5, control-check latency was **149,136 cycles**.
