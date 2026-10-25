@@ -26,7 +26,7 @@ T5: 149136 cycles = 2.98272 ms, code 11
 Reference inference: Healthy/T1–T4 634281 cycles = 12.68562 ms; T5 634282 cycles = 12.68564 ms
 
 INTERPRETATION
-The monitor checks sampled Conv2 MAC products, expected feature-memory addresses, and the T5 stall state. It does not consume Trojan-specific activation flags. Code 11 remains shared by feature/interconnect, routing, control, and ambiguous arithmetic signatures. The metrics apply only to this controlled canonical simulation set; they do not prove detection of arbitrary unknown Trojans.
+The monitor checks sampled Conv2 MAC products, expected feature-memory addresses, and the T5 stall state. It does not consume Trojan-specific activation flags. Code 11 remains shared by feature-data-path, routing, control, and ambiguous arithmetic signatures. The metrics apply only to this controlled canonical simulation set; they do not prove detection of arbitrary unknown Trojans.
 
 LEGACY PRE-MONITOR EVIDENCE — NOT CURRENT MONITOR VALIDATION
 The following records belong to the earlier RTL/bitstream revision:
