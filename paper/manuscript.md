@@ -133,7 +133,7 @@ The archived Quartus Power Analyzer estimates (463.79–467.17 mW across Healthy
 
 ### F. Ablation and security-overhead trade-off
 
-A historical, pre-monitor evidence-bounded numerical evaluation-layer ablation was derived from the earlier 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/memory-only hardware builds, so no independent resource-overhead delta is claimed.
+A historical, pre-monitor evidence-bounded numerical evaluation-layer ablation was derived from the earlier 60-row ledger by masking the observable decision channels. Final CNN classification alone gives 0% TPR because the selected Trojans are output-stealthy; timing alone gives 20% TPR because only T5 changes the total inference-cycle count; accepting only regional code 01, 10, or 11 gives 20%, 20%, and 60% TPR, respectively; accepting any non-zero regional code gives 100% TPR with 0% FPR. This is a coverage ablation over already implemented monitor events, not a separate set of synthesized no-monitor/PE-only/weight-data-path-only hardware builds, so no independent resource-overhead delta is claimed.
 
 ## XI. Robustness, Stealthiness, and Generalization
 
