@@ -147,7 +147,7 @@ module cnn_small_core (
     // Type    : Conv2 Weight Memory Data-Path Alteration
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
-    // Payload : flip exactly 1 bit of c2w_q before multiplication
+    // Payload : flip exactly 1 bit of the c2w_q operand before multiplication
     // ================================================================
     reg t2_trigger;
     reg t2_detected;
