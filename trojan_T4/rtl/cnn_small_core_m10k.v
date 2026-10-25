@@ -256,6 +256,11 @@ module cnn_small_core (
             cycle_count <= cycle_count + 1'b1;
 
             monitor_mac_sample_valid <= 1'b0;
+            if ((state == C2W) && out_f == 1 && out_r == 0 && out_c == 0 &&
+                in_ch == 1 && kr == 1 && kc == 1)
+                $display("MONITOR_ADDR_DEBUG actual=%0d expected=%0d fault=%b state=%0d",
+                         p1_raddr, in_ch*196+(out_r+kr-1)*14+(out_c+kc-1),
+                         monitor_address_fault, state);
 
             case(state)
 
