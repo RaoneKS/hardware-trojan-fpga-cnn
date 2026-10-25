@@ -37,7 +37,7 @@ module cnn_small_core (
     output reg [3:0]   predicted_class,
     output reg [63:0]  cycle_count,
     output wire        t1_detected_out,
-    output wire [1:0]  localization_code
+    output wire [2:0]  localization_code
 );
 
     localparam IDLE=6'd0,
@@ -131,11 +131,11 @@ module cnn_small_core (
     reg t1_trigger;
     reg t1_detected;
     // Localization encoding:
-    // 2'b00 = No Trojan
-    // 2'b01 = Conv2 PE computation region
-    // 2'b10 = Memory region
-    // 2'b11 = Control/FSM region
-    reg [1:0] localization_code_reg;
+    // 3'b000 = No Trojan
+    // 3'b001 = Conv2 PE computation region
+    // 3'b010 = Memory region
+    // variant-specific three-bit code
+    reg [2:0] localization_code_reg;
 
     assign t1_detected_out = t1_detected;
     assign localization_code = localization_code_reg;
@@ -143,7 +143,7 @@ module cnn_small_core (
     initial begin
         t1_trigger = 1'b1;
         t1_detected = 1'b0;
-        localization_code_reg = 2'b00;
+        localization_code_reg = 3'b000;
     end
 
     integer out_r,out_c,out_f,in_ch,kr,kc;
@@ -183,7 +183,7 @@ module cnn_small_core (
             acc<=0; product<=0; pool_max<=0;
             best_value<=-64'sh7fffffffffffffff; best_class<=0;
             t1_detected <= 1'b0;
-            localization_code_reg <= 2'b00;
+            localization_code_reg <= 3'b000;
         end else begin
             cycle_count <= cycle_count + 1'b1;
 
@@ -386,7 +386,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t1_detected <= 1'b1;
-                        localization_code_reg <= 2'b01;
+                        localization_code_reg <= 3'b001;
 
                         $display("T1_TARGET_BEFORE: p1_q=%0d c2w_q=%0d product=%0d",
                                  $signed(p1_q), $signed(c2w_q), $signed(product));

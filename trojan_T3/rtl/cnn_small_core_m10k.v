@@ -39,7 +39,7 @@ module cnn_small_core (
     output wire        t1_detected_out,
     output wire        t2_detected_out,
     output wire        t3_detected_out,
-    output wire [1:0]  localization_code
+    output wire [2:0]  localization_code
 );
 
     localparam IDLE=6'd0,
@@ -154,11 +154,11 @@ module cnn_small_core (
     reg t3_detected;
 
     // Localization encoding:
-    // 2'b00 = No Trojan
-    // 2'b01 = Conv2 PE computation region (T1)
-    // 2'b10 = Conv2 Weight Memory region (T2)
-    // 2'b11 = Interconnect / Data-Path region (T3)
-    reg [1:0] localization_code_reg;
+    // 3'b000 = No Trojan
+    // 3'b001 = Conv2 PE computation region (T1)
+    // 3'b010 = Conv2 Weight Memory region (T2)
+    // 3'b011 = Feature interconnect (T3)
+    reg [2:0] localization_code_reg;
 
     assign t1_detected_out = t1_detected;
     assign t2_detected_out = t2_detected;
@@ -172,7 +172,7 @@ module cnn_small_core (
         t2_detected = 1'b0;
         t3_trigger = 1'b1; // T3 active
         t3_detected = 1'b0;
-        localization_code_reg = 2'b00;
+        localization_code_reg = 3'b000;
     end
 
     integer out_r,out_c,out_f,in_ch,kr,kc;
@@ -214,7 +214,7 @@ module cnn_small_core (
             t1_detected <= 1'b0;
             t2_detected <= 1'b0;
             t3_detected <= 1'b0;
-            localization_code_reg <= 2'b00;
+            localization_code_reg <= 3'b000;
         end else begin
             cycle_count <= cycle_count + 1'b1;
 
@@ -415,7 +415,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t3_detected <= 1'b1;
-                        localization_code_reg <= 2'b11;
+                        localization_code_reg <= 3'b011;
 
                         $display("T3_TARGET_BEFORE: p1_interconnect=%0d (32'h%08h)",
                                  $signed(p1_q), p1_q);
@@ -436,7 +436,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t2_detected <= 1'b1;
-                        localization_code_reg <= 2'b10;
+                        localization_code_reg <= 3'b010;
 
                         $display("T2_TARGET_BEFORE: p1_q=%0d c2w_q=%0d (8'b%b)",
                                  $signed(p1_q), $signed(c2w_q), c2w_q);
@@ -462,7 +462,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t1_detected <= 1'b1;
-                        localization_code_reg <= 2'b01;
+                        localization_code_reg <= 3'b001;
 
                         $display("T1_TARGET_BEFORE: p1_q=%0d c2w_q=%0d product=%0d",
                                  $signed(p1_q), $signed(c2w_q), $signed(product));
