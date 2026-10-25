@@ -144,7 +144,7 @@ module cnn_small_core (
 
     // ================================================================
     // T2 HARDWARE TROJAN
-    // Type    : Conv2 Weight Memory Data-Path Alteration
+    // Type    : Conv2 Weight-Operand Data-Path Bit Flip
     // Target  : Conv2 weight c2w_q before MAC
     // Trigger : t2_trigger
     // Payload : flip exactly 1 bit of the c2w_q operand before multiplication
@@ -155,7 +155,7 @@ module cnn_small_core (
     // Localization encoding:
     // 2'b00 = No Trojan
     // 2'b01 = Conv2 PE computation region
-    // 2'b10 = Conv2 Weight Memory region
+    // 2'b10 = Conv2 Weight/Data-Path region
     // 2'b11 = Control/FSM region
     reg [1:0] localization_code_reg;
 
@@ -430,7 +430,7 @@ module cnn_small_core (
                 ir=out_r+kr-1; ic=out_c+kc-1;
                 if(ir>=0 && ir<14 && ic>=0 && ic<14) begin
                     trusted_product = $signed(p1_q) * $signed(c2w_q);
-                    // T2 HARDWARE TROJAN: Conv2 Weight Memory Data-Path Alteration
+                    // T2 HARDWARE TROJAN: Conv2 Weight-Operand Data-Path Bit Flip
                     // Corrupt 8-bit signed Conv2 weight by flipping exactly one bit before MAC
                     if (t2_trigger &&
                         out_f == 1 &&
@@ -746,7 +746,7 @@ module trusted_runtime_monitor (
                              (observed_product !== feature_flip_product)) begin
                     localization_code <= 2'b10; // weight/data-path signature
                 end else begin
-                    localization_code <= 2'b11; // feature/interconnect or ambiguous
+                    localization_code <= 2'b11; // feature-data-path or ambiguous
                 end
             end
             if (address_fault) begin
