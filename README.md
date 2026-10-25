@@ -26,6 +26,12 @@ MNIST → INT8 CNN → Runtime detector → CNN class + Trojan status + regional
              └─ FC → Argmax
 ~~~
 
+## Independent runtime monitor prototype
+
+The draft branch `independent-runtime-monitor` adds a reference-assisted monitor that checks sampled Conv2 MAC results, expected feature-memory addresses, and the T5 control-stall state. The clean reference core is also instrumented to measure false alarms on healthy workloads instead of assuming zero.
+
+**Validation boundary:** this is a prototype under CI validation. Existing DE10-Standard observations and Quartus reports refer to previously built bitstreams; they do not yet validate the monitor-enhanced RTL. See [the monitor design and validation plan](docs/INDEPENDENT_RUNTIME_MONITOR.md) before using any updated detection or overhead claims.
+
 ### Localization map
 
 | Code | Region | Interpretation |
