@@ -92,7 +92,7 @@ Regional localization was correct for all 50 evaluated Trojan rows at the define
 | Healthy / T1 / T2 / T3 / T4 | 634,281 cycles / 12.68562 ms | T1–T4: 149,136 cycles / 2.98272 ms |
 | T5 | 634,282 cycles / 12.68564 ms | 149,135 cycles / 2.98270 ms |
 
-### Fresh C6 implementation evidence
+### Legacy pre-monitor C6 implementation evidence
 
 | Target | ALMs | Registers | RAM blocks | DSPs | Setup slack | Hold slack |
 |---|---:|---:|---:|---:|---:|---:|
@@ -102,15 +102,15 @@ Regional localization was correct for all 50 evaluated Trojan rows at the define
 
 Block memory bits for Healthy/T1/T2: **455,104**.
 
-Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact final fitter resource counts for T3/T4/T5 are also not inferred.
+These resource/timing snapshots are from the pre-monitor RTL and cannot be used to estimate the monitor's hardware overhead. Exact fresh C6 Fmax is not archived, and exact final fitter counts for T3/T4/T5 are not inferred.
 
-## Extended held-out simulation evaluation
+## Historical held-out simulation evaluation (pre-monitor RTL)
 
-A separate successful [GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates with the Healthy baseline and selected five Healthy-correct images per class (50 images). Healthy and T1–T5 were run for each image, yielding 300 additional simulation rows: TP=250, TN=50, FP=0, FN=0, TPR=100%, FPR=0%, precision=100%, F1=1.000, and 250/250 correct regional codes. These metrics are conditional on the Healthy-screened inputs and are not physical measurements or a universal guarantee. See [the held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
+The earlier [held-out GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) evaluated 50 Healthy-correct images across Healthy and T1–T5 (300 simulation rows). That matrix predates the independent monitor and is **not a result for the monitor-enhanced revision**. It must be rerun before claiming held-out performance for the current monitor. See [the historical held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
 
-## Physical DE10-Standard validation
+## Legacy physical DE10-Standard validation
 
-T1, T2, T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. T1 produced class 7, detector asserted, localization code 01; T2 produced class 7, detector asserted, localization code 10; T3/T4/T5 produced class 7, detector asserted, shared localization code 11.
+T1–T5 bitstreams from the **pre-monitor RTL revision** were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. Those observations document the earlier design only. The monitor-enhanced RTL has passed simulation but still requires a fresh Quartus build and new physical-board validation.
 
 - 0 programming errors / 0 warnings
 - LEDR0–LEDR5 observed ON
@@ -187,7 +187,8 @@ hardware-trojan-fpga-cnn/
 5. Exact fresh C6 Fmax is not archived.
 6. Exact final fitter resource counts for T3/T4/T5 are not archived.
 7. Broader datasets and cross-CNN generalization remain future work.
-8. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis over the committed 60-row ledger; independently synthesized ablation builds are not claimed.
+8. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis over the pre-monitor 60-row ledger; independently synthesized ablation builds are not claimed.
+9. The independent monitor has only been validated in the canonical RTL simulation matrix and unit tests; the held-out 300-row matrix, Quartus overhead, and physical board validation remain pending.
 
 ## Project status
 
