@@ -1,4 +1,8 @@
-# Cross-Workload Robustness Evaluation
+# Canonical Cross-Workload Simulation — Monitor-Enhanced RTL
+
+## Revision and scope
+
+This document summarizes the canonical ten-workload simulation matrix for the independent-monitor draft branch. It is RTL simulation, not physical validation. The separate 300-row held-out result and all board/resource evidence are from the pre-monitor revision.
 
 ## Overview
 A critical concern in Hardware Trojan detection within deep learning accelerators is input sensitivity: whether detection mechanisms trigger false alarms on diverse legitimate inputs (false positives) or fail to detect malicious activity when features change dynamically across different input classes (false negatives).
@@ -52,8 +56,8 @@ This evaluation reports the cross-workload rows recorded in the committed cycle-
    - Code `2'b10` (T2 Conv2 Weight Memory): 10/10 correct.
    - Code `2'b11` (T3 Interconnect, T4 Routing, T5 Control): 30/30 correct.
 3. **Temporal Invariance**:
-   - For T1, T2, T3, and T4, detection latency was strictly invariant at **149,136 cycles** across all 10 workloads.
-   - For T5, detection latency was strictly invariant at **149,135 cycles** across all 10 workloads.
+   - For T1, T2, and T3, monitor detection latency was invariant at **149,137 cycles** across all 10 workloads.
+   - For T4, address-check latency was **149,135 cycles**; for T5, control-check latency was **149,136 cycles**.
    - Standard deviation of detection latency across workloads: **0.00 cycles**.
 4. **Classification Integrity & Trojan Stealthiness**:
    - For all 10 workloads, the CNN output classification was identical between the healthy baseline and Trojan-injected runs.
