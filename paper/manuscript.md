@@ -39,8 +39,8 @@ The attacker is assumed to have RTL/netlist-level access during an untrusted des
 
 The controlled payload families are:
 - **T1:** arithmetic corruption in a Conv2 processing element;
-- **T2:** Conv2 weight-memory/data-path corruption;
-- **T3:** feature-interconnect alteration between Pool1 and Conv2;
+- **T2:** Conv2 weight-operand/data-path bit flip;
+- **T3:** feature-operand bit flip at the Conv2 MAC input;
 - **T4:** selective spatial source-routing alteration;
 - **T5:** one-cycle control-sequencer stall.
 
@@ -74,7 +74,7 @@ Healthy uses localization 00. T1 uses 01 for Conv2 PE computation. T2 uses 10 fo
 |---|---|---|---|
 | T1 | Conv2 PE | selected MAC product sign inversion | 01 |
 | T2 | Conv2 weight/data path | selected weight bit flip | 10 |
-| T3 | Conv2 interconnect | selected feature-interconnect alteration | 11 |
+| T3 | Conv2 feature data path | selected feature-operand bit flip | 11 |
 | T4 | Conv2 routing | selected source-address/routing alteration | 11 |
 | T5 | Conv2 control | one-cycle control-path stall | 11 |
 
@@ -99,7 +99,7 @@ The localization map is:
 - 00: Healthy;
 - 01: Conv2 PE computation;
 - 10: Conv2 weight/data path;
-- 11: shared interconnect/routing/control.
+- 11: shared feature-data-path/routing/control.
 
 The 11 code intentionally does not distinguish T3 from T4 or T5; it also represents ambiguous arithmetic signatures. In the monitor-enhanced canonical simulation matrix, T1 is localized to 01 on 10/10 rows, T2 to 10 on 10/10, and T3–T5 to shared code 11 on 30/30 rows.
 
