@@ -72,7 +72,7 @@ for project_dir in "${projects[@]}"; do
     rel="${file#"${dir}"/}"
     mkdir -p "${out}/$(dirname "${rel}")"
     cp -p "${file}" "${out}/${rel}"
-  done < <(find "${dir}" -type f \\( -name '*.sof' -o -name '*.fit.summary' -o -name '*.sta.summary' -o -name '*.fit.rpt' -o -name '*.sta.rpt' -o -name '*.flow.rpt' \\) -print0)
+  done < <(find "${dir}" -type f \( -name '*.sof' -o -name '*.fit.summary' -o -name '*.sta.summary' -o -name '*.fit.rpt' -o -name '*.sta.rpt' -o -name '*.flow.rpt' \) -print0)
 done
 
 {
