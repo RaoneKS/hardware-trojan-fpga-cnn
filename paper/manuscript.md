@@ -1,11 +1,11 @@
-# Runtime Hardware Trojan Detection and Regional Localization in an INT8 FPGA-CNN Accelerator
+# Runtime Hardware Trojan Detection and Three-Bit Variant Identification in an INT8 FPGA-CNN Accelerator
 
 **Author:** Jeevan K. S.  
 **Affiliation:** Department of Electronics and Communication Engineering, IIIT Dharwad, India
 
 ## Abstract
 
-Field-programmable gate arrays (FPGAs) provide a practical platform for deploying convolutional neural networks (CNNs) at the edge, but their programmable datapaths, third-party intellectual property, and distributed design flows also create opportunities for malicious hardware modification. Hardware Trojans are particularly difficult to expose when their payload changes an internal computation without necessarily changing the final classification. This work presents a lightweight runtime monitoring and regional localization framework integrated with an INT8 LeNet-style CNN accelerator for MNIST inference. Five controlled Trojan variants are introduced at distinct microarchitectural regions: Conv2 processing-element arithmetic, Conv2 weight memory, Conv2 feature interconnect, Conv2 spatial routing, and the Conv2 control sequencer. The accelerator is implemented for the Intel Cyclone V SoC FPGA on the Terasic DE10-Standard and evaluated using cycle-accurate Verilog simulation, Quartus implementation, and physical board programming. The canonical 60-row simulation matrix covers ten MNIST workloads (one per digit class) and six hardware targets (Healthy and T1–T5). A separate held-out evaluation screened additional MNIST inputs against the Healthy baseline and evaluated 50 correctly classified images (five per class) across all six targets, yielding 300 additional cycle-accurate simulation rows. For this controlled matrix, the detector obtains TP=50, TN=10, FP=0 and FN=0, corresponding to 100% TPR/recall, 0% FPR, 100% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1–T4 trigger after 149,136 cycles (2.98272 ms at 50 MHz), while T5 triggers after 149,135 cycles because its one-cycle control stall shifts the reference point. T1, T2, T3, T4 and T5 bitstreams were also successfully programmed on the physical DE10-Standard and produced the expected class/detector/localization LED patterns. Quartus Power Analyzer results are reported only as tool estimates; physical rail/current power measurements were not performed. Likewise, exact final fitter resource counts for T3–T5 and exact fresh C6 Fmax values are not claimed where they are not archived.
+Field-programmable gate arrays (FPGAs) provide a practical platform for deploying convolutional neural networks (CNNs) at the edge, but their programmable datapaths, third-party intellectual property, and distributed design flows also create opportunities for malicious hardware modification. Hardware Trojans are particularly difficult to expose when their payload changes an internal computation without necessarily changing the final classification. This work presents a lightweight runtime monitoring and variant-aware three-bit identification framework integrated with an INT8 LeNet-style CNN accelerator for MNIST inference. Five controlled Trojan variants are introduced at distinct microarchitectural regions: Conv2 processing-element arithmetic, Conv2 weight memory, Conv2 feature interconnect, Conv2 spatial routing, and the Conv2 control sequencer. The accelerator is implemented for the Intel Cyclone V SoC FPGA on the Terasic DE10-Standard and evaluated using cycle-accurate Verilog simulation, Quartus implementation, and physical board programming. The canonical 60-row simulation matrix covers ten MNIST workloads (one per digit class) and six hardware targets (Healthy and T1–T5). A separate held-out evaluation screened additional MNIST inputs against the Healthy baseline and evaluated 50 correctly classified images (five per class) across all six targets, yielding 300 additional cycle-accurate simulation rows. For this controlled matrix, the detector obtains TP=50, TN=10, FP=0 and FN=0, corresponding to 100% TPR/recall, 0% FPR, 100% precision and F1=1.000. Regional localization is correct for all 50 Trojan rows at the defined three-region resolution. T1–T4 trigger after 149,136 cycles (2.98272 ms at 50 MHz), while T5 triggers after 149,135 cycles because its one-cycle control stall shifts the reference point. T1, T2, T3, T4 and T5 bitstreams were also successfully programmed on the physical DE10-Standard and produced the expected class/detector/localization LED patterns. Quartus Power Analyzer results are reported only as tool estimates; physical rail/current power measurements were not performed. Likewise, exact final fitter resource counts for T3–T5 and exact fresh C6 Fmax values are not claimed where they are not archived.
 
 **Keywords:** Hardware Trojans, FPGA security, CNN accelerator, runtime detection, hardware monitoring, regional localization, INT8, MNIST, Cyclone V.
 
@@ -64,7 +64,7 @@ The fresh C6 Healthy snapshot contains 1,153 ALMs, 912 registers, 71 RAM blocks,
 
 ## V. Experimental Inputs and Expected Outputs
 
-Ten deterministic MNIST workloads represent classes 0 through 9. The canonical top-level interface reports predicted class on LEDR[2:0], detector status on LEDR3, and a two-bit regional code on LEDR[5:4].
+Ten deterministic MNIST workloads represent classes 0 through 9. The updated three-bit interface reports predicted class on LEDR[2:0], detector status on LEDR3, and localization code on LEDR[6:4].
 
 Healthy uses localization 00. T1 uses 01 for Conv2 PE computation. T2 uses 10 for Conv2 weight/data path. T3, T4 and T5 use shared regional code 11 for interconnect/routing/control.
 
@@ -101,7 +101,7 @@ The localization map is:
 - 10: Conv2 weight/data path;
 - 11: shared interconnect/routing/control.
 
-The 11 code intentionally does not distinguish T3 from T4 or T5. In the committed simulation matrix, T1 is correct on 10/10 rows, T2 on 10/10, and T3-T5 on 30/30, giving 50/50 = 100% regional localization accuracy.
+The codebook is variant-aware for the five known controlled RTL variants and does not establish blind localization of unknown, mixed or simultaneous Trojans. In the committed simulation matrix, T1 is correct on 10/10 rows, T2 on 10/10, and T3-T5 on 30/30, giving 50/50 = 100% regional localization accuracy.
 
 ## X. Results and Discussion
 
@@ -129,7 +129,7 @@ Exact final T3-T5 fitter counts and exact fresh-C6 Fmax are not archived and are
 
 ### E. Power estimates
 
-Quartus Power Analyzer estimates are Healthy 463.79 mW, T1 465.51 mW, T2 466.28 mW, T3 467.17 mW, T4 464.75 mW, and T5 464.27 mW. These are tool estimates, not physical rail/current measurements.
+Previously reported Quartus Power Analyzer values are historical estimates from an earlier build, not current three-bit power estimates. Physical rail/current power was not measured.
 
 ### F. Ablation and security-overhead trade-off
 
@@ -185,7 +185,7 @@ The repository contains the workload manifest, 60-row simulation ledger, RTL/tes
 
 ## XVI. Conclusion and Future Perspective
 
-A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. T1, T2, T3, T4 and T5 were physically programmed and validated on the DE10-Standard.
+A reproducible INT8 FPGA-CNN prototype with runtime Hardware Trojan detection and regional localization was implemented on Cyclone V. Five controlled Trojan variants cover arithmetic, weight/data path, interconnect, routing, and control regions. The 60-row simulation matrix achieves 100% detection and 0% false positives for the selected controlled cases, with 100% regional localization at the defined three-region resolution. Healthy and T1–T5 three-bit LED patterns were reported physically observed on the DE10-Standard; see docs/PHYSICAL_BOARD_VALIDATION_3BIT.md.
 
 The result is a controlled research prototype rather than a universal detector. Future work should add physical power instrumentation, a graded trigger-probability/payload-severity sweep, independently synthesized monitor-ablation variants, additional CNNs, broader datasets, and finer localization.
 

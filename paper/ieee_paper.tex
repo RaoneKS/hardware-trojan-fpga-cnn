@@ -1,7 +1,7 @@
 \documentclass[conference]{IEEEtran}
 \usepackage{amsmath,booktabs,array}
 \usepackage{url}
-\title{Runtime Hardware Trojan Detection and Regional Localization in an INT8 FPGA-CNN Accelerator}
+\title{Runtime Hardware Trojan Detection and Three-Bit Variant Identification in an INT8 FPGA-CNN Accelerator}
 \author{\IEEEauthorblockN{Jeevan K. S.}\IEEEauthorblockA{Department of Electronics and Communication Engineering\\IIIT Dharwad, India}}
 \begin{document}\maketitle
 \begin{abstract}
@@ -30,7 +30,7 @@ Y=\operatorname{ArgMax}(f_{FC}(f_{Pool2}(f_{Conv2}(f_{Pool1}(f_{Conv1}(X)))))).
 \end{equation}
 The attacker is assumed to have RTL/netlist-level access during an untrusted design or synthesis stage. The controlled campaign includes arithmetic corruption (T1), weight-memory corruption (T2), feature-interconnect alteration (T3), source-routing alteration (T4), and a one-cycle control stall (T5).
 
-The detector output is mapped to LEDR[3]. A two-bit localization code is mapped to LEDR[5:4]: 00=healthy, 01=Conv2 PE arithmetic, 10=Conv2 weight memory, and 11=shared interconnect/routing/control. LEDR[2:0] reports the predicted class. Code 11 intentionally does not distinguish T3, T4 and T5.
+The detector output is mapped to LEDR[3], the predicted class to LEDR[2:0], and the three-bit code to LEDR[6:4]. The map is 000=Healthy, 001=T1 Conv2 PE arithmetic, 010=T2 Conv2 weight-memory path, 011=T3 feature interconnect, 100=T4 spatial source routing, and 101=T5 control sequencing; 110 and 111 are reserved. The codebook is variant-aware for known controlled RTL variants, not blind localization of unknown or mixed Trojans.
 
 \section{Experimental Methodology}
 Cycle-accurate Verilog simulation uses Icarus Verilog. The canonical matrix contains ten workloads (digits 0--9) and six targets, giving 60 rows. The FPGA target is the Intel Cyclone V SoC 5CSXFC6D6F31C6 on the Terasic DE10-Standard. The verified synchronous-M10K reference latency is 634,281 cycles at 50 MHz. Earlier 301,854-cycle and 346,563-cycle values are historical development milestones and are not used as the current reference.
@@ -43,7 +43,7 @@ TPR=\frac{TP}{TP+FN},\quad FPR=\frac{FP}{FP+TN},
 \begin{equation}
 Precision=\frac{TP}{TP+FP},\quad F1=2\frac{Precision\cdot TPR}{Precision+TPR}.
 \end{equation}
-For the canonical matrix, $(TP,TN,FP,FN)=(50,10,0,0)$, so the metrics evaluate to $(TPR,FPR,Precision,F1)=(1,0,1,1)$. The held-out matrix independently gives $(250,50,0,0)$ and the same point estimates within its Healthy-screened sample.
+For the canonical matrix, $(TP,TN,FP,FN)=(50,10,0,0)$, so the metrics evaluate to $(TPR,FPR,Precision,F1)=(1,0,1,1)$. The prior held-out matrix gives $(250,50,0,0)$ under the historical two-bit codebook; it is not a fresh three-bit codebook evaluation.
 These metrics apply only to the canonical committed controlled matrix. In a separate held-out same-CNN evaluation, 50 additional Healthy-correct images were run on Healthy and T1--T5 (300 rows), producing TP=250, TN=50, FP=0 and FN=0. Because images misclassified by the Healthy baseline were screened out, the held-out FPR is conditional on the selected Healthy-correct set. The successful CI artifact and screening protocol are documented in \texttt{docs/EXTENDED\_HELDOUT\_RESULTS.md}.
 
 T1 is localized to region 01 for 10/10 workloads, T2 to region 10 for 10/10, and T3--T5 to shared region 11 for 30/30. Regional localization accuracy is therefore 50/50=100\% at the defined resolution.
@@ -65,7 +65,7 @@ T2 & 1192 & 919 & 71 & 15 & +0.163 & +0.163\\
 \end{table}
 Exact final fitter counts for T3--T5 and exact fresh-C6 Fmax are not archived and are not inferred.
 
-Quartus Power Analyzer estimates are 463.79, 465.51, 466.28, 467.17, 464.75 and 464.27 mW for Healthy and T1--T5 respectively. These are tool estimates rather than physical rail/current measurements.
+Previously reported Quartus Power Analyzer values are historical estimates from an earlier build, not current three-bit power estimates. Physical rail/current power was not measured.
 
 T1, T2, T3, T4 and T5 were programmed on the physical DE10-Standard with zero programming errors and zero warnings. The observed LED patterns matched the expected outputs: class 7 and detector asserted for all variants, localization 01 for T1, 10 for T2, and shared code 11 for T3--T5.
 
