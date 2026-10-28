@@ -38,7 +38,7 @@ module cnn_small_core (
     output reg [63:0]  cycle_count,
     output wire        t1_detected_out,
     output wire        t2_detected_out,
-    output wire [1:0]  localization_code
+    output wire [2:0]  localization_code
 );
 
     localparam IDLE=6'd0,
@@ -143,11 +143,11 @@ module cnn_small_core (
     reg t2_detected;
 
     // Localization encoding:
-    // 2'b00 = No Trojan
-    // 2'b01 = Conv2 PE computation region
-    // 2'b10 = Conv2 Weight Memory region
-    // 2'b11 = Control/FSM region
-    reg [1:0] localization_code_reg;
+    // 3'b000 = No Trojan
+    // 3'b001 = Conv2 PE computation region
+    // 3'b010 = Conv2 Weight Memory region
+    // variant-specific three-bit code
+    reg [2:0] localization_code_reg;
 
     assign t1_detected_out = t1_detected;
     assign t2_detected_out = t2_detected;
@@ -158,7 +158,7 @@ module cnn_small_core (
         t1_detected = 1'b0;
         t2_trigger = 1'b1; // T2 active
         t2_detected = 1'b0;
-        localization_code_reg = 2'b00;
+        localization_code_reg = 3'b000;
     end
 
     integer out_r,out_c,out_f,in_ch,kr,kc;
@@ -199,7 +199,7 @@ module cnn_small_core (
             best_value<=-64'sh7fffffffffffffff; best_class<=0;
             t1_detected <= 1'b0;
             t2_detected <= 1'b0;
-            localization_code_reg <= 2'b00;
+            localization_code_reg <= 3'b000;
         end else begin
             cycle_count <= cycle_count + 1'b1;
 
@@ -400,7 +400,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t2_detected <= 1'b1;
-                        localization_code_reg <= 2'b10;
+                        localization_code_reg <= 3'b010;
 
                         $display("T2_TARGET_BEFORE: p1_q=%0d c2w_q=%0d (8'b%b)",
                                  $signed(p1_q), $signed(c2w_q), c2w_q);
@@ -426,7 +426,7 @@ module cnn_small_core (
                         kr == 1 &&
                         kc == 1) begin
                         t1_detected <= 1'b1;
-                        localization_code_reg <= 2'b01;
+                        localization_code_reg <= 3'b001;
 
                         $display("T1_TARGET_BEFORE: p1_q=%0d c2w_q=%0d product=%0d",
                                  $signed(p1_q), $signed(c2w_q), $signed(product));

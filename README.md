@@ -26,16 +26,19 @@ MNIST → INT8 CNN → Runtime detector → CNN class + Trojan status + regional
              └─ FC → Argmax
 ~~~
 
-### Localization map
+### Localization map — experimental three-bit branch
 
-| Code | Region | Interpretation |
-|---|---|---|
-| 00 | Healthy | No Trojan detected |
-| 01 | Conv2 PE | T1 region |
-| 10 | Conv2 weight/data path | T2 region |
-| 11 | Shared routing/control | T3/T4/T5 region |
+| Code | Meaning |
+|---|---|
+| 000 | Healthy / no detector assertion |
+| 001 | T1 — Conv2 PE arithmetic |
+| 010 | T2 — Conv2 weight-memory data path |
+| 011 | T3 — feature interconnect |
+| 100 | T4 — spatial source routing |
+| 101 | T5 — control sequencing |
+| 110–111 | Reserved |
 
-Code 11 is a shared regional code and does not uniquely distinguish T3, T4, and T5.
+This is variant-aware identification for five known, controlled RTL variants, not general-purpose localization of unseen or simultaneous Trojans. The three-bit interface and pin assignments are experimental until the updated branch passes fresh Quartus builds and physical board validation.
 
 ## Platform
 
@@ -102,17 +105,11 @@ Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact 
 
 A separate successful [GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates with the Healthy baseline and selected five Healthy-correct images per class (50 images). Healthy and T1–T5 were run for each image, yielding 300 additional simulation rows: TP=250, TN=50, FP=0, FN=0, TPR=100%, FPR=0%, precision=100%, F1=1.000, and 250/250 correct regional codes. These metrics are conditional on the Healthy-screened inputs and are not physical measurements or a universal guarantee. See [the held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
 
-## Physical DE10-Standard validation
+## Physical DE10-Standard validation — three-bit branch
 
-T1, T2, T3, T4 and T5 were physically programmed through the DE10-Standard USB-Blaster/JTAG chain with 0 programming errors and 0 warnings. T1 produced class 7, detector asserted, localization code 01; T2 produced class 7, detector asserted, localization code 10; T3/T4/T5 produced class 7, detector asserted, shared localization code 11.
+The historical physical-board evidence in [the validation record](docs/PHYSICAL_BOARD_VALIDATION.md) applies to the earlier two-bit localization implementation. It must not be interpreted as physical validation of the experimental three-bit branch. The new third localization output is assigned to LEDR[6] on this branch, and requires fresh Quartus compilation, generation of new programming files, and a repeat of the board tests for Healthy and T1–T5.
 
-- 0 programming errors / 0 warnings
-- LEDR0–LEDR5 observed ON
-- <code>LEDR[2:0] = 111</code> → class 7
-- <code>LEDR3 = 1</code> → detector asserted
-- <code>LEDR[5:4] = 11</code> → regional code 11
-
-[Detailed physical validation](docs/PHYSICAL_BOARD_VALIDATION.md)
+**Three-bit branch physical validation: not yet complete.**
 
 ## Power evidence
 
@@ -177,7 +174,7 @@ hardware-trojan-fpga-cnn/
 1. The 60-row experiment is a controlled simulation regression, not 60 physical measurements.
 2. Physical rail/current power measurement is not included.
 3. Quartus Power Analyzer values are tool estimates.
-4. T3/T4/T5 share localization code 11.
+4. the current three-bit codebook distinguishes T3/T4/T5 as 011/100/101.
 5. Exact fresh C6 Fmax is not archived.
 6. Exact final fitter resource counts for T3/T4/T5 are not archived.
 7. Broader datasets and cross-CNN generalization remain future work.
@@ -185,10 +182,12 @@ hardware-trojan-fpga-cnn/
 
 ## Project status
 
-**Research prototype — complete and submission-ready for the defined controlled course/research scope.**
+**Experimental three-bit localization branch — not yet FPGA-validated.** The earlier two-bit implementation has separate historical evidence; this branch must pass fresh regression, Quartus builds, and physical tests before it can be called complete.
 
 ## Author
 
 **Jeevan K S**  
 B.Tech — Electronics and Communication Engineering  
 IIIT Dharwad
+
+Current branch records: [three-bit physical validation](docs/PHYSICAL_BOARD_VALIDATION_3BIT.md), [Quartus validation](docs/QUARTUS_3BIT_VALIDATION.md), and [completion status](docs/FINAL_COMPLETION_STATUS.md). The former two-bit physical record is historical only.

@@ -12,7 +12,7 @@ module tb_cnn_small_core;
     wire [3:0] predicted_class;
     wire [63:0] cycle_count;
     wire t1_detected_out;
-    wire [1:0] localization_code;
+    wire [2:0] localization_code;
 
     reg [63:0] sim_cycle;
     reg [63:0] inference_start_cycle;
@@ -111,12 +111,12 @@ module tb_cnn_small_core;
         $display("T1_DETECTION_CYCLE = %0d", t1_detection_cycle);
         $display("INFERENCE_START_CYCLE = %0d", inference_start_cycle);
         $display("DETECTION_LATENCY = %0d", detection_latency);
-        $display("LOCALIZATION_OUTPUT = 2'b%b", localization_code);
+        $display("LOCALIZATION_OUTPUT = 3'b%b", localization_code);
 
-        if (predicted_class == expected_class[3:0] && t1_detected_out == 1'b1 && localization_code == 2'b01) begin
+        if (predicted_class == expected_class[3:0] && t1_detected_out == 1'b1 && localization_code == 3'b001) begin
             $display("");
             $display("========================================");
-            $display(" PASS: CNN predicted expected digit %0d | T1 Detected | Localized to Conv2 PE (2'b01)" , expected_class);
+            $display(" PASS: CNN predicted expected digit %0d | T1 Detected | Localized to Conv2 PE (3'b001)" , expected_class);
             $display("========================================");
         end
         else begin

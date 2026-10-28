@@ -39,7 +39,7 @@ module cnn_small_core (
     output wire        t1_detected_out,
     output wire        t2_detected_out,
     output wire        t5_detected_out,
-    output wire [1:0]  localization_code
+    output wire [2:0]  localization_code
 );
 
     localparam IDLE=6'd0,
@@ -155,11 +155,11 @@ module cnn_small_core (
     reg t5_detected;
 
     // Localization encoding:
-    // 2'b00 = No Trojan
-    // 2'b01 = Conv2 PE computation region (T1)
-    // 2'b10 = Conv2 Weight Memory region (T2)
-    // 2'b11 = Interconnect / Data-Path region (T5)
-    reg [1:0] localization_code_reg;
+    // 3'b000 = No Trojan
+    // 3'b001 = Conv2 PE computation region (T1)
+    // 3'b010 = Conv2 Weight Memory region (T2)
+    // 3'b101 = Control sequencing (T5)
+    reg [2:0] localization_code_reg;
 
     assign t1_detected_out = t1_detected;
     assign t2_detected_out = t2_detected;
@@ -173,7 +173,7 @@ module cnn_small_core (
         t2_detected = 1'b0;
         t5_trigger = 1'b1; // T5 active
         t5_detected = 1'b0;
-        localization_code_reg = 2'b00;
+        localization_code_reg = 3'b000;
     end
 
     integer out_r,out_c,out_f,in_ch,kr,kc;
@@ -215,7 +215,7 @@ module cnn_small_core (
             t1_detected <= 1'b0;
             t2_detected <= 1'b0;
             t5_detected <= 1'b0;
-            localization_code_reg <= 2'b00;
+            localization_code_reg <= 3'b000;
         end else begin
             cycle_count <= cycle_count + 1'b1;
 
@@ -404,7 +404,7 @@ module cnn_small_core (
                     out_f == 1 && out_r == 0 && out_c == 0 &&
                     in_ch == 1 && kr == 1 && kc == 1) begin
                     t5_detected <= 1'b1;
-                    localization_code_reg <= 2'b11;
+                    localization_code_reg <= 3'b101;
                     $display("T5_ACTIVE: selected Conv2 control-path stall inserted");
                     state<=T5STALL;
                 end else begin

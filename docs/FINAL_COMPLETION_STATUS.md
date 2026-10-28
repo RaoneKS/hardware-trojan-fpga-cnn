@@ -1,92 +1,19 @@
-# Final Completion Status
+# Final Completion Status — Three-Bit Branch
 
-## Repository state
+As of 2026-10-28. Branch: localization-refinement-3bit. The default main branch is intentionally unchanged.
 
-The repository contains the reproducibility pipeline, evidence-cleanup changes, fresh C6 Healthy/T1/T2 resource snapshot, and physical DE10-Standard observations for T1, T2, T3, T4, and T5.
+## Completed within the controlled scope
+- Canonical cycle-accurate simulation: 60 PASS rows (10 workloads × Healthy/T1–T5); CI run 40700346008 succeeded.
+- Metrics for that selected simulation matrix: TP=50, TN=10, FP=0, FN=0; TPR/recall=100%, FPR=0%, precision=100%, F1=1.000. All 50 Trojan-present rows emit their expected code.
+- Three-bit map: Healthy 000; T1 001 (Conv2 PE arithmetic); T2 010 (Conv2 weight-memory path); T3 011 (feature interconnect); T4 100 (spatial source routing); T5 101 (control sequencing).
+- Fresh Quartus full compilation of all six targets: zero failed compile commands; all listed Fmax values exceed the 50 MHz target. See docs/QUARTUS_3BIT_VALIDATION.md.
+- Healthy and T1–T5 board LED patterns were reported and match the expected codes. See docs/PHYSICAL_BOARD_VALIDATION_3BIT.md.
 
-## Complete evidence
+## Not claimed complete
+1. The previous 300-row held-out study used the old two-bit codebook. A fresh 300-row three-bit run is not yet evidenced.
+2. The full current Quartus raw report bundle/SOF binaries and a complete final six-target fitter-resource table are not included in the professor package.
+3. No physical rail/current power was measured.
+4. New-session board photographs and raw programmer logs are not included.
+5. This is variant-aware identification for five known controlled RTL variants, not blind detection/localization of unknown or mixed Trojans.
 
-- INT8 CNN baseline and golden/reference flow
-- T1–T5 controlled Trojan RTL and testbenches
-- Workload-aware Trojan testbenches
-- Ten deterministic MNIST workloads covering digits 0–9
-- Separate held-out 50-image / 300-run same-CNN validation (five Healthy-correct images per class); detailed report in `docs/EXTENDED_HELDOUT_RESULTS.md`
-- Canonical 10 workloads × 6 targets regression ledger
-- Automated TP/TN/FP/FN and derived metrics
-- CI execution of the canonical matrix
-- Conservative power/activity evidence wording
-- Paper manuscript and tables
-- Professor requirements audit
-- Evidence-bounded numerical regional-coverage ablation and output-stealthiness sensitivity analysis
-- Submission checklist
-- Fresh C6 resource/timing snapshot for Healthy/T1/T2
-- Physical DE10-Standard board-output validation for T1/T2/T3/T4/T5
-
-## Committed simulation result
-
-The committed ledger contains 60 PASS rows:
-- Healthy: 10
-- T1–T5: 50
-- TP = 50
-- TN = 10
-- FP = 0
-- FN = 0
-- TPR = 100%
-- FPR = 0%
-- Precision = 100%
-- Recall = 100%
-- F1 = 1.000
-- Regional localization is correct for all committed Trojan rows
-
-These statistics describe the committed simulation regression cases only. The ledger is not presented as 60 independent physical measurements.
-
-## Fresh C6 resource snapshot
-
-The currently archived fresh C6 evidence is:
-
-| Target | ALMs | Registers | Block memory bits | RAM blocks | DSP blocks | Worst setup slack | Worst hold slack | Fmax |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| Healthy | 1,153 | 912 | 455,104 | 71 | 13 | +0.181 ns | +0.173 ns | not archived |
-| T1 | 1,170 | 918 | 455,104 | 71 | 13 | +0.141 ns | +0.141 ns | not archived |
-| T2 | 1,192 | 919 | 455,104 | 71 | 15 | +0.163 ns | +0.163 ns | not archived |
-
-Exact final fitter resource counts for T3/T4/T5 are not archived and are not inferred.
-
-## Canonical timing
-
-At 50 MHz:
-- Healthy/T1/T2/T3/T4: 634,281 cycles = 12.68562 ms
-- T5: 634,282 cycles = 12.68564 ms
-- T1–T4 detection latency: 149,136 cycles = 2.98272 ms
-- T5 detection latency: 149,135 cycles = 2.98270 ms
-
-## Physical DE10-Standard validation
-
-T1, T2, T3, T4, and T5 were programmed successfully through the DE10-Standard USB-Blaster/JTAG chain at FPGA device index 2 (JTAG ID `02D020DD`), with 0 programming errors and 0 warnings.
-
-Physical LED observations:
-- T1: LEDR0–LEDR4 ON, LEDR5 OFF -> `LEDR[5:4] = 01`
-- T2: LEDR0, LEDR1, LEDR2, LEDR3, LEDR5 ON, LEDR4 OFF -> `LEDR[5:4] = 10`
-- T3: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
-- T4: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
-- T5: LEDR0–LEDR5 ON -> `LEDR[5:4] = 11`
-- For all five variants, `LEDR[2:0] = 111` -> class 7
-- For all five variants, `LEDR3 = 1` -> detector asserted
-
-## Limitations
-
-1. Physical rail/current power measurement is not present.
-2. Quartus Power Analyzer values are tool estimates.
-3. Exact final fitter ALM/register/RAM/DSP counts for T3–T5 are not archived.
-4. Exact fresh C6 Fmax is not archived.
-5. Broader datasets/cross-CNN generalization are future work.
-6. The numerical ablation is an evidence-bounded evaluation-layer channel-masking analysis; separate synthesized ablation builds are not archived.
-7. The 100%/0% detection metrics are scoped to the committed 60-row simulation regression.
-8. Localization code 11 does not distinguish T3/T4/T5.
-9. The stealthiness analysis is a cross-variant output-stealthiness/observability comparison, not a graded payload-severity sweep.
-
-## Final status
-
-**PROJECT COMPLETE for the defined controlled course/research implementation and validation scope.**
-
-These limitations are evidence boundaries or research extensions, not blockers for the completed controlled project scope.
+Status: canonical simulation, six Quartus builds, and six reported board output patterns are complete within the boundaries above. Do not conflate the earlier two-bit study with the current three-bit codebook.

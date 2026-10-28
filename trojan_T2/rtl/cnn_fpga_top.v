@@ -4,7 +4,7 @@ module cnn_fpga_top (
     input  wire       CLOCK_50,
     input  wire [0:0] KEY,
     output wire [3:0] LEDR,
-    output wire [1:0] localization_code
+    output wire [2:0] localization_code
 );
 
     wire rst;
@@ -16,7 +16,7 @@ module cnn_fpga_top (
     wire [63:0] cycle_count;
     wire        t1_detected_out;
     wire        t2_detected_w;
-    wire [1:0]  loc_code;
+    wire [2:0]  loc_code;
 
     assign rst = ~KEY[0];
 
