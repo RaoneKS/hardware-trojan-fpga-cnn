@@ -13,12 +13,17 @@ set_global_assignment -name VERILOG_FILE rtl/cnn_fpga_top.v
 set_location_assignment PIN_AF14 -to CLOCK_50
 set_location_assignment PIN_AJ4  -to KEY[0]
 
+# DE10-Standard onboard LEDs: class/status on LEDR[0:3].
 set_location_assignment PIN_AA24 -to LEDR[0]
 set_location_assignment PIN_AB23 -to LEDR[1]
 set_location_assignment PIN_AC23 -to LEDR[2]
 set_location_assignment PIN_AD24 -to LEDR[3]
+
+# Three-bit localization displayed on onboard LEDR[4:6].
+# Pins match the DE10-Standard reference QSF.
 set_location_assignment PIN_AG25 -to localization_code[0]
 set_location_assignment PIN_AF25 -to localization_code[1]
+set_location_assignment PIN_AE24 -to localization_code[2]
 
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[0]
@@ -28,5 +33,12 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[2]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[3]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to localization_code[0]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to localization_code[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to localization_code[2]
+
+# Match the DE10-Standard reference LED electrical settings.
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to LEDR
+set_instance_assignment -name SLEW_RATE 0 -to LEDR
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to localization_code
+set_instance_assignment -name SLEW_RATE 0 -to localization_code
 
 set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 Lite Edition"
