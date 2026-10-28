@@ -105,7 +105,7 @@ Exact fresh C6 Fmax is not archived, so it is intentionally not reported. Exact 
 
 A separate successful [GitHub Actions run](https://github.com/RaoneKS/hardware-trojan-fpga-cnn/actions/runs/37684517036) screened held-out MNIST candidates with the Healthy baseline and selected five Healthy-correct images per class (50 images). Healthy and T1–T5 were run for each image, yielding 300 additional simulation rows: TP=250, TN=50, FP=0, FN=0, TPR=100%, FPR=0%, precision=100%, F1=1.000, and 250/250 correct regional codes. These metrics are conditional on the Healthy-screened inputs and are not physical measurements or a universal guarantee. See [the held-out evaluation report](docs/EXTENDED_HELDOUT_RESULTS.md).
 
-## Physical DE10-Standard validation — prior two-bit baseline only
+## Physical DE10-Standard validation — three-bit branch
 
 The historical physical-board evidence in [the validation record](docs/PHYSICAL_BOARD_VALIDATION.md) applies to the earlier two-bit localization implementation. It must not be interpreted as physical validation of the experimental three-bit branch. The new third localization output is assigned to LEDR[6] on this branch, and requires fresh Quartus compilation, generation of new programming files, and a repeat of the board tests for Healthy and T1–T5.
 
@@ -174,7 +174,7 @@ hardware-trojan-fpga-cnn/
 1. The 60-row experiment is a controlled simulation regression, not 60 physical measurements.
 2. Physical rail/current power measurement is not included.
 3. Quartus Power Analyzer values are tool estimates.
-4. T3/T4/T5 share localization code 11.
+4. the current three-bit codebook distinguishes T3/T4/T5 as 011/100/101.
 5. Exact fresh C6 Fmax is not archived.
 6. Exact final fitter resource counts for T3/T4/T5 are not archived.
 7. Broader datasets and cross-CNN generalization remain future work.
@@ -189,3 +189,5 @@ hardware-trojan-fpga-cnn/
 **Jeevan K S**  
 B.Tech — Electronics and Communication Engineering  
 IIIT Dharwad
+
+Current branch records: [three-bit physical validation](docs/PHYSICAL_BOARD_VALIDATION_3BIT.md), [Quartus validation](docs/QUARTUS_3BIT_VALIDATION.md), and [completion status](docs/FINAL_COMPLETION_STATUS.md). The former two-bit physical record is historical only.
