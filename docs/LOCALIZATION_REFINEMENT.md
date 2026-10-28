@@ -1,28 +1,16 @@
-# Three-bit Trojan Localization Refinement (Experimental Branch)
+# Three-Bit Variant-Aware Localization
 
-## Purpose
-This branch upgrades the original two-bit, three-region localization output to a three-bit code distinguishing the five *known, controlled* Trojan variants. The extra output bit changes the RTL interface and requires fresh synthesis and board validation; this is not a drop-in replacement for the tested DE10 image.
-
-## Encoding
-| Code | Meaning |
+| Code | Configuration |
 |---|---|
-| `000` | Healthy / no detector assertion |
-| `001` | T1 — Conv2 processing-element arithmetic |
-| `010` | T2 — Conv2 weight-memory data path |
-| `011` | T3 — feature interconnect |
-| `100` | T4 — spatial source routing |
-| `101` | T5 — control sequencing |
-| `110` | Reserved: ambiguous/conflicting evidence |
-| `111` | Reserved: invalid/unknown code |
+| 000 | Healthy / detector inactive |
+| 001 | T1 — Conv2 PE arithmetic |
+| 010 | T2 — Conv2 weight-memory path |
+| 011 | T3 — feature interconnect |
+| 100 | T4 — spatial source routing |
+| 101 | T5 — control sequencing |
+| 110, 111 | Reserved |
 
-Each variant-specific RTL emits its code and its testbench checks the corresponding three-bit value. This distinguishes the five known injected variants, but does not prove a general-purpose classifier for unseen or simultaneous Trojans.
+## Evidence
+The canonical 60-row simulation passed, with 10 rows for each configuration and expected codes on all 50 Trojan-present rows. Fresh Quartus compilation succeeded for all six configurations, with all listed Fmax values above 50 MHz. Physical LED observations were reported for all six configurations and match the codebook.
 
-## Required validation before replacing current paper/board results
-1. Run the canonical 60-row Healthy/T1–T5 regression and confirm predicted classes, detection flags, and new localization codes.
-2. Re-run the held-out 300-row same-CNN test and preserve the Healthy-correct screening qualification.
-3. Compile each variant with Quartus; record warnings, fitter resources, setup/hold slack and Fmax.
-4. Assign a physical FPGA pin for the third localization bit, regenerate programming files, and re-test every physical variant.
-5. Only after these steps, update the paper's headline localization results and board claims. Existing two-bit/three-region results remain the validated baseline until this branch passes these checks.
-
-## Research limitation
-The code is emitted within each controlled RTL variant after its corresponding detector path fires. This is variant-aware identification for the known campaign, not blind inference of arbitrary Trojan location. General localization requires independent diagnostic signatures and tests for unseen/mixed variants.
+The older held-out 300-row study used the former two-bit codebook (T3/T4/T5 shared code 11); it is historical detection evidence only, not a fresh three-bit localization result. The current codebook is variant-aware and is not blind inference of unknown/mixed Trojan locations. Physical rail/current power was not measured. See docs/QUARTUS_3BIT_VALIDATION.md and docs/PHYSICAL_BOARD_VALIDATION_3BIT.md.

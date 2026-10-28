@@ -1,0 +1,7 @@
+configuration,expected_localization_code,LEDR0,LEDR1,LEDR2,LEDR3,LEDR4,LEDR5,LEDR6,observed_leds_on,result,notes
+Healthy,000,ON,ON,ON,OFF,OFF,OFF,OFF,"0,1,2",PASS,"Reported observation; reference class 7."
+T1,001,ON,ON,ON,ON,ON,OFF,OFF,"0,1,2,3,4",PASS,"Conv2 PE arithmetic."
+T2,010,ON,ON,ON,ON,OFF,ON,OFF,"0,1,2,3,5",PASS,"Conv2 weight-memory path."
+T3,011,ON,ON,ON,ON,ON,ON,OFF,"0,1,2,3,4,5",PASS,"Feature interconnect."
+T4,100,ON,ON,ON,ON,OFF,OFF,ON,"0,1,2,3,6",PASS,"Spatial source routing."
+T5,101,ON,ON,ON,ON,ON,OFF,ON,"0,1,2,3,4,6",PASS,"Control sequencing."
